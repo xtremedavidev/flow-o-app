@@ -1,27 +1,24 @@
 "use client";
 
 import { AuthBgWrapper, AuthInput } from "@/components";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { SubmitHandler, useForm } from "react-hook-form";
 
-const Login = () => {
+export default function ForgotPassword() {
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<LoginInputs>();
+  } = useForm<ForgotPasswordInputs>();
 
   const router = useRouter();
 
-  const onSubmit: SubmitHandler<LoginInputs> = async (data) => {
+  const onSubmit: SubmitHandler<ForgotPasswordInputs> = async (data) => {
     const UserData = {
       email: data.email,
-      password: data.password,
     };
 
     console.log("hee", UserData);
-
     router.push("/login/verify");
   };
 
@@ -32,8 +29,10 @@ const Login = () => {
         className="flex w-full flex-col gap-10"
       >
         <div className="space-y-2 text-center">
-          <h1 className="text-2xl font-semibold">Welcome Back,</h1>
-          <p className="text-base font-normal">Please Log in to continue</p>
+          <h1 className="text-2xl font-semibold">Forgot Password</h1>
+          <p className="text-base font-normal">
+            Please provide your email so we can send your password reset link
+          </p>
         </div>
 
         <div className="flex flex-col gap-[44px]">
@@ -51,53 +50,31 @@ const Login = () => {
           ))}
         </div>
 
-        <div className="flex items-center justify-between text-sm font-normal">
-          <div className="flex gap-2">
-            <input type="checkbox" />
-            <p>Remember me</p>
-          </div>
-
-          <p>
-            Forgot your Password?{" "}
-            <Link href="/login/forgot-password" className="font-bold">
-              Reset
-            </Link>
-          </p>
-        </div>
-
         <button
           type="submit"
           className="h-[48px] w-full items-center justify-center rounded-[17px] bg-[#297FB8] text-base font-semibold"
         >
-          Log In
+          Send OTP
         </button>
       </form>
     </AuthBgWrapper>
   );
-};
-export default Login;
-
-interface LoginInputs {
-  email: string;
-  password: string;
 }
 
-interface LoginFormField {
-  name: keyof LoginInputs;
+ interface ForgotPasswordInputs {
+  email: string;
+}
+
+ interface ForgetPassFormField {
+  name: keyof ForgotPasswordInputs;
   label: string;
   type: string;
 }
 
-const loginArr: LoginFormField[] = [
+const loginArr: ForgetPassFormField[] = [
   {
     label: "email",
     name: "email",
     type: "email",
-  },
-
-  {
-    label: "password",
-    name: "password",
-    type: "password",
   },
 ];
