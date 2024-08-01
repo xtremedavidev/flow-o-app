@@ -1,0 +1,8 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.custom-login-gradient {
+  @apply bg-gradient-to-tr;
+  background-image: linear-gradient(to top right, #297FB8, #0A1F2D, #111C23, #202020);
+}
