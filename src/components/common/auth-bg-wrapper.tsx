@@ -5,7 +5,7 @@ export const AuthBgWrapper: FC<PropsWithChildren> = ({ children }) => {
   return (
     <main className="custom-login-gradient relative flex min-h-screen items-center justify-center">
       <Image
-        src="/images/flowoptix-logo-big.png"
+        src="/images/flowoptix-logo-big.svg"
         alt="FlowOptix"
         width={200}
         height={200}
