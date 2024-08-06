@@ -1,9 +1,13 @@
 "use client";
 
 import { AuthBgWrapper, AuthInput } from "@/components";
+import { encryptToken } from "@/utils";
+import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { toast } from "react-toastify";
 
 const Login = () => {
   const {
@@ -14,15 +18,43 @@ const Login = () => {
 
   const router = useRouter();
 
+  const mutation = useMutation({
+    mutationFn: (data: { identifier: string; password: string }) => {
+      return axios.post(
+        `${process.env.NEXT_PUBLIC_BASEURL}/user-gateway/login`,
+        data,
+      );
+    },
+  });
+
   const onSubmit: SubmitHandler<LoginInputs> = async (data) => {
     const UserData = {
-      email: data.email,
+      identifier: data.email,
       password: data.password,
     };
 
     console.log("hee", UserData);
 
-    router.push("/login/verify");
+    try {
+      const res = await mutation.mutateAsync(UserData);
+
+      if (res?.data?.message === "success") {
+        const token = res?.data?.token;
+        const encryptedToken = encryptToken(token);
+
+        localStorage.setItem("token", encryptedToken);
+        toast.success("Login Successful");
+        router.push("/dashboard/home");
+      } else {
+        if (res?.data?.message) {
+          toast.error(res?.data?.message);
+          console.log("hello 22", res);
+        }
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Login Failed");
+    }
   };
 
   return (
@@ -67,9 +99,9 @@ const Login = () => {
 
         <button
           type="submit"
-          className="h-[48px] w-full items-center justify-center rounded-[17px] bg-[#297FB8] text-base font-semibold"
+          className={`h-[48px] w-full items-center justify-center rounded-[17px] bg-[#297FB8] text-base font-semibold ${mutation.isPending && "animate-pulse"}`}
         >
-          Log In
+          {mutation.isPending ? "Loading..." : "Log In"}
         </button>
       </form>
     </AuthBgWrapper>

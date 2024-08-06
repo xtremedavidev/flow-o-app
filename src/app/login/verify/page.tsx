@@ -51,7 +51,7 @@ const VerifyLogin = () => {
         </div>
 
         <button
-          onClick={() => router.push("/login/reset")}
+          onClick={() => router.push("/dashboard/home")}
           type="submit"
           className="h-[48px] w-full items-center justify-center rounded-[17px] bg-[#297FB8] text-base font-semibold"
         >
