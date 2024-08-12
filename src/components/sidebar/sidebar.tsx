@@ -2,6 +2,14 @@
 
 import Image from "next/image";
 import { FiLogOut } from "react-icons/fi";
+import { MdDashboard } from "react-icons/md";
+import { BsFillDeviceSsdFill } from "react-icons/bs";
+import { GoAlertFill } from "react-icons/go";
+import { MdPieChart } from "react-icons/md";
+import { IoMdSettings } from "react-icons/io";
+import Link from "next/link";
+import React, { FC } from "react";
+import { usePathname } from "next/navigation";
 
 export const Sidebar = () => {
   return (
@@ -18,7 +26,7 @@ export const Sidebar = () => {
             <SidebarItem
               key={item.label}
               label={item.label}
-              icon={item.icon}
+              icon={<item.icon size={24} color="#ffffff" />}
               href={item.href}
             />
           ))}
@@ -49,10 +57,16 @@ export const Sidebar = () => {
             </div>
           </div>
 
-          <button className="flex w-full items-center gap-[10px] rounded-[4px] bg-white/[0.08] px-4 py-3 text-base font-normal">
+          <Link
+            href="/login"
+            onClick={() => {
+              localStorage.removeItem("token");
+            }}
+            className="flex w-full items-center gap-[10px] rounded-[4px] bg-white/[0.08] px-4 py-3 text-base font-normal"
+          >
             <FiLogOut size={24} color="#ffffff" />
             <span>Logout</span>
-          </button>
+          </Link>
         </div>
       </div>
     </div>
@@ -93,39 +107,30 @@ const SidebarItem: FC<{
   );
 };
 
-import { MdDashboard } from "react-icons/md";
-import { BsFillDeviceSsdFill } from "react-icons/bs";
-import { GoAlertFill } from "react-icons/go";
-import { MdPieChart } from "react-icons/md";
-import { IoMdSettings } from "react-icons/io";
-import Link from "next/link";
-import React, { FC } from "react";
-import { usePathname } from "next/navigation";
-
 const SidebarListItemsArr = [
   {
     label: "Dashboard",
-    icon: <MdDashboard size={24} color="#ffffff" />,
+    icon: MdDashboard,
     href: "/dashboard/home",
   },
   {
     label: "Manage Devices",
-    icon: <BsFillDeviceSsdFill size={24} color="#ffffff" />,
+    icon: BsFillDeviceSsdFill,
     href: "/dashboard/devices",
   },
   {
     label: "Action Center",
-    icon: <GoAlertFill size={24} color="#ffffff" />,
+    icon: GoAlertFill,
     href: "/dashboard/action-center",
   },
   {
     label: "Reports",
-    icon: <MdPieChart size={24} color="#ffffff" />,
+    icon: MdPieChart,
     href: "/dashboard/reports",
   },
   {
     label: "Settings",
-    icon: <IoMdSettings size={24} color="#ffffff" />,
+    icon: IoMdSettings,
     href: "/dashboard/settings",
   },
 ];

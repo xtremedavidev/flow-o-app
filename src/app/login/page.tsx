@@ -85,7 +85,7 @@ const Login = () => {
 
         <div className="flex items-center justify-between text-sm font-normal">
           <div className="flex gap-2">
-            <input type="checkbox" />
+            <input type="checkbox" checked={true} />
             <p>Remember me</p>
           </div>
 

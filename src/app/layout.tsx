@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   title: "FlowOptix",
   description: "",
   icons: {
-    icon: "/images/flowoptix-logo-big.svg",
+    icon: "/images/flowoptix-logo-big.png",
   },
 };
 
@@ -23,7 +23,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.className} bg-[#202020] text-white`}>
-        <ToastContainer />
+        <ToastContainer position="top-center" />
         <ProviderQueryclient>{children}</ProviderQueryclient>
       </body>
     </html>
