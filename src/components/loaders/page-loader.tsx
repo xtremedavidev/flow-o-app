@@ -6,7 +6,7 @@ export const PageLoader = () => {
       <div className="relative flex animate-pulse flex-col items-center gap-4">
         <Image
           alt="loader"
-          src="/images/flowoptix-logo-big.svg"
+          src="/images/flowoptix-logo-big.png"
           height={200}
           width={200}
         />
