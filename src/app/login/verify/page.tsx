@@ -7,7 +7,7 @@ import PinInput from "react-pin-input";
 const VerifyLogin = () => {
   const router = useRouter();
   return (
-    <AuthBgWrapper>
+    <>
       <div className="flex flex-col items-center gap-[30px]">
         <div className="space-y-5 text-center">
           <h1 className="text-[32px] font-semibold">Email Verification</h1>
@@ -58,7 +58,7 @@ const VerifyLogin = () => {
           Submit
         </button>
       </div>
-    </AuthBgWrapper>
+    </>
   );
 };
 export default VerifyLogin;

@@ -58,53 +58,51 @@ const Login = () => {
   };
 
   return (
-    <AuthBgWrapper>
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="flex w-full flex-col gap-10"
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="flex w-full flex-col gap-10"
+    >
+      <div className="space-y-2 text-center">
+        <h1 className="text-2xl font-semibold">Welcome Back,</h1>
+        <p className="text-base font-normal">Please Log in to continue</p>
+      </div>
+
+      <div className="flex flex-col gap-[44px]">
+        {loginArr.map(({ name, label, type }) => (
+          <AuthInput
+            key={name}
+            type={type}
+            placeholder={`Enter your ${label}`}
+            label={label}
+            error={errors[name]?.message as string}
+            {...register(name, {
+              required: `${label} is required`,
+            })}
+          />
+        ))}
+      </div>
+
+      <div className="flex items-center justify-between text-sm font-normal">
+        <div className="flex gap-2">
+          <input type="checkbox" checked={true} />
+          <p>Remember me</p>
+        </div>
+
+        <p>
+          Forgot your Password?{" "}
+          <Link href="/login/forgot-password" className="font-bold">
+            Reset
+          </Link>
+        </p>
+      </div>
+
+      <button
+        type="submit"
+        className={`h-[48px] w-full items-center justify-center rounded-[17px] bg-[#297FB8] text-base font-semibold ${mutation.isPending && "animate-pulse"}`}
       >
-        <div className="space-y-2 text-center">
-          <h1 className="text-2xl font-semibold">Welcome Back,</h1>
-          <p className="text-base font-normal">Please Log in to continue</p>
-        </div>
-
-        <div className="flex flex-col gap-[44px]">
-          {loginArr.map(({ name, label, type }) => (
-            <AuthInput
-              key={name}
-              type={type}
-              placeholder={`Enter your ${label}`}
-              label={label}
-              error={errors[name]?.message as string}
-              {...register(name, {
-                required: `${label} is required`,
-              })}
-            />
-          ))}
-        </div>
-
-        <div className="flex items-center justify-between text-sm font-normal">
-          <div className="flex gap-2">
-            <input type="checkbox" checked={true} />
-            <p>Remember me</p>
-          </div>
-
-          <p>
-            Forgot your Password?{" "}
-            <Link href="/login/forgot-password" className="font-bold">
-              Reset
-            </Link>
-          </p>
-        </div>
-
-        <button
-          type="submit"
-          className={`h-[48px] w-full items-center justify-center rounded-[17px] bg-[#297FB8] text-base font-semibold ${mutation.isPending && "animate-pulse"}`}
-        >
-          {mutation.isPending ? "Loading..." : "Log In"}
-        </button>
-      </form>
-    </AuthBgWrapper>
+        {mutation.isPending ? "Loading..." : "Log In"}
+      </button>
+    </form>
   );
 };
 export default Login;

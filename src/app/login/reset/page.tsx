@@ -27,7 +27,7 @@ const ResetPassword = () => {
   };
 
   return (
-    <AuthBgWrapper>
+    <>
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="flex w-full flex-col gap-8"
@@ -68,7 +68,7 @@ const ResetPassword = () => {
           <LoginWithBtn key={item.label} icon={item.icon} label={item.label} />
         ))}
       </div>
-    </AuthBgWrapper>
+    </>
   );
 };
 export default ResetPassword;
