@@ -1,13 +1,18 @@
 "use client";
 
-import { AuthBgWrapper, AuthInput } from "@/components";
-import { encryptToken } from "@/utils";
+import { AuthInput } from "@/components";
+import { DefaultResponse } from "@/types";
+import { encryptToken, fetcher } from "@/utils";
 import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
+
+interface LoginResponse extends DefaultResponse {
+  token: string;
+}
 
 const Login = () => {
   const {
@@ -16,13 +21,18 @@ const Login = () => {
     formState: { errors },
   } = useForm<LoginInputs>();
 
+  const [rememberMe, setRememberMe] = useState(true);
+
   const router = useRouter();
 
   const mutation = useMutation({
     mutationFn: (data: { identifier: string; password: string }) => {
-      return axios.post(
+      return fetcher<LoginResponse>(
         `${process.env.NEXT_PUBLIC_BASEURL}/user-gateway/login`,
-        data,
+        {
+          method: "POST",
+          data,
+        },
       );
     },
   });
@@ -33,27 +43,24 @@ const Login = () => {
       password: data.password,
     };
 
-    console.log("hee", UserData);
-
     try {
       const res = await mutation.mutateAsync(UserData);
 
-      if (res?.data?.message === "success") {
-        const token = res?.data?.token;
+      if (res?.message === "success") {
+        const token = res?.token;
         const encryptedToken = encryptToken(token);
 
         localStorage.setItem("token", encryptedToken);
         toast.success("Login Successful");
         router.push("/dashboard/home");
       } else {
-        if (res?.data?.message) {
-          toast.error(res?.data?.message);
-          console.log("hello 22", res);
+        if (res?.message) {
+          toast.error(res?.message);
+          console.log("else block res----", res);
         }
       }
     } catch (error) {
       console.error(error);
-      toast.error("Login Failed");
     }
   };
 
@@ -82,9 +89,13 @@ const Login = () => {
         ))}
       </div>
 
-      <div className="flex items-center justify-between text-sm font-normal">
+      <div className="flex flex-col justify-between gap-4 text-sm font-normal lg:flex-row lg:items-center">
         <div className="flex gap-2">
-          <input type="checkbox" checked={true} />
+          <input
+            type="checkbox"
+            checked={rememberMe}
+            onChange={(e) => setRememberMe(e.target.checked)}
+          />
           <p>Remember me</p>
         </div>
 

@@ -78,7 +78,7 @@ const LogoWithText = () => {
     <div className="flex items-center gap-3">
       <Image
         alt="FlowOptix Logo"
-        src="/images/flowoptix-logo-big.svg"
+        src="/images/flowoptix-logo-big.png"
         width={50}
         height={50}
       />
