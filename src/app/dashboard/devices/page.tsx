@@ -1,9 +1,9 @@
 import {
   AddDeviceButton,
   DeviceListTable,
+  FilterButton,
   ManageDevicesCard,
 } from "@/components";
-import { TbFilterFilled } from "react-icons/tb";
 import { TbArrowsSort } from "react-icons/tb";
 
 const DashboardDevices = () => {
@@ -19,10 +19,7 @@ const DashboardDevices = () => {
 
       <div className="flex w-full items-center justify-end gap-[10px]">
         <TbArrowsSort size={24} color="#ABAAAA" />
-        <button className="flex items-center gap-[10px] rounded-lg bg-[#464646] px-[10px] py-[6px]">
-          <TbFilterFilled />
-          <span>Filter</span>
-        </button>
+        <FilterButton />
       </div>
 
       <div className="mt-[10px]">

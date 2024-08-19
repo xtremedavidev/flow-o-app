@@ -2,6 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
+input:-webkit-autofill,
+textarea:-webkit-autofill,
+select:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0px 1000px transparent inset;
+  box-shadow: 0 0 0px 1000px transparent inset;
+  -webkit-text-fill-color: #fff; 
+  transition: background-color 5000s ease-in-out 0s;
+}
+
 .custom-login-gradient {
   @apply bg-gradient-to-tr;
   background-image: linear-gradient(to top right, #297FB8, #0A1F2D, #111C23, #202020);

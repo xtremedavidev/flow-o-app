@@ -1,3 +1,5 @@
+import { ClientTrWrapper } from "./client-tr-wrapper";
+
 export const DeviceListTable = () => {
   return (
     // <div className="h-[600px] overflow-x-auto overflow-y-auto">
@@ -21,7 +23,12 @@ export const DeviceListTable = () => {
         </thead>
         <tbody className="mt-4 divide-y-8 divide-[#202020]">
           {devices.map((device, index) => (
-            <tr key={index} className="bg-[#292929]">
+            // <tr key={index} className="bg-[#292929]">
+            <ClientTrWrapper
+              key={index}
+              className="cursor-pointer bg-[#292929]"
+              pushTo={`/dashboard/devices/${encodeURIComponent(device.name_id)}`}
+            >
               <td className="whitespace-nowrap px-[15px] py-4 text-sm font-normal">
                 {device.name_id}
               </td>
@@ -37,7 +44,8 @@ export const DeviceListTable = () => {
               <td className="whitespace-nowrap px-[15px] py-4 text-sm font-normal">
                 {device.location}
               </td>
-            </tr>
+            </ClientTrWrapper>
+            // </tr>
           ))}
         </tbody>
       </table>

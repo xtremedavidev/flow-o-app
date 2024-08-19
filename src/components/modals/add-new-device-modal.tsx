@@ -83,9 +83,9 @@ export const AddNewDeviceModal: FC<ModalProps> = ({ isOpen, setIsOpen }) => {
       setIsOpen={setIsOpen}
     >
       <div className="grid grid-cols-2 gap-x-[10px] gap-y-2">
-        {formFields.map((field) => (
+        {formFields.map((field, idx) => (
           <ModalInput
-            className={`first:col-span-2`}
+            className={`first:col-span-2 ${idx === 1 && "col-span-2"}`}
             key={field.name}
             // name={field.name as keyof FormValues}
             name={field.name as Path<FormValues>}
@@ -121,7 +121,7 @@ const ModalInput = <T extends FieldValues>({
   return (
     <div
       className={cn(
-        `w-full rounded-[4px] bg-[#464646] px-3 py-[10px] text-[10px] font-medium text-white`,
+        `w-full rounded-[4px] bg-[#464646] px-3 text-[10px] font-medium text-white`,
         className,
       )}
     >
@@ -133,13 +133,17 @@ const ModalInput = <T extends FieldValues>({
             return (
               <select
                 {...field}
-                className="w-full border-none bg-transparent outline-none ring-transparent"
+                className="w-full border-none bg-transparent py-[10px] outline-none ring-transparent"
               >
                 <option value="" disabled>
                   {label}
                 </option>
                 {options.map((option) => (
-                  <option key={option.value} value={option.value}>
+                  <option
+                    key={option.value}
+                    value={option.value}
+                    className="py-2 text-black"
+                  >
                     {option.label}
                   </option>
                 ))}
@@ -147,7 +151,7 @@ const ModalInput = <T extends FieldValues>({
             );
           } else if (type === "checkbox") {
             return (
-              <div className="flex items-center">
+              <div className="flex items-center py-[10px]">
                 <input
                   {...field}
                   type="checkbox"
@@ -163,7 +167,7 @@ const ModalInput = <T extends FieldValues>({
                 {...field}
                 {...props}
                 type={type}
-                className="w-full border-none bg-transparent outline-none ring-transparent"
+                className="w-full border-none bg-transparent py-[10px] outline-none ring-transparent"
                 placeholder={label}
               />
             );
