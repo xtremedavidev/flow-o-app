@@ -9,7 +9,7 @@ export const DeviceActivities = () => {
       <div className="flex items-center justify-between px-[14px]">
         <h1 className="text-base font-medium">Device Activities</h1>
         <div className="flex shrink-0 items-center gap-[10px]">
-          <MdDateRange size={24} color="#ffffff" />
+          <MdDateRange size={28} color="#ffffff" />
           <div className="w-full max-w-[100px] px-3 py-2 text-white">
             <select
               name="status"

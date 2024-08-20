@@ -172,7 +172,7 @@ export const PuslingMapChart: React.FC = () => {
         id="pulsingmapdiv"
         style={{
           width: "100%",
-          height: "200px",
+          height: "240px",
           position: "relative",
           borderRadius: "18px",
         }}

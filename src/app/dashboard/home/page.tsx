@@ -6,8 +6,11 @@ import {
   LocateWellCard,
   WellActivityCard,
 } from "@/components";
+import { useFetchGeneralInsights } from "@/hooks";
 import { fetcher, getToken } from "@/utils";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import axios from "axios";
+import { useEffect, useState } from "react";
 // import { Metadata } from "next";
 import { BsFillDeviceSsdFill } from "react-icons/bs";
 
@@ -17,28 +20,32 @@ import { BsFillDeviceSsdFill } from "react-icons/bs";
 // };
 
 const DashboardHome = () => {
-  const token = getToken();
+  // ---------------------------------------------------------------
 
-  const fetchUserData = async () => {
-    return fetcher<unknown>(
-      `${process.env.NEXT_PUBLIC_BASEURL}/record-gateway/get`,
-      {
-        method: "POST",
-        config: {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      },
-    );
-  };
+  // const token = getToken();
 
-  const { data, error, isLoading } = useQuery<unknown, Error>({
-    queryKey: ["user-data"],
-    queryFn: fetchUserData,
-  });
+  // const fetchUserData = async () => {
+  //   return fetcher<unknown>(
+  //     `${process.env.NEXT_PUBLIC_BASEURL}/record-gateway/get`,
+  //     {
+  //       method: "POST",
+  //       config: {
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //       },
+  //     },
+  //   );
+  // };
 
-  console.log("Niggaa---------", data, error, isLoading);
+  // const { data, error, isLoading } = useQuery<unknown, Error>({
+  //   queryKey: ["user-data"],
+  //   queryFn: fetchUserData,
+  // });
+
+  // console.log("Niggaa---------", data, error, isLoading);
+
+  // ---------------------------------------------------------------
 
   return (
     <div className="flex h-full flex-col gap-7 overflow-y-auto">
