@@ -10,7 +10,7 @@ const DashboardLayout: FC<PropsWithChildren> = ({ children }) => {
           <Topbar />
 
           <div className="flex h-[calc(100vh-100px)] justify-between gap-5 overflow-hidden px-5 py-3">
-            <div className="w-full">{children}</div>
+            <div className="w-full overflow-hidden">{children}</div>
 
             <Rightbar />
           </div>

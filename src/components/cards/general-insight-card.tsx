@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { LineChart } from "../charts";
 import { useFetchGeneralInsights } from "@/hooks";
 import { getToken } from "@/utils";
@@ -35,7 +35,7 @@ export const GeneralInsightsCard = () => {
     const fetchGeneralInsights = async () => {
       try {
         const res = await mutation.mutateAsync();
-        console.log("Response data:", res.data);
+        // console.log("Response data:", res.data);
         setChartData(res.data);
       } catch (error) {
         console.error("Error fetching general insights:", error);
@@ -64,6 +64,8 @@ export const GeneralInsightsCard = () => {
 
   const transformedData = chartData ? transformData(chartData) : [];
 
+  const lineChartData = useMemo(() => transformedData, [chartData]);
+
   return (
     <div className="rounded-2xl bg-[#297FB8]/10 px-[26px] py-[18px]">
       <h2 className="text-xl font-medium">General Insight</h2>
@@ -74,7 +76,7 @@ export const GeneralInsightsCard = () => {
 
       <hr className="my-[30px] w-full border-[1.5px] border-solid border-[#565656]/[0.35]" />
 
-      {chartData && <LineChart data={transformedData} />}
+      {chartData && <LineChart data={lineChartData} />}
     </div>
   );
 };

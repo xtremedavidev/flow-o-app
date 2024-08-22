@@ -20,20 +20,14 @@ export const LineChart: React.FC<LineChartProps> = ({ data }) => {
     // Create root element
     let root = am5.Root.new("chartdiv");
 
+    // Hide the amCharts logo
+    root._logo!.dispose();
+
     // Apply theme
     const myTheme = am5.Theme.new(root);
-
-    myTheme.rule("AxisLabel", ["minor"]).setAll({
-      dy: 1,
-    });
-
-    myTheme.rule("Grid", ["x"]).setAll({
-      strokeOpacity: 0.05,
-    });
-
-    myTheme.rule("Grid", ["x", "minor"]).setAll({
-      strokeOpacity: 0.05,
-    });
+    myTheme.rule("AxisLabel", ["minor"]).setAll({ dy: 1 });
+    myTheme.rule("Grid", ["x"]).setAll({ strokeOpacity: 0.05 });
+    myTheme.rule("Grid", ["x", "minor"]).setAll({ strokeOpacity: 0.05 });
 
     root.setThemes([am5themes_Animated.new(root), myTheme]);
 
@@ -53,22 +47,27 @@ export const LineChart: React.FC<LineChartProps> = ({ data }) => {
     let xAxis = chart.xAxes.push(
       am5xy.DateAxis.new(root, {
         maxDeviation: 0.2,
-        baseInterval: {
-          timeUnit: "hour",
-          count: 1,
-        },
-        renderer: am5xy.AxisRendererX.new(root, {
-          minorGridEnabled: true,
-        }),
+        baseInterval: { timeUnit: "hour", count: 1 },
+        renderer: am5xy.AxisRendererX.new(root, { minorGridEnabled: true }),
         tooltip: am5.Tooltip.new(root, {}),
       }),
     );
+
+    xAxis.get("renderer").labels.template.setAll({
+      fill: am5.color(0xffffff),
+      fontSize: 10,
+    });
 
     let yAxis = chart.yAxes.push(
       am5xy.ValueAxis.new(root, {
         renderer: am5xy.AxisRendererY.new(root, {}),
       }),
     );
+
+    yAxis.get("renderer").labels.template.setAll({
+      fill: am5.color(0xffffff),
+      fontSize: 10,
+    });
 
     // Create series by category
     const categories = Array.from(new Set(data.map((item) => item.category)));
@@ -117,75 +116,57 @@ export const LineChart: React.FC<LineChartProps> = ({ data }) => {
     );
     cursor.lineY.set("visible", false);
 
-    // -----------------------------------------------
-
-    // Show tooltips for all series on the cursor's x-position
-
-    // -----------------------------------------------
-
     // Add scrollbars
     chart.set(
       "scrollbarX",
-      am5.Scrollbar.new(root, {
-        orientation: "horizontal",
-      }),
+      am5.Scrollbar.new(root, { orientation: "horizontal" }),
     );
-
     chart.set(
       "scrollbarY",
-      am5.Scrollbar.new(root, {
-        orientation: "vertical",
-      }),
+      am5.Scrollbar.new(root, { orientation: "vertical" }),
     );
 
-    // Add legend
-    let legend = chart.rightAxesContainer.children.push(
-      am5.Legend.new(root, {
-        width: 200,
-        paddingLeft: 15,
+    // Place the legend below the chart
+    let legendContainer = root.container.children.push(
+      am5.Container.new(root, {
+        layout: root.verticalLayout,
+        width: am5.percent(100),
         height: am5.percent(100),
       }),
     );
 
-    // Highlight series on legend hover
-    legend.itemContainers.template.events.on("pointerover", function (e) {
-      let itemContainer = e.target;
+    legendContainer.children.push(chart);
 
-      let series = itemContainer.dataItem?.dataContext as am5xy.LineSeries;
+    let legend = legendContainer.children.push(
+      am5.Legend.new(root, {
+        centerX: am5.p50,
+        x: am5.p50,
+        marginTop: 20,
+        layout: root.gridLayout,
+        maxHeight: 100, // Limit the height to 20% of the container
+        verticalScrollbar: am5.Scrollbar.new(root, { orientation: "vertical" }), // Add vertical scrollbar if necessary
+      }),
+    );
 
-      chart.series.each(function (chartSeries) {
-        if (chartSeries instanceof am5xy.LineSeries) {
-          if (chartSeries !== series) {
-            chartSeries.strokes.template.setAll({
-              strokeOpacity: 0.15,
-              stroke: am5.color(0x000000),
-            });
-          } else {
-            chartSeries.strokes.template.setAll({
-              strokeWidth: 4,
-            });
-          }
-        }
-      });
+    legend.labels.template.setAll({
+      fill: am5.color(0xffffff),
+      fontSize: 10,
     });
 
-    // Reset series on legend out
-    legend.itemContainers.template.events.on("pointerout", function () {
-      chart.series.each(function (chartSeries) {
-        if (chartSeries instanceof am5xy.LineSeries) {
-          chartSeries.strokes.template.setAll({
-            strokeOpacity: 1,
-            strokeWidth: 1,
-            stroke: chartSeries.get("fill"),
-          });
-        }
-      });
-    });
-
+    // Ensure legend items wrap if necessary
     legend.itemContainers.template.set("width", am5.p100);
+    legend.labels.template.setAll({
+      width: am5.p100,
+      textAlign: "left",
+      fill: am5.color(0xffffff),
+      fontSize: 10,
+    });
+
     legend.valueLabels.template.setAll({
       width: am5.p100,
       textAlign: "right",
+      fill: am5.color(0xffffff),
+      fontSize: 10,
     });
 
     legend.data.setAll(chart.series.values);

@@ -1,54 +1,25 @@
-"use client";
-
 import {
   ActivesCard,
+  EventLogTable,
   GeneralInsightsCard,
   LocateWellCard,
+  ReportDataTable,
+  SwitcherSitesWells,
+  SystemEfficiencyCard,
   WellActivityCard,
 } from "@/components";
-import { useFetchGeneralInsights } from "@/hooks";
-import { fetcher, getToken } from "@/utils";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import axios from "axios";
-import { useEffect, useState } from "react";
-// import { Metadata } from "next";
+
+import { Metadata } from "next";
 import { BsFillDeviceSsdFill } from "react-icons/bs";
 
-// export const metadata: Metadata = {
-//   title: "FlowOptix | Dashboard",
-//   description: "Dashboard for FlowOptix",
-// };
+export const metadata: Metadata = {
+  title: "FlowOptix | Dashboard",
+  description: "Dashboard for FlowOptix",
+};
 
 const DashboardHome = () => {
-  // ---------------------------------------------------------------
-
-  // const token = getToken();
-
-  // const fetchUserData = async () => {
-  //   return fetcher<unknown>(
-  //     `${process.env.NEXT_PUBLIC_BASEURL}/record-gateway/get`,
-  //     {
-  //       method: "POST",
-  //       config: {
-  //         headers: {
-  //           Authorization: `Bearer ${token}`,
-  //         },
-  //       },
-  //     },
-  //   );
-  // };
-
-  // const { data, error, isLoading } = useQuery<unknown, Error>({
-  //   queryKey: ["user-data"],
-  //   queryFn: fetchUserData,
-  // });
-
-  // console.log("Niggaa---------", data, error, isLoading);
-
-  // ---------------------------------------------------------------
-
   return (
-    <div className="flex h-full flex-col gap-7 overflow-y-auto">
+    <div className="flex h-full min-h-full flex-col gap-7 overflow-y-auto">
       <h1 className="text-2xl font-semibold">Dashboard</h1>
 
       <div className="flex items-center gap-6">
@@ -62,6 +33,14 @@ const DashboardHome = () => {
             percentage={card.percentage}
           />
         ))}
+
+        <SystemEfficiencyCard
+          average_downtime="5 mins"
+          average_resolution="2 Hours"
+          icon={<BsFillDeviceSsdFill />}
+          label="System Efficiency"
+          percentage={92}
+        />
       </div>
 
       <div className="flex justify-between">
@@ -74,6 +53,22 @@ const DashboardHome = () => {
       </div>
 
       <GeneralInsightsCard />
+
+      <SwitcherSitesWells />
+
+      <div>
+        <div className="w-full overflow-x-auto">
+          <ReportDataTable />
+        </div>
+
+        <h1 className="mb-5 mt-10 text-center text-xl font-medium">
+          Event Log
+        </h1>
+
+        <div className="w-full overflow-x-auto">
+          <EventLogTable />
+        </div>
+      </div>
     </div>
   );
 };
