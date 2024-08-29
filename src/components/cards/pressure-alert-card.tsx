@@ -1,0 +1,75 @@
+import { LiaOilCanSolid } from "react-icons/lia";
+import { ConditionsItem } from "../ui";
+import { RxExternalLink } from "react-icons/rx";
+import { BiTask } from "react-icons/bi";
+import { GotoerIfLink } from "../common";
+import { FC } from "react";
+
+interface PressureAlertCardProps {
+  alertID: string;
+}
+
+export const PressureAlertCard: FC<PressureAlertCardProps> = ({ alertID }) => {
+  return (
+    <GotoerIfLink url={`/dashboard/action-center/${alertID}`}>
+      <div className="cursor-pointer rounded-[10px] border-2 border-solid border-[#FF0000]/[0.19] bg-[#FF0000]/[0.11] px-[10px] py-2 @container">
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex shrink-0 items-center justify-center rounded-full bg-[#A07C5A] p-[10px]">
+            <LiaOilCanSolid size={16} color="#002137" />
+          </div>
+          <div className="@md:w-full">
+            <h2 className="text-xs font-bold @md:text-base">
+              High Pressure Detected
+            </h2>
+            <div className="mt-1 flex items-center justify-between">
+              <span className="text-[8px] font-normal text-white/50 @md:text-xs">
+                2024-06-28 10:32 AM
+              </span>
+              <span className="flex shrink-0 items-center justify-center rounded-md bg-[#FF4A4A] px-2 py-[2px] text-[8px] font-normal @md:text-xs">
+                Critical
+              </span>
+            </div>
+
+            <p className="mt-[6px] text-[10px] font-normal @md:text-sm">
+              The pressure in well XYZ has gone a lot more beyond safe limits.
+            </p>
+
+            <div className="mt-2 space-y-1 rounded-[10px] bg-white/5 px-[5px] py-1">
+              {PressureUpdateArr.map((update, index) => (
+                <ConditionsItem
+                  key={index}
+                  colour={update.color}
+                  status={update.desc}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-[10px] flex items-center justify-between gap-2 @md:w-full @md:justify-end">
+          <button className="flex w-full items-center justify-center gap-1 rounded-md bg-[#297FB8] py-[5px] text-[10px] font-normal @md:hidden">
+            Expand Alert <RxExternalLink size={12} color="#ffffff" />
+          </button>
+          <button className="flex shrink-0 items-center justify-center gap-1 rounded-md bg-[#1F7541] px-2 py-[5px] text-[10px] font-normal">
+            <BiTask size={12} color="#ffffff" /> Mark Resolved
+          </button>
+        </div>
+      </div>
+    </GotoerIfLink>
+  );
+};
+
+const PressureUpdateArr = [
+  {
+    color: "#F94144",
+    desc: "Reduce flow rate immediately",
+  },
+  {
+    color: "#D48A2E",
+    desc: "Monitor pressure levels for the next 24 hours",
+  },
+  {
+    color: "#D48A2E",
+    desc: "Contact site engineer if pressure remains high",
+  },
+];
