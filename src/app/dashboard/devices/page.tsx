@@ -8,7 +8,7 @@ import { TbArrowsSort } from "react-icons/tb";
 
 const DashboardDevices = () => {
   return (
-    <div className="h-full overflow-y-auto pr-2">
+    <div>
       <ManageDevicesCard />
 
       <div className="mb-5 mt-[26px] flex items-center justify-between">

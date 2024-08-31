@@ -19,7 +19,7 @@ export const metadata: Metadata = {
 
 const DashboardHome = () => {
   return (
-    <div className="flex h-full min-h-full flex-col gap-7 overflow-y-auto">
+    <div className="flex flex-col gap-7">
       <h1 className="text-2xl font-semibold">Dashboard</h1>
 
       <div className="flex items-center gap-6">

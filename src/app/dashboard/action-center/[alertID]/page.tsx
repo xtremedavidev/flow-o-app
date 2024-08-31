@@ -1,9 +1,12 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { FC } from "react";
+
+import { MagicCardIcon, RefreshIcon } from "@/components";
+import { useRouter } from "next/navigation";
+import { BsStars } from "react-icons/bs";
+import { FaMagic, FaRegClock } from "react-icons/fa";
 import { FaAngleLeft } from "react-icons/fa6";
-import { FaRegClock } from "react-icons/fa";
 import { HiChatBubbleBottomCenterText } from "react-icons/hi2";
 
 interface AlertsPageProps {
@@ -15,7 +18,7 @@ interface AlertsPageProps {
 const AlertsPage: FC<AlertsPageProps> = ({ params }) => {
   const router = useRouter();
   return (
-    <div className="h-full">
+    <div>
       <div>
         <button className="flex items-center gap-4">
           <FaAngleLeft
@@ -69,7 +72,7 @@ const AlertsPage: FC<AlertsPageProps> = ({ params }) => {
           Alert Description
         </h2>
 
-        <p className="mt-[18px] text-sm font-normal text-[#F1F1F1]">
+        <p className="mt-[18px] text-xs font-normal text-[#F1F1F1]">
           Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
           eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
           minim veniam, quis nostrud exercitation ullamco laboris nisi ut
@@ -79,12 +82,58 @@ const AlertsPage: FC<AlertsPageProps> = ({ params }) => {
           culpa qui officia deserunt mollit anim id est laborum.
         </p>
       </div>
+
+      <div className="mb-[12px] mt-[30px] flex w-full items-center justify-between">
+        <div className="flex items-center gap-[10px] px-[5px] py-[10px]">
+          <span className="text-base font-semibold text-[#BBBBBB]">
+            AI Suggestions
+          </span>
+          <FaMagic size={18} color="#CACACA" />
+        </div>
+
+        <div>
+          <div className="flex w-fit items-center gap-3 rounded-[38px] bg-[#2251F8]/[0.15] px-[18px] py-2 text-xs font-normal text-[#3984F3]">
+            <span>Regenerate</span>
+            <RefreshIcon />
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div className="w-full space-y-[10px] border border-red-500">
+          {Array.from({ length: 5 }).map((_, index) => (
+            <AISuggestionItem
+              key={index}
+              title="Check Sensor Connections"
+              details="Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+            />
+          ))}
+        </div>
+        <p>
+          Generate more specific solution? Type in your Prompt <MagicCardIcon />
+        </p>
+      </div>
     </div>
   );
 };
 
 export default AlertsPage;
 
-const AISuggestions = () => {
-  return <div></div>;
+interface AISuggestionItemProps {
+  title: string;
+  details: string;
+}
+
+const AISuggestionItem: FC<AISuggestionItemProps> = ({ title, details }) => {
+  return (
+    <div className="flex w-full items-center gap-3 border border-solid">
+      <div className="w-fit rounded-[10px] bg-[#297FB8]/[0.3] p-2">
+        <BsStars size={24} color="#A9D7F5" />
+      </div>
+      <div className="space-y-[6px] rounded-[20px] bg-[#297FB8]/[0.3] px-4 py-[14px] text-[#D0D0D0]">
+        <h4 className="text-base font-semibold">{title}</h4>
+        <p className="text-sm font-normal">{details}</p>
+      </div>
+    </div>
+  );
 };

@@ -14,7 +14,7 @@ const DeviceByDeviceIDPage = ({ params }: DeviceByDeviceIDPageProps) => {
   const deviceId = decodeURIComponent(params.deviceId);
 
   return (
-    <div className="h-full overflow-y-auto">
+    <div >
       <div className="mb-[10px] flex items-center gap-4">
         <BackArrowButton />
 

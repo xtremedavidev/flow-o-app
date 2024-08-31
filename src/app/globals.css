@@ -11,6 +11,26 @@ select:-webkit-autofill {
   transition: background-color 5000s ease-in-out 0s;
 }
 
+::-webkit-scrollbar {
+  width: 0.5rem !important; 
+  background: #0b231e;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #297FB8 !important; 
+  /* border-radius: 4px !important;  */
+}
+
+/* ::-moz-selection {
+  background: #FF9500;
+  color: #2a1900;
+}
+
+::selection {
+  color: #2a1900;
+  background: #FF9500;
+} */
+
 .custom-login-gradient {
   @apply bg-gradient-to-tr;
   background-image: linear-gradient(to top right, #297FB8, #0A1F2D, #111C23, #202020);

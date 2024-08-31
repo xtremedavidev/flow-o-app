@@ -18,7 +18,7 @@ import { TbArrowsSort } from "react-icons/tb";
 
 const DashboardActionCenter = async () => {
   return (
-    <div className="h-full overflow-y-auto">
+    <div >
       <ActionCenterCard />
       <div className="my-8">
         <BaseSwitcher
