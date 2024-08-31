@@ -10,6 +10,7 @@ import { IoMdSettings } from "react-icons/io";
 import Link from "next/link";
 import React, { FC } from "react";
 import { usePathname } from "next/navigation";
+import { BiSolidLeaf } from "react-icons/bi";
 
 export const Sidebar = () => {
   return (
@@ -20,7 +21,7 @@ export const Sidebar = () => {
         </div>
       </div>
 
-      <div className="mt-6 flex h-full flex-col justify-between gap-6 2xl:mt-[66px]">
+      <div className="my-6 flex h-full flex-col justify-between gap-6 2xl:mt-[66px]">
         <div className="space-y-2 xl:space-y-3 2xl:space-y-4">
           {SidebarListItemsArr.map((item, index) => (
             <SidebarItem
@@ -64,7 +65,7 @@ export const Sidebar = () => {
             }}
             className="flex w-full items-center gap-[10px] rounded-[4px] bg-white/[0.08] px-4 py-3 text-base font-normal"
           >
-            <FiLogOut size={24} color="#ffffff" />
+            <FiLogOut size={24} color="#ffffff" className="flex shrink-0" />
             <span>Logout</span>
           </Link>
         </div>
@@ -111,26 +112,31 @@ const SidebarListItemsArr = [
   {
     label: "Dashboard",
     icon: MdDashboard,
-    href: "/dashboard/home",
+    href: "/home",
   },
   {
     label: "Manage Devices",
     icon: BsFillDeviceSsdFill,
-    href: "/dashboard/devices",
+    href: "/devices",
   },
   {
     label: "Action Center",
     icon: GoAlertFill,
-    href: "/dashboard/action-center",
+    href: "/action-center",
   },
   {
     label: "Reports",
     icon: MdPieChart,
-    href: "/dashboard/reports",
+    href: "/reports",
+  },
+  {
+    label: "Environmental \n Compliance",
+    icon: BiSolidLeaf,
+    href: "/env-compliance",
   },
   {
     label: "Settings",
     icon: IoMdSettings,
-    href: "/dashboard/settings",
+    href: "/settings",
   },
 ];

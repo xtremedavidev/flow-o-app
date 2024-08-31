@@ -32,7 +32,7 @@ const Login = () => {
         {
           method: "POST",
           data,
-        },
+        }
       );
     },
   });
@@ -52,7 +52,7 @@ const Login = () => {
 
         localStorage.setItem("token", encryptedToken);
         toast.success("Login Successful");
-        router.push("/dashboard/home");
+        router.push("/home");
       } else {
         if (res?.message) {
           toast.error(res?.message);

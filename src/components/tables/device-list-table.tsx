@@ -27,7 +27,7 @@ export const DeviceListTable = () => {
             <ClientTrWrapper
               key={index}
               className="cursor-pointer bg-[#292929]"
-              pushTo={`/dashboard/devices/${encodeURIComponent(device.name_id)}`}
+              pushTo={`/devices/${encodeURIComponent(device.name_id)}`}
             >
               <td className="whitespace-nowrap px-[15px] py-4 text-sm font-normal">
                 {device.name_id}

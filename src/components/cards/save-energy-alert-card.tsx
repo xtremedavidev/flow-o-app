@@ -11,7 +11,7 @@ export const SaveEnergyAlertCard: FC<PressureAlertCardProps> = ({
   alertID,
 }) => {
   return (
-    <GotoerIfLink url={`/dashboard/action-center/${alertID}`}>
+    <GotoerIfLink url={`/action-center/${alertID}`}>
       <div className="cursor-pointer rounded-[10px] border-2 border-solid border-white/[0.09] bg-gradient-to-tr from-[#FF00B8]/[0.09] to-[#FF00C7]/[0.09] px-[10px] py-2 @container">
         <div className="flex items-center justify-between gap-4">
           <div className="flex shrink-0 items-center justify-center rounded-full bg-white p-[10px]">

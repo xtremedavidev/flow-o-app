@@ -11,7 +11,7 @@ interface PressureAlertCardProps {
 
 export const PressureAlertCard: FC<PressureAlertCardProps> = ({ alertID }) => {
   return (
-    <GotoerIfLink url={`/dashboard/action-center/${alertID}`}>
+    <GotoerIfLink url={`/action-center/${alertID}`}>
       <div className="cursor-pointer rounded-[10px] border-2 border-solid border-[#FF0000]/[0.19] bg-[#FF0000]/[0.11] px-[10px] py-2 @container">
         <div className="flex items-center justify-between gap-4">
           <div className="flex shrink-0 items-center justify-center rounded-full bg-[#A07C5A] p-[10px]">

@@ -50,7 +50,7 @@ const VerifyLogin = () => {
         {
           method: "POST",
           data,
-        },
+        }
       );
     },
   });
@@ -61,7 +61,7 @@ const VerifyLogin = () => {
       router.push("/login/forgot-password");
     } else {
       const identifier = decodeURIComponent(
-        decryptToken(decodeURIComponent(encryptedIdentifierFromURL)),
+        decryptToken(decodeURIComponent(encryptedIdentifierFromURL))
       );
 
       const UserData = {
@@ -82,7 +82,7 @@ const VerifyLogin = () => {
 
           router.push(
             "/login/reset?identifier=" +
-              encodeURIComponent(encryptToken(identifier)),
+              encodeURIComponent(encryptToken(identifier))
           );
         } else {
           if (res?.message) {
@@ -111,10 +111,10 @@ const VerifyLogin = () => {
         method: "POST",
         data: {
           identifier: decodeURIComponent(
-            decryptToken(encryptedIdentifierFromURL),
+            decryptToken(encryptedIdentifierFromURL)
           ),
         },
-      },
+      }
     )
       .then((res) => {
         if (res?.message === "success") {
@@ -193,7 +193,7 @@ const VerifyLogin = () => {
         </div>
 
         <button
-          onClick={() => router.push("/dashboard/home")}
+          onClick={() => router.push("/home")}
           type="submit"
           className={`h-[48px] w-full items-center justify-center rounded-[17px] bg-[#297FB8] ${mutation.isPending && "animate-pulse"} text-base font-semibold`}
         >

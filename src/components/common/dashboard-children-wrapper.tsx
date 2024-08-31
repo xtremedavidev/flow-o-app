@@ -20,7 +20,7 @@ export const DashboardChildrenWrapper: FC<DashboardChildrenWrapperProps> = ({
         <DashboardPageWrapper>{children}</DashboardPageWrapper>
       </div>
 
-      {!pathname.startsWith("/dashboard/action-center") && rightbar}
+      {!pathname.startsWith("/action-center") && rightbar}
     </div>
   );
 };

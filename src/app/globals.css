@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+textarea {
+    resize: none; 
+}
+
 input:-webkit-autofill,
 textarea:-webkit-autofill,
 select:-webkit-autofill {
@@ -13,12 +17,13 @@ select:-webkit-autofill {
 
 ::-webkit-scrollbar {
   width: 0.5rem !important; 
+  height: 0.5rem;
   background: #0b231e;
 }
 
 ::-webkit-scrollbar-thumb {
   background-color: #297FB8 !important; 
-  /* border-radius: 4px !important;  */
+  border-radius: 2.5px !important; 
 }
 
 /* ::-moz-selection {
