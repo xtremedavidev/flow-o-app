@@ -1,6 +1,25 @@
+import { DeviceData } from "@/types";
 import { ClientTrWrapper } from "./client-tr-wrapper";
+import { FC, useMemo } from "react";
+import { encryptToken } from "@/utils";
 
-export const DeviceListTable = () => {
+interface DeviceListTableProps {
+  devicesData: DeviceData[];
+}
+
+export const DeviceListTable: FC<DeviceListTableProps> = ({ devicesData }) => {
+  const transformedDevices = useMemo(
+    () =>
+      devicesData.map((device) => ({
+        name: device.deviceName,
+        type: device.measurementType,
+        status: device.status,
+        location: `${device.site} - ${device.well}`,
+        device_id: device.id,
+      })),
+    [devicesData]
+  );
+
   return (
     // <div className="h-[600px] overflow-x-auto overflow-y-auto">
     <div className="overflow-x-auto">
@@ -22,15 +41,15 @@ export const DeviceListTable = () => {
           </tr>
         </thead>
         <tbody className="mt-4 divide-y-8 divide-[#202020]">
-          {devices.map((device, index) => (
+          {transformedDevices.map((device, index) => (
             // <tr key={index} className="bg-[#292929]">
             <ClientTrWrapper
               key={index}
               className="cursor-pointer bg-[#292929]"
-              pushTo={`/devices/${encodeURIComponent(device.name_id)}`}
+              pushTo={`/devices/${encodeURIComponent(encryptToken(device.device_id))}`}
             >
               <td className="whitespace-nowrap px-[15px] py-4 text-sm font-normal">
-                {device.name_id}
+                {device.name}
               </td>
               <td className="whitespace-nowrap px-[15px] py-4 text-sm font-normal">
                 {device.type}
@@ -58,53 +77,8 @@ const StatusIndicator = ({ status }: { status: string }) => {
     <div
       className="flex h-3 w-3 shrink-0 rounded-full"
       style={{
-        background: status === "Active" ? "#10A957" : "red",
+        background: status === "ACTIVE" ? "#10A957" : "red",
       }}
     />
   );
 };
-
-const devices = [
-  {
-    name_id: "Pressure Sensor/D-002",
-    type: "Barometer",
-    status: "Active",
-    location: "Site A - Well 001",
-  },
-  {
-    name_id: "Pressure Sensor/D-002",
-    type: "Barometer",
-    status: "Active",
-    location: "Site A - Well 001",
-  },
-  {
-    name_id: "Pressure Sensor/D-002",
-    type: "Barometer",
-    status: "Active",
-    location: "Site A - Well 001",
-  },
-  {
-    name_id: "Pressure Sensor/D-002",
-    type: "Barometer",
-    status: "Active",
-    location: "Site A - Well 001",
-  },
-  {
-    name_id: "Pressure Sensor/D-002",
-    type: "Barometer",
-    status: "Active",
-    location: "Site A - Well 001",
-  },
-  {
-    name_id: "Pressure Sensor/D-002",
-    type: "Barometer",
-    status: "Active",
-    location: "Site A - Well 001",
-  },
-  {
-    name_id: "Pressure Sensor/D-002",
-    type: "Barometer",
-    status: "Active",
-    location: "Site A - Well 001",
-  },
-];

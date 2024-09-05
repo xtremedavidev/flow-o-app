@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
+import Cookies from "js-cookie";
 
 interface LoginResponse extends DefaultResponse {
   token: string;
@@ -50,7 +51,10 @@ const Login = () => {
         const token = res?.token;
         const encryptedToken = encryptToken(token);
 
-        localStorage.setItem("token", encryptedToken);
+        Cookies.set("token", encryptedToken, {
+          expires: rememberMe ? 30 : undefined,
+        });
+        // localStorage.setItem("token", encryptedToken);
         toast.success("Login Successful");
         router.push("/home");
       } else {

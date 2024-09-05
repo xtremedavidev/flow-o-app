@@ -1,15 +1,22 @@
+import { getDashboardCardData } from "@/actions";
 import {
   ActivesCard,
   EventLogTable,
+  FallbackLoader,
   GeneralInsightsCard,
+  ListWrapper,
   LocateWellCard,
   ReportDataTable,
+  SiteItem,
   SwitcherSitesWells,
   SystemEfficiencyCard,
   WellActivityCard,
 } from "@/components";
+import { decryptToken, fetcher, getCurrentDate } from "@/utils";
 
 import { Metadata } from "next";
+import { cookies } from "next/headers";
+import { Suspense } from "react";
 import { BsFillDeviceSsdFill } from "react-icons/bs";
 
 export const metadata: Metadata = {
@@ -17,22 +24,86 @@ export const metadata: Metadata = {
   description: "Dashboard for FlowOptix",
 };
 
-const DashboardHome = () => {
+const DashboardHome = async () => {
+  const token = cookies().get("token")?.value;
+  const decryptedToken = token ? decryptToken(token) : undefined;
+
+  const { wellsData, devicesData, sitesData } =
+    await getDashboardCardData(decryptedToken);
+
+  const { date } = getCurrentDate();
+
+  const SwitcherSitesWellsViewArr = [
+    <ListWrapper key="list-wrapper-for-all-sites" listTitle="Sites">
+      <Suspense fallback={<FallbackLoader />}>
+        {sitesData.data.length < 1 ? (
+          <div className="flex w-full justify-center">No site data</div>
+        ) : (
+          sitesData.data.map((site) => (
+            <SiteItem
+              key={site.id}
+              id={site.id}
+              name={site.name}
+              coordinate={site.location}
+              lastUpdated={date}
+              location={site.location}
+              numberOfWells={0}
+              status={site.status}
+            />
+          ))
+        )}
+      </Suspense>
+    </ListWrapper>,
+    <ListWrapper key="list-wrapper-for-all-wells" listTitle="Wells">
+      <Suspense fallback={<FallbackLoader />}>
+        {wellsData.data.wells.length < 1 ? (
+          <div className="flex w-full justify-center">No well data</div>
+        ) : (
+          wellsData.data.wells.map((well) => (
+            <SiteItem
+              key={well.id}
+              id={well.id}
+              name={well.name}
+              coordinate={well.location}
+              lastUpdated={date}
+              location={well.location}
+              numberOfWells={0}
+              status={well.status}
+            />
+          ))
+        )}
+      </Suspense>
+    </ListWrapper>,
+  ];
+
   return (
     <div className="flex flex-col gap-7">
       <h1 className="text-2xl font-semibold">Dashboard</h1>
 
       <div className="flex items-center gap-6">
-        {ActiveCardArr.map((card) => (
-          <ActivesCard
-            key={card.label}
-            icon={<card.icon />}
-            label={card.label}
-            amount={card.amount}
-            desc={card.desc}
-            percentage={card.percentage}
-          />
-        ))}
+        <ActivesCard
+          icon={<BsFillDeviceSsdFill />}
+          label="Active Wells"
+          amount={`${wellsData.data.activeWell}`}
+          desc={`of ${wellsData.data.totalWell} total`}
+          percentage={
+            wellsData.data.totalWell > 0
+              ? (wellsData.data.activeWell / wellsData.data.totalWell) * 100
+              : 0
+          }
+        />
+        <ActivesCard
+          icon={<BsFillDeviceSsdFill />}
+          label="Active Devices"
+          amount={`${devicesData.data.activeDevice}`}
+          desc={`of ${devicesData.data.totalDevice} total`}
+          percentage={
+            devicesData.data.totalDevice > 0
+              ? (devicesData.data.activeDevice / devicesData.data.totalDevice) *
+                100
+              : 0
+          }
+        />
 
         <SystemEfficiencyCard
           average_downtime="5 mins"
@@ -54,7 +125,7 @@ const DashboardHome = () => {
 
       <GeneralInsightsCard />
 
-      <SwitcherSitesWells />
+      <SwitcherSitesWells currentViewArr={SwitcherSitesWellsViewArr} />
 
       <div>
         <div className="w-full overflow-x-auto">
@@ -72,21 +143,5 @@ const DashboardHome = () => {
     </div>
   );
 };
-export default DashboardHome;
 
-const ActiveCardArr = [
-  {
-    icon: BsFillDeviceSsdFill,
-    label: "Active Wells",
-    amount: "250",
-    desc: "of 300 total",
-    percentage: 83,
-  },
-  {
-    icon: BsFillDeviceSsdFill,
-    label: "Active Devices",
-    amount: "200",
-    desc: "of 400 total",
-    percentage: 50,
-  },
-];
+export default DashboardHome;

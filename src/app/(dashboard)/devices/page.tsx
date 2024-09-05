@@ -1,15 +1,48 @@
 import {
   AddDeviceButton,
   DeviceListTable,
+  FallbackLoader,
   FilterButton,
   ManageDevicesCard,
 } from "@/components";
+import { decryptToken, fetcher, getCurrentDate } from "@/utils";
 import { TbArrowsSort } from "react-icons/tb";
+import { cookies } from "next/headers";
+import { Suspense } from "react";
+import { DevicesDataResp } from "@/types";
+import { Metadata } from "next";
 
-const DashboardDevices = () => {
+export const metadata: Metadata = {
+  title: "FlowOptix | Manage Devices",
+  description: "Dashboard for FlowOptix",
+};
+
+const DashboardDevices = async () => {
+  const token = cookies().get("token")?.value;
+  const decryptedToken = token ? decryptToken(token) : undefined;
+
+  const devicesData = await fetcher<DevicesDataResp>(
+    `${process.env.NEXT_PUBLIC_BASEURL}/iot-gateway/get`,
+    {
+      method: "POST",
+      data: {},
+      token: decryptedToken,
+    }
+  );
+
+  const lastUpdated = getCurrentDate();
+
+  // console.log("device data -------", devicesData.data.devices);
+
   return (
     <div>
-      <ManageDevicesCard />
+      <Suspense fallback={<FallbackLoader />}>
+        <ManageDevicesCard
+          active_devices={devicesData.data.activeDevice}
+          total_devices={devicesData.data.totalDevice}
+          last_updated={lastUpdated}
+        />
+      </Suspense>
 
       <div className="mb-5 mt-[26px] flex items-center justify-between">
         <h1 className="text-2xl font-semibold">Devices List</h1>
@@ -23,7 +56,9 @@ const DashboardDevices = () => {
       </div>
 
       <div className="mt-[10px]">
-        <DeviceListTable />
+        <Suspense fallback={<FallbackLoader />}>
+          <DeviceListTable devicesData={devicesData.data.devices} />
+        </Suspense>
       </div>
     </div>
   );

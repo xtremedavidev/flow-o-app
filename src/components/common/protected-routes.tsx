@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { FC, useEffect, useState } from "react";
 import { PageLoader } from "../loaders";
 import { toast } from "react-toastify";
+import Cookies from "js-cookie";
 
 interface ProtectedRouteWrapperProps {
   children: React.ReactNode;
@@ -17,10 +18,13 @@ export const ProtectedRouteWrapper: FC<ProtectedRouteWrapperProps> = ({
 
   useEffect(() => {
     const checkAuthentication = async () => {
-      const token = localStorage.getItem("token");
+      const token = Cookies.get("token");
+      // const token = localStorage.getItem("token");
 
       if (!token) {
-        toast.error("You have to login");
+        toast.error(
+          "Access Denied: You do not have the necessary permissions to view this page."
+        );
         setIsAuthenticated(false);
         router.replace("/login");
       } else {

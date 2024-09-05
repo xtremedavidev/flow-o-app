@@ -11,6 +11,7 @@ import Link from "next/link";
 import React, { FC } from "react";
 import { usePathname } from "next/navigation";
 import { BiSolidLeaf } from "react-icons/bi";
+import Cookies from "js-cookie";
 
 export const Sidebar = () => {
   return (
@@ -61,7 +62,8 @@ export const Sidebar = () => {
           <Link
             href="/login"
             onClick={() => {
-              localStorage.removeItem("token");
+              // localStorage.removeItem("token");
+              Cookies.remove("token");
             }}
             className="flex w-full items-center gap-[10px] rounded-[4px] bg-white/[0.08] px-4 py-3 text-base font-normal"
           >

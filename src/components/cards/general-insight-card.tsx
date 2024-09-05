@@ -3,7 +3,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { LineChart } from "../charts";
 import { useFetchGeneralInsights } from "@/hooks";
-import { getToken } from "@/utils";
+// import { getToken } from "@/utils";
+import Cookies from "js-cookie";
 
 interface OriginalData {
   x: string; // Time in HH:mm format
@@ -19,7 +20,8 @@ interface TransformedData {
 }
 
 export const GeneralInsightsCard = () => {
-  const token = getToken();
+  // const token = getToken();
+  const token = Cookies.get("token") ?? null;
   const well = "70367f55-d068-4871-bffd-e7727ac7a45d";
   const startDate = "2020-08-19";
   const endDate = "2024-12-30";

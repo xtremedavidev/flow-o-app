@@ -1,8 +1,17 @@
-import { BackArrowButton, DeviceActivities, StatusIcon } from "@/components";
+import {
+  BackArrowButton,
+  DeviceActivities,
+  FallbackLoader,
+  StatusIcon,
+} from "@/components";
 import { MdAccessTimeFilled } from "react-icons/md";
 import { TiUser } from "react-icons/ti";
 import { MdLocationOn } from "react-icons/md";
 import { MdOutlineStickyNote2 } from "react-icons/md";
+import { decryptToken, fetcher, getCurrentDate } from "@/utils";
+import { cookies } from "next/headers";
+import { DeviceData, DeviceDataResp } from "@/types";
+import { FC, useMemo, Suspense } from "react";
 
 interface DeviceByDeviceIDPageProps {
   params: {
@@ -10,11 +19,27 @@ interface DeviceByDeviceIDPageProps {
   };
 }
 
-const DeviceByDeviceIDPage = ({ params }: DeviceByDeviceIDPageProps) => {
-  const deviceId = decodeURIComponent(params.deviceId);
+const DeviceByDeviceIDPage = async ({ params }: DeviceByDeviceIDPageProps) => {
+  const deviceId = decryptToken(decodeURIComponent(params.deviceId));
+
+  const token = cookies().get("token")?.value;
+  const decryptedToken = token ? decryptToken(token) : undefined;
+
+  const deviceData = await fetcher<DeviceDataResp>(
+    `${process.env.NEXT_PUBLIC_BASEURL}/iot-gateway/get`,
+    {
+      method: "POST",
+      data: {
+        id: deviceId,
+      },
+      token: decryptedToken,
+    }
+  );
+
+  // console.log("single device data", deviceData);
 
   return (
-    <div >
+    <div>
       <div className="mb-[10px] flex items-center gap-4">
         <BackArrowButton />
 
@@ -25,7 +50,9 @@ const DeviceByDeviceIDPage = ({ params }: DeviceByDeviceIDPageProps) => {
         </div>
       </div>
 
-      <DeviceDetailsCard />
+      <Suspense fallback={<FallbackLoader />}>
+        <DeviceDetailsCard deviceData={deviceData.data} />
+      </Suspense>
 
       <DeviceActivities />
     </div>
@@ -34,12 +61,60 @@ const DeviceByDeviceIDPage = ({ params }: DeviceByDeviceIDPageProps) => {
 
 export default DeviceByDeviceIDPage;
 
-const DeviceDetailsCard = () => {
+interface DeviceDetailsCardProps {
+  deviceData: DeviceData;
+}
+
+const DeviceDetailsCard: FC<DeviceDetailsCardProps> = ({ deviceData }) => {
+  // console.log("catching???", deviceData);
+
+  const deviceInfo = useMemo(
+    () => [
+      { label: "Device ID", value: deviceData.id },
+      { label: "Measurement", value: deviceData.measurementType },
+      // { label: "Unit", value: "Psi" },
+    ],
+    [deviceData]
+  );
+
+  const deviceMetadata = useMemo(
+    () => [
+      {
+        icon: MdAccessTimeFilled,
+        label: "Created At",
+        value: deviceData.createdAt,
+      },
+      {
+        icon: TiUser,
+        label: "Created by",
+        value: deviceData.user_id,
+      },
+      {
+        icon: StatusIcon,
+        label: "Status",
+        value: deviceData.status,
+      },
+      {
+        icon: MdLocationOn,
+        label: "Location",
+        value: `${deviceData.site}, ${deviceData.well}`,
+      },
+    ],
+    [deviceData]
+  );
+
+  const lastUpdated = getCurrentDate();
+
   return (
     <div className="mb-6 rounded-[10px] bg-[#292929] p-4">
-      <div className="flex justify-between">
+      <div className="flex justify-between gap-4">
         <div className="space-y-[6px]">
-          <h3 className="text-2xl font-medium">Device Name/id</h3>
+          <h3 className="text-2xl font-medium">
+            {deviceData.deviceName}/
+            <span className="text-[10px] font-normal leading-none">
+              {deviceData.id}
+            </span>
+          </h3>
           {deviceInfo.map((info, index) => (
             <DeviceLabelAndValue
               key={index}
@@ -71,18 +146,12 @@ const DeviceDetailsCard = () => {
         </div>
         <div className="space-y-[2px] text-[10px] text-[#CCCCCC]">
           <p className="font-semibold">Last updated</p>
-          <p className="font-normal italic">31/05/22</p>
+          <p className="font-normal italic">{lastUpdated.date}</p>
         </div>
       </div>
     </div>
   );
 };
-
-const deviceInfo = [
-  { label: "Device ID", value: "0z12x34y" },
-  { label: "Measurement", value: "Pressure" },
-  { label: "Unit", value: "Psi" },
-];
 
 const DeviceLabelAndValue = ({
   label,
@@ -117,26 +186,3 @@ const DeviceLabelAndValueWithIcon = ({
     </div>
   );
 };
-
-const deviceMetadata = [
-  {
-    icon: MdAccessTimeFilled,
-    label: "Created At",
-    value: "May, 15 2022 14:23 PM",
-  },
-  {
-    icon: TiUser,
-    label: "Created by",
-    value: "UsEr Full Name",
-  },
-  {
-    icon: StatusIcon,
-    label: "Status",
-    value: "Active",
-  },
-  {
-    icon: MdLocationOn,
-    label: "Location",
-    value: "Site A, Well 001",
-  },
-];

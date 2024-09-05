@@ -1,5 +1,3 @@
-"use client"
-
 import axios, { AxiosError, AxiosRequestConfig, Method } from "axios";
 import { toast } from "react-toastify";
 import { ErrorResponse } from "@/types"; 
@@ -8,13 +6,19 @@ interface FetcherOptions {
   method?: Method;
   data?: any;
   config?: AxiosRequestConfig;
+  token?: string;
 }
 
 export const fetcher = async <T>(
   url: string,
   options: FetcherOptions = {}
 ): Promise<T> => {
-  const { method = "GET", data, config } = options;
+  const { method = "GET", data, config, token } = options;
+
+    const headers = {
+    Authorization: token ? `Bearer ${token}` : undefined,
+    ...config?.headers,
+  };
 
   try {
     const response = await axios({
@@ -22,6 +26,7 @@ export const fetcher = async <T>(
       method,
       data,
       ...config,
+      headers,
     });
 
     return response.data;

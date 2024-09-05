@@ -1,24 +1,39 @@
-import React from "react";
+import { FC } from "react";
 
-export const ManageDevicesCard = () => {
+interface ManageDevicesCardProps {
+  total_devices: number;
+  active_devices: number;
+  last_updated: {
+    date: string;
+    time: string;
+  };
+}
+
+export const ManageDevicesCard: FC<ManageDevicesCardProps> = ({
+  total_devices,
+  active_devices,
+  last_updated,
+}) => {
   return (
     <div className="flex items-center justify-between rounded-[10px] bg-[#292929] px-[15px] py-[12px]">
       <div>
         <h1 className="text-2xl font-semibold">Manage Devices</h1>
         <p className="flex items-center gap-1 text-xs font-semibold italic text-[#CCCCCC]">
           Last Updated:
-          <span className="font-normal text-[#C1C1C1]">31/05/22</span>
-          <span>10:32</span>
+          <span className="font-normal text-[#C1C1C1]">
+            {last_updated.date}
+          </span>
+          <span>{last_updated.time}</span>
         </p>
       </div>
 
       <div className="text-[#CCCCCC]">
         <h2 className="text-base font-semibold">Devices Overview</h2>
         <p className="text-xs font-medium">
-          Total Devices: <span className="font-normal">150</span>
+          Total Devices: <span className="font-normal">{total_devices}</span>
         </p>
         <p className="text-xs font-medium">
-          Active Devices: <span className="font-normal">140</span>
+          Active Devices: <span className="font-normal">{active_devices}</span>
         </p>
 
         <div className="flex items-center gap-2">
