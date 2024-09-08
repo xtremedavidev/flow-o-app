@@ -1,6 +1,6 @@
 "use server";
 
-import { DevicesDataResp, SitesResponse, WellsResponse } from "@/types";
+import { DevicesDataResp, ReportsResponse, SitesResponse, WellsResponse } from "@/types";
 import { fetcher } from "@/utils";
 import { redirect } from "next/navigation";
 import { toast } from "react-toastify";
@@ -60,4 +60,29 @@ export async function getDashboardCardData(decryptedToken: string | undefined) {
   }
 
   return { wellsData, devicesData, sitesData };
+}
+
+
+export async function getReports(decryptedToken: string | undefined){
+   if (!decryptedToken) {
+    toast.error("Session expired. Please login again");
+    redirect("/login");
+  }
+
+  const reportsDataPromise = await fetcher<ReportsResponse>(
+    `${process.env.NEXT_PUBLIC_BASEURL}/record-gateway/get-reports`,
+    {
+      method: "GET",
+      data: {},
+      token: decryptedToken,
+    }
+  );
+
+  if (!reportsDataPromise) {
+    console.error("Failed to fetch reports data");
+    toast.error("Failed to fetch reports data");
+    return null;
+  }
+
+  return reportsDataPromise;
 }
