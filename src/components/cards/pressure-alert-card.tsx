@@ -1,40 +1,52 @@
 import { LiaOilCanSolid } from "react-icons/lia";
-import { ConditionsItem } from "../ui";
+// import { ConditionsItem } from "../ui";
 import { RxExternalLink } from "react-icons/rx";
 import { BiTask } from "react-icons/bi";
 import { GotoerIfLink } from "../common";
 import { FC } from "react";
+import { formatDate } from "@/utils";
+import Link from "next/link";
+import { AlertCardsProps } from "@/types";
 
-interface PressureAlertCardProps {
-  alertID: string;
-}
+interface PressureAlertCardProps extends AlertCardsProps {}
 
-export const PressureAlertCard: FC<PressureAlertCardProps> = ({ alertID }) => {
+export const PressureAlertCard: FC<PressureAlertCardProps> = ({
+  id,
+  description,
+  handleResolve,
+  level,
+  time,
+  title,
+}) => {
+  const formattedtime = formatDate(time);
+
   return (
-    <GotoerIfLink url={`/action-center/${alertID}`}>
-      <div className="cursor-pointer rounded-[10px] border-2 border-solid border-[#FF0000]/[0.19] bg-[#FF0000]/[0.11] px-[10px] py-2 @container">
+    <GotoerIfLink url={`/action-center/${id}`}>
+      <div
+        className={`cursor-pointer rounded-[10px] border-2 border-solid ${level === "Critical" ? "border-[#FF0000]/[0.19]" : level === "Warning" ? "border-[#d48a2e]/[0.11]" : "border-[#3f9360]/[0.11]"} ${level === "Critical" ? "bg-[#FF0000]/[0.11]" : level === "Warning" ? "bg-[#d48a2e]/[0.11]" : "bg-[#3f9360]/[0.11]"} px-[10px] py-2 @container`}
+      >
         <div className="flex items-center justify-between gap-4">
           <div className="flex shrink-0 items-center justify-center rounded-full bg-[#A07C5A] p-[10px]">
             <LiaOilCanSolid size={16} color="#002137" />
           </div>
           <div className="@md:w-full">
-            <h2 className="text-xs font-bold @md:text-base">
-              High Pressure Detected
-            </h2>
+            <h2 className="text-xs font-bold @md:text-base">{title}</h2>
             <div className="mt-1 flex items-center justify-between">
               <span className="text-[8px] font-normal text-white/50 @md:text-xs">
-                2024-06-28 10:32 AM
+                {formattedtime.formattedDate} {formattedtime.formattedTime}
               </span>
-              <span className="flex shrink-0 items-center justify-center rounded-md bg-[#FF4A4A] px-2 py-[2px] text-[8px] font-normal @md:text-xs">
-                Critical
+              <span
+                className={`flex shrink-0 items-center justify-center rounded-md ${level === "Critical" ? "bg-[#FF4A4A]" : level === "Warning" ? "bg-[#d48a2e]" : "bg-[#3f9360]"} px-2 py-[2px] text-[8px] font-normal @md:text-xs`}
+              >
+                {level}
               </span>
             </div>
 
             <p className="mt-[6px] text-[10px] font-normal @md:text-sm">
-              The pressure in well XYZ has gone a lot more beyond safe limits.
+              {description}
             </p>
 
-            <div className="mt-2 space-y-1 rounded-[10px] bg-white/5 px-[5px] py-1">
+            {/* <div className="mt-2 space-y-1 rounded-[10px] bg-white/5 px-[5px] py-1">
               {PressureUpdateArr.map((update, index) => (
                 <ConditionsItem
                   key={index}
@@ -42,15 +54,23 @@ export const PressureAlertCard: FC<PressureAlertCardProps> = ({ alertID }) => {
                   status={update.desc}
                 />
               ))}
-            </div>
+            </div> */}
           </div>
         </div>
 
         <div className="mt-[10px] flex items-center justify-between gap-2 @md:w-full @md:justify-end">
-          <button className="flex w-full items-center justify-center gap-1 rounded-md bg-[#297FB8] py-[5px] text-[10px] font-normal @md:hidden">
+          <Link
+            href={`/action-center/${id}`}
+            className="flex w-full items-center justify-center gap-1 rounded-md bg-[#297FB8] py-[5px] text-[10px] font-normal @md:hidden"
+          >
             Expand Alert <RxExternalLink size={12} color="#ffffff" />
-          </button>
-          <button className="flex shrink-0 items-center justify-center gap-1 rounded-md bg-[#1F7541] px-2 py-[5px] text-[10px] font-normal">
+          </Link>
+          <button
+            onClick={async () => {
+              handleResolve(id);
+            }}
+            className="flex shrink-0 items-center justify-center gap-1 rounded-md bg-[#1F7541] px-2 py-[5px] text-[10px] font-normal"
+          >
             <BiTask size={12} color="#ffffff" /> Mark Resolved
           </button>
         </div>

@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { FC, useEffect, useMemo, useState } from "react";
 import { LineChart } from "../charts";
-import { useFetchGeneralInsights } from "@/hooks";
+import { GeneralInsightsData, useFetchGeneralInsights } from "@/hooks";
 // import { getToken } from "@/utils";
 import Cookies from "js-cookie";
 
@@ -19,36 +19,13 @@ interface TransformedData {
   category: string; // Category (e.g., "Flow Temp", "Pipeline Press.")
 }
 
-export const GeneralInsightsCard = () => {
-  // const token = getToken();
-  const token = Cookies.get("token") ?? null;
-  const well = "70367f55-d068-4871-bffd-e7727ac7a45d";
-  const startDate = "2020-08-19";
-  const endDate = "2024-12-30";
+interface GeneralInsightsCardProps {
+  generalInsightsChartData?: GeneralInsightsData[];
+}
 
-  const [chartData, setChartData] = useState<OriginalData[] | null>(null);
-
-  const mutation = useFetchGeneralInsights({
-    data: { well, startDate, endDate },
-    token,
-  });
-
-  useEffect(() => {
-    const fetchGeneralInsights = async () => {
-      try {
-        const res = await mutation.mutateAsync();
-        // console.log("Response data:", res.data);
-        setChartData(res.data);
-      } catch (error) {
-        console.error("Error fetching general insights:", error);
-      }
-    };
-
-    if (token) {
-      fetchGeneralInsights();
-    }
-  }, []);
-
+export const GeneralInsightsCard: FC<GeneralInsightsCardProps> = ({
+  generalInsightsChartData,
+}) => {
   const transformData = (data: OriginalData[]): TransformedData[] => {
     return data.map((item) => {
       // Combine date and time
@@ -64,9 +41,14 @@ export const GeneralInsightsCard = () => {
     });
   };
 
-  const transformedData = chartData ? transformData(chartData) : [];
+  const transformedData = generalInsightsChartData
+    ? transformData(generalInsightsChartData)
+    : [];
 
-  const lineChartData = useMemo(() => transformedData, [chartData]);
+  const lineChartData = useMemo(
+    () => transformedData,
+    [generalInsightsChartData]
+  );
 
   return (
     <div className="rounded-2xl bg-[#297FB8]/10 px-[26px] py-[18px]">
@@ -78,7 +60,13 @@ export const GeneralInsightsCard = () => {
 
       <hr className="my-[30px] w-full border-[1.5px] border-solid border-[#565656]/[0.35]" />
 
-      {chartData && <LineChart data={lineChartData} />}
+      {generalInsightsChartData && generalInsightsChartData?.length < 1 && (
+        <div className="flex w-full justify-center">No insights chart data</div>
+      )}
+
+      {generalInsightsChartData && generalInsightsChartData?.length >= 1 && (
+        <LineChart data={lineChartData} />
+      )}
     </div>
   );
 };

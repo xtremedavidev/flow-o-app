@@ -223,8 +223,8 @@ const formFields = [
   //   type: "select",
   //   options: [
   //     { value: "celsius", label: "Celsius" },
-  //     { value: "fahrenheit", label: "Fahrenheit" },
-  //     { value: "pascal", label: "Pascal" },
+  //     { value: "psi", label: "PSI" },
+  //     { value: "percentage", label: "Percentage" },
   //   ],
   // },
   {

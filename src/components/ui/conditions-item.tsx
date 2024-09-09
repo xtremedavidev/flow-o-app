@@ -11,7 +11,7 @@ export const ConditionsItem = ({
         style={{ background: colour }}
         className="flex h-[9px] w-[9px] shrink-0 rounded-full"
       />
-      <span className="text-sm font-normal">{status}</span>
+      <span className="text-xs font-normal @md:text-sm">{status}</span>
     </div>
   );
 };

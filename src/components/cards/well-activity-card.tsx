@@ -1,3 +1,5 @@
+"use client";
+
 import { ColumnChart } from "../charts";
 
 export const WellActivityCard = () => {

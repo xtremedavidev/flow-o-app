@@ -2,16 +2,16 @@ import { fetcher } from "@/utils";
 import { useMutation } from "@tanstack/react-query";
 
 
-interface Record {
+export interface GeneralInsightsData {
   x: string;
   y: string;
   dataTypeName: string;
   date: string;
 }
 
-interface GeneralInsightsAPIResponse {
+export interface GeneralInsightsAPIResponse {
   message: string;
-  data: Record[];
+  data: GeneralInsightsData[];
 }
 
 interface FetchGeneralInsightsParams {
@@ -38,11 +38,7 @@ export const useFetchGeneralInsights = ({
         {
           method: "POST",
           data,
-          config: {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          },
+          token
         },
       );
     },

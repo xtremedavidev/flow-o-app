@@ -1,21 +1,32 @@
 "use client";
 
+import { SessionDataResponse } from "@/types";
 import * as am5 from "@amcharts/amcharts5";
 import * as am5percent from "@amcharts/amcharts5/percent";
 import am5themes_Animated from "@amcharts/amcharts5/themes/Animated";
-import { useLayoutEffect, useRef } from "react";
+import { FC, useLayoutEffect, useRef } from "react";
 
-export const SemiPieChart = () => {
-  const chartRef = useRef<HTMLDivElement>(null); // Create a ref for the div element
+interface SemiPieChartProps {
+  sessionData: SessionDataResponse;
+}
+
+export const SemiPieChart: FC<SemiPieChartProps> = ({ sessionData }) => {
+  const chartRef = useRef<HTMLDivElement>(null);
+  const rootRef = useRef<am5.Root | null>(null);
 
   useLayoutEffect(() => {
-    if (!chartRef.current) return; // Ensure the ref is assigned
+    if (!chartRef.current) return;
 
-    let root = am5.Root.new(chartRef.current); // Initialize amCharts with the ref
+    if (rootRef.current) {
+      rootRef.current.dispose();
+    }
+
+    let root = am5.Root.new(chartRef.current);
+
+    rootRef.current = root;
 
     root.setThemes([am5themes_Animated.new(root)]);
 
-    // Hide the amCharts logo
     root._logo!.dispose();
 
     let chart = root.container.children.push(
@@ -24,7 +35,7 @@ export const SemiPieChart = () => {
         endAngle: 360,
         layout: root.verticalLayout,
         innerRadius: am5.percent(50),
-      }),
+      })
     );
 
     let series = chart.series.push(
@@ -34,7 +45,7 @@ export const SemiPieChart = () => {
         valueField: "value",
         categoryField: "category",
         alignLabels: false,
-      }),
+      })
     );
 
     series.states.create("hidden", {
@@ -63,12 +74,12 @@ export const SemiPieChart = () => {
         const category = (dataItem.dataContext as any).category;
 
         switch (category) {
-          case "One":
-            return am5.color(0x3f9360); // Green color
-          case "Two":
-            return am5.color(0xd48a2e); // Orange color
-          case "Three":
-            return am5.color(0xcc2023); // Red color
+          case "Resolved":
+            return am5.color(0x3f9360);
+          case "Warning":
+            return am5.color(0xd48a2e);
+          case "Unresolved":
+            return am5.color(0xcc2023);
           default:
             return fill;
         }
@@ -77,9 +88,15 @@ export const SemiPieChart = () => {
     });
 
     series.data.setAll([
-      { value: 50, category: "One" },
-      { value: 25, category: "Two" },
-      { value: 25, category: "Three" },
+      {
+        value: Number(sessionData.data.resolvedPercentage),
+        category: "Resolved",
+      },
+      // { value: sessionData.data.resolvedPercentage, category: "Warning" },
+      {
+        value: Number(sessionData.data.unresolvedPercentage),
+        category: "Unresolved",
+      },
     ]);
 
     let legend = chart.children.push(am5.Legend.new(root, {}));
@@ -88,11 +105,12 @@ export const SemiPieChart = () => {
     chart.appear(1000, 100);
 
     return () => {
-      root.dispose();
+      if (rootRef.current) {
+        rootRef.current.dispose();
+        rootRef.current = null;
+      }
     };
   }, []);
 
-  return (
-    <div ref={chartRef} style={{ width: "100%", height: "150px" }}></div> // Use ref instead of id
-  );
+  return <div ref={chartRef} style={{ width: "100%", height: "150px" }}></div>;
 };

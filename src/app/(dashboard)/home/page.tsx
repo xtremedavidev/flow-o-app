@@ -11,7 +11,9 @@ import {
   SwitcherSitesWells,
   SystemEfficiencyCard,
   WellActivityCard,
+  WellChartAndMap,
 } from "@/components";
+import { GeneralInsightsAPIResponse } from "@/hooks";
 import { decryptToken, fetcher, getCurrentDate } from "@/utils";
 
 import { Metadata } from "next";
@@ -32,6 +34,17 @@ const DashboardHome = async () => {
     await getDashboardCardData(decryptedToken);
 
   const { date } = getCurrentDate();
+
+  const generalInsightsChartData = await fetcher<GeneralInsightsAPIResponse>(
+    `${process.env.NEXT_PUBLIC_BASEURL}/record-gateway/get-graph-data`,
+    {
+      method: "POST",
+      data: {
+        well: "7206bdaf-79af-4a11-89b6-7fa14de2db7c",
+      },
+      token: decryptedToken,
+    }
+  );
 
   const SwitcherSitesWellsViewArr = [
     <ListWrapper key="list-wrapper-for-all-sites" listTitle="Sites">
@@ -114,16 +127,11 @@ const DashboardHome = async () => {
         />
       </div>
 
-      <div className="flex justify-between">
-        <div className="w-[45%]">
-          <LocateWellCard />
-        </div>
-        <div className="w-[50%]">
-          <WellActivityCard />
-        </div>
-      </div>
+      <WellChartAndMap />
 
-      <GeneralInsightsCard />
+      <GeneralInsightsCard
+        generalInsightsChartData={generalInsightsChartData.data}
+      />
 
       <SwitcherSitesWells currentViewArr={SwitcherSitesWellsViewArr} />
 

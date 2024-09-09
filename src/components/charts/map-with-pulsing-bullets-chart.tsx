@@ -27,12 +27,12 @@ export const PuslingMapChart: React.FC = () => {
         projection: isGlobeView
           ? am5map.geoOrthographic()
           : am5map.geoMercator(),
-      }),
+      })
     );
 
     // Create series for background fill
     let backgroundSeries = chart.series.push(
-      am5map.MapPolygonSeries.new(root, {}),
+      am5map.MapPolygonSeries.new(root, {})
     );
     backgroundSeries.mapPolygons.template.setAll({
       fill: root.interfaceColors.get("alternativeBackground"),
@@ -49,7 +49,7 @@ export const PuslingMapChart: React.FC = () => {
     let polygonSeries = chart.series.push(
       am5map.MapPolygonSeries.new(root, {
         geoJSON: am5geodata_worldLow,
-      }),
+      })
     );
 
     // Create line series for trajectory lines
@@ -79,7 +79,7 @@ export const PuslingMapChart: React.FC = () => {
           tooltipY: 0,
           fill: colorset.next(),
           strokeOpacity: 0,
-        }),
+        })
       );
 
       let circle2 = container.children.push(
@@ -89,7 +89,7 @@ export const PuslingMapChart: React.FC = () => {
           fill: colorset.next(),
           strokeOpacity: 0,
           tooltipText: "{title}",
-        }),
+        })
       );
 
       circle.animate({
@@ -148,7 +148,7 @@ export const PuslingMapChart: React.FC = () => {
       longitude: number,
       latitude: number,
       title: string,
-      url: string,
+      url: string
     ) {
       pointSeries.data.push({
         url: url,
@@ -168,41 +168,27 @@ export const PuslingMapChart: React.FC = () => {
 
   return (
     <>
+      <button
+        onClick={() => setIsGlobeView(!isGlobeView)}
+        style={{
+          backgroundColor: "transparent",
+          border: "none",
+          cursor: "pointer",
+          color: "#FFFFFF",
+        }}
+      >
+        {isGlobeView ? "Switch to Map" : "Switch to Globe"}
+      </button>
       <div
         id="pulsingmapdiv"
         style={{
           width: "100%",
-          height: "240px",
-          position: "relative",
+          // height: "240px",
+          height: "100%",
+          // position: "relative",
           borderRadius: "18px",
         }}
       ></div>
-      <div
-        style={{
-          position: "absolute",
-          top: "-20px",
-          right: 0,
-          zIndex: 99,
-          display: "flex",
-          alignItems: "center",
-          gap: "10px",
-          color: "#FFFFFF",
-          fontFamily: "Arial, sans-serif",
-          fontSize: "14px",
-        }}
-      >
-        <button
-          onClick={() => setIsGlobeView(!isGlobeView)}
-          style={{
-            backgroundColor: "transparent",
-            border: "none",
-            cursor: "pointer",
-            color: "#FFFFFF",
-          }}
-        >
-          {isGlobeView ? "Switch to Map" : "Switch to Globe"}
-        </button>
-      </div>
     </>
   );
 };

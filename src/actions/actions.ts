@@ -1,6 +1,6 @@
 "use server";
 
-import { DevicesDataResp, ReportsResponse, SitesResponse, WellsResponse } from "@/types";
+import { DevicesDataResp, ReportsResponse, SessionDataResponse, SitesResponse, WellsResponse } from "@/types";
 import { fetcher } from "@/utils";
 import { redirect } from "next/navigation";
 import { toast } from "react-toastify";
@@ -69,7 +69,7 @@ export async function getReports(decryptedToken: string | undefined){
     redirect("/login");
   }
 
-  const reportsDataPromise = await fetcher<ReportsResponse>(
+  const reportsData = await fetcher<ReportsResponse>(
     `${process.env.NEXT_PUBLIC_BASEURL}/record-gateway/get-reports`,
     {
       method: "GET",
@@ -78,11 +78,42 @@ export async function getReports(decryptedToken: string | undefined){
     }
   );
 
-  if (!reportsDataPromise) {
+  if (!reportsData) {
     console.error("Failed to fetch reports data");
     toast.error("Failed to fetch reports data");
     return null;
   }
 
-  return reportsDataPromise;
+  return reportsData;
+}
+
+export async function getSessionData(decryptedToken: string | undefined){
+   if (!decryptedToken) {
+    toast.error("Session expired. Please login again");
+    redirect("/login");
+  }
+
+  const sessionData = await fetcher<SessionDataResponse>(
+    `${process.env.NEXT_PUBLIC_BASEURL}/record-gateway/get-session-data`,
+    {
+      method: "GET",
+      data: {},
+      token: decryptedToken,
+    }
+  );
+
+  if (!sessionData) {
+    console.error("Failed to fetch reports data");
+    toast.error("Failed to fetch reports data");
+    return null;
+  }
+
+  return sessionData;
+}
+
+export async function getRightbarData(decryptedToken: string | undefined){
+  const sessionData = await getSessionData(decryptedToken);
+  const reportsData = await getReports(decryptedToken);
+
+  return { sessionData, reportsData };
 }
