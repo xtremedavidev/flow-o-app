@@ -1,8 +1,18 @@
 "use client";
 
+import { FC } from "react";
 import { ColumnChart } from "../charts";
+import { GiCancel } from "react-icons/gi";
 
-export const WellActivityCard = () => {
+interface WellActivityProps {
+  showMap: boolean | null;
+  setShowMap: React.Dispatch<React.SetStateAction<boolean | null>>;
+}
+
+export const WellActivityCard: FC<WellActivityProps> = ({
+  showMap,
+  setShowMap,
+}) => {
   return (
     <div className="w-full rounded-2xl bg-[#297FB8]/10 px-[26px] py-[18px]">
       <div className="flex items-center justify-between">
@@ -16,12 +26,24 @@ export const WellActivityCard = () => {
           </p>
         </div>
 
-        <div className="text-[10px] font-normal text-[#BDBDBD]">
-          Change range
+        <div
+          className={`text-[10px] font-normal text-[#BDBDBD] ${showMap === false ? "flex items-center gap-6" : ""}`}
+        >
+          <span>Change range</span>
+          {showMap === false && (
+            <GiCancel
+              onClick={() => setShowMap(null)}
+              size={20}
+              color="red"
+              className="cursor-pointer"
+            />
+          )}
         </div>
       </div>
 
-      <ColumnChart />
+      <div onClick={() => setShowMap(false)} className="relative h-full pt-3">
+        <ColumnChart />
+      </div>
     </div>
   );
 };

@@ -184,7 +184,7 @@ export const PuslingMapChart: React.FC = () => {
         style={{
           width: "100%",
           // height: "240px",
-          height: "100%",
+          height: "240px",
           // position: "relative",
           borderRadius: "18px",
         }}

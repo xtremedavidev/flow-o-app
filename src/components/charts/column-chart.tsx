@@ -43,7 +43,7 @@ export const ColumnChart: React.FC = () => {
         wheelX: "panX",
         wheelY: "zoomX",
         paddingLeft: 0,
-      }),
+      })
     );
 
     // Add cursor
@@ -51,7 +51,7 @@ export const ColumnChart: React.FC = () => {
       "cursor",
       am5xy.XYCursor.new(root, {
         behavior: "zoomX",
-      }),
+      })
     );
     cursor.lineY.set("visible", false);
 
@@ -99,7 +99,7 @@ export const ColumnChart: React.FC = () => {
           minGridDistance: 50, // Adjust to ensure labels don't overlap with the chart
         }),
         tooltip: am5.Tooltip.new(root, {}),
-      }),
+      })
     );
 
     // Position the labels below the bars
@@ -119,7 +119,7 @@ export const ColumnChart: React.FC = () => {
         }),
         min: 0, // Ensure the minimum value on the y-axis is 0
         max: 100, // Ensure the maximum value on the y-axis is 100
-      }),
+      })
     );
 
     // Add series
@@ -133,7 +133,7 @@ export const ColumnChart: React.FC = () => {
         tooltip: am5.Tooltip.new(root, {
           labelText: "{valueY}",
         }),
-      }),
+      })
     );
 
     // Set column appearance
@@ -151,7 +151,7 @@ export const ColumnChart: React.FC = () => {
       "scrollbarX",
       am5.Scrollbar.new(root, {
         orientation: "horizontal",
-      }),
+      })
     );
 
     let data = generateDatas(startDate, endDate);

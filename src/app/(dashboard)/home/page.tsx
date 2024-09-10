@@ -1,4 +1,8 @@
-import { getDashboardCardData } from "@/actions";
+import {
+  getDashboardCardData,
+  getGeneralInsightsChartData,
+  getRecords,
+} from "@/actions";
 import {
   ActivesCard,
   EventLogTable,
@@ -32,19 +36,14 @@ const DashboardHome = async () => {
 
   const { wellsData, devicesData, sitesData } =
     await getDashboardCardData(decryptedToken);
+  const recordsData = await getRecords(decryptedToken);
+
+  const generalInsightsChartData = await getGeneralInsightsChartData(
+    decryptedToken,
+    "7206bdaf-79af-4a11-89b6-7fa14de2db7c"
+  );
 
   const { date } = getCurrentDate();
-
-  const generalInsightsChartData = await fetcher<GeneralInsightsAPIResponse>(
-    `${process.env.NEXT_PUBLIC_BASEURL}/record-gateway/get-graph-data`,
-    {
-      method: "POST",
-      data: {
-        well: "7206bdaf-79af-4a11-89b6-7fa14de2db7c",
-      },
-      token: decryptedToken,
-    }
-  );
 
   const SwitcherSitesWellsViewArr = [
     <ListWrapper key="list-wrapper-for-all-sites" listTitle="Sites">
@@ -129,16 +128,18 @@ const DashboardHome = async () => {
 
       <WellChartAndMap />
 
-      <GeneralInsightsCard
-        generalInsightsChartData={generalInsightsChartData.data}
-      />
+      {generalInsightsChartData && (
+        <GeneralInsightsCard
+          generalInsightsChartData={generalInsightsChartData.data}
+        />
+      )}
 
       <SwitcherSitesWells currentViewArr={SwitcherSitesWellsViewArr} />
 
       <div className="mt-10 rounded-[27px] bg-[#297FB8]/[0.1] p-3">
         <h1 className="mb-5 text-center text-xl font-medium">Report Data</h1>
         <div className="w-full overflow-x-auto">
-          <ReportDataTable />
+          <ReportDataTable recordsData={recordsData} />
         </div>
 
         <h1 className="mb-5 mt-10 text-center text-xl font-medium">

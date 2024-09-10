@@ -1,6 +1,7 @@
 "use server";
 
-import { DevicesDataResp, ReportsResponse, SessionDataResponse, SitesResponse, WellsResponse } from "@/types";
+import { GeneralInsightsAPIResponse } from "@/hooks";
+import { DevicesDataResp, RecordsData, ReportsResponse, ReportTableHeaderResponse, SessionDataResponse, SitesResponse, WellsResponse } from "@/types";
 import { fetcher } from "@/utils";
 import { redirect } from "next/navigation";
 import { toast } from "react-toastify";
@@ -116,4 +117,80 @@ export async function getRightbarData(decryptedToken: string | undefined){
   const reportsData = await getReports(decryptedToken);
 
   return { sessionData, reportsData };
+}
+
+
+export async function getTableHeaderForReportData(decryptedToken: string | undefined){
+   if (!decryptedToken) {
+    toast.error("Session expired. Please login again");
+    redirect("/login");
+  }
+
+  const reportTableHeaderData = await fetcher<ReportTableHeaderResponse>(
+    `${process.env.NEXT_PUBLIC_BASEURL}/record-gateway/get-flow-datas`,
+    {
+      method: "GET",
+      data: {},
+      token: decryptedToken,
+    }
+  );
+
+  if (!reportTableHeaderData) {
+    console.error("Failed to fetch reports table header data");
+    toast.error("Failed to fetch reports table header data");
+    return null;
+  }
+
+  return reportTableHeaderData;
+}
+
+export async function getRecords(decryptedToken: string | undefined){
+   if (!decryptedToken) {
+    toast.error("Session expired. Please login again");
+    redirect("/login");
+  }
+
+  const recordsData = await fetcher<RecordsData>(
+    `${process.env.NEXT_PUBLIC_BASEURL}/record-gateway/get`,
+    {
+      method: "POST",
+      data: {},
+      token: decryptedToken,
+    }
+  );
+
+  if (!recordsData) {
+    console.error("Failed to fetch reports data");
+    toast.error("Failed to fetch reports data");
+    return null;
+  }
+
+  return recordsData;
+}
+
+
+export async function getGeneralInsightsChartData(decryptedToken: string | undefined, wellID: string){
+   if (!decryptedToken) {
+    toast.error("Session expired. Please login again");
+    redirect("/login");
+  }
+
+  const generalInsightsChartData = await fetcher<GeneralInsightsAPIResponse>(
+    `${process.env.NEXT_PUBLIC_BASEURL}/record-gateway/get-graph-data`,
+    {
+      method: "POST",
+      data: {
+        well: wellID,
+      },
+      token: decryptedToken,
+    }
+  );
+
+  if (!generalInsightsChartData) {
+    console.error("Failed to fetch reports data");
+    toast.error("Failed to fetch reports data");
+    return null;
+  }
+
+  return generalInsightsChartData;
 }
