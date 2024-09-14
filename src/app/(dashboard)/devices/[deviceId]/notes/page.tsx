@@ -58,7 +58,7 @@ interface NotesItemProps {
 
 const NotesItem: FC<NotesItemProps> = ({ username, comment }) => {
   return (
-    <div className="w-full space-y-3 rounded-xl bg-[#CDEBFF] px-5 py-[15px]">
+    <div className="w-full space-y-3 rounded-xl bg-[#CDEBFF]/[0.07] px-5 py-[15px]">
       <h2 className="text-sm font-semibold text-[#F1F1F1]">{username}</h2>
       <p className="text-xs font-semibold text-[#F1F1F1]">{comment}</p>
     </div>
