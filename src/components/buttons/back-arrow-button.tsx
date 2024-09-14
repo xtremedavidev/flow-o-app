@@ -9,5 +9,12 @@ export const BackArrowButton = () => {
   const handleBack = () => {
     router.back();
   };
-  return <FaChevronLeft size={16} color="#ffffff" onClick={handleBack} />;
+  return (
+    <FaChevronLeft
+      size={16}
+      color="#ffffff"
+      onClick={handleBack}
+      className="cursor-pointer"
+    />
+  );
 };

@@ -76,7 +76,7 @@ const VerifyLogin = () => {
 
         console.log("res", res);
 
-        if (res?.message === "success") {
+        if (res?.data?.message === "success") {
           toast.success("OTP Verified Successfully");
           console.log("to check something", encryptedIdentifierFromURL);
 
@@ -85,8 +85,8 @@ const VerifyLogin = () => {
               encodeURIComponent(encryptToken(identifier))
           );
         } else {
-          if (res?.message) {
-            toast.error(res?.message);
+          if (res?.data?.message) {
+            toast.error(res?.data?.message);
             console.log("hello 22", res);
           }
         }
@@ -117,11 +117,11 @@ const VerifyLogin = () => {
       }
     )
       .then((res) => {
-        if (res?.message === "success") {
+        if (res?.data?.message === "success") {
           toast.success("An OTP has been sent to your email");
         } else {
-          if (res?.message) {
-            toast.error(res?.message);
+          if (res?.data?.message) {
+            toast.error(res?.data?.message);
             console.log("hello 22", res);
           }
         }

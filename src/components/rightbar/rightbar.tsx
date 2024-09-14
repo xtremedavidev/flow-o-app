@@ -1,30 +1,20 @@
 import { SemiPieChart } from "../charts";
-import { ConditionsArr } from "@/libs";
+// import { ConditionsArr } from "@/libs";
 import { ConditionsItem } from "../ui";
 import { PressureAlertCard, SaveEnergyAlertCard } from "../cards";
-import { getRightbarData } from "@/actions";
-import { cookies } from "next/headers";
+import { getRightbarData, handleResolve } from "@/actions";
+// import { cookies } from "next/headers";
 import { decryptToken, fetcher } from "@/utils";
-import { toast } from "react-toastify";
+// import { toast } from "react-toastify";
+import Cookies from "js-cookie";
 
 export const Rightbar = async () => {
-  const token = cookies().get("token")?.value;
-  const decryptedToken = token ? decryptToken(token) : undefined;
+  const token = Cookies.get("token");
+  const decryptedToken = token
+    ? decryptToken(decodeURIComponent(token))
+    : undefined;
 
-  const { sessionData, reportsData } = await getRightbarData(decryptedToken);
-
-  async function handleResolve(id: string) {
-    "use server";
-    const res = await fetcher<{ message: string }>(
-      `${process.env.NEXT_PUBLIC_BASEURL}/record-gateway/resolve-report`,
-      {
-        method: "POST",
-        data: { reportId: id },
-        token: decryptedToken,
-      }
-    );
-    toast.success(res.message);
-  }
+  const { sessionData, reportsData } = await getRightbarData();
 
   return (
     <div className="flex h-full w-full max-w-[30%] shrink-0 flex-col overflow-y-auto rounded-2xl bg-[#333333] px-[14px] py-[19px] @container">
@@ -37,7 +27,7 @@ export const Rightbar = async () => {
           </div>
         )}
 
-        {sessionData && <SemiPieChart sessionData={sessionData} />}
+        {sessionData && <SemiPieChart sessionData={sessionData.data} />}
         <div className="flex items-center justify-between">
           {ConditionsArr.map((condition, index) => (
             <ConditionsItem
@@ -51,15 +41,15 @@ export const Rightbar = async () => {
 
       <h2 className="my-4 text-sm font-medium">Recent Alerts</h2>
 
-      <div className="space-y-[10px]">
-        {reportsData && reportsData?.data.length < 1 && (
+      <div className="flex flex-col gap-[10px]">
+        {reportsData && reportsData?.data?.data.length < 1 && (
           <div className="flex w-full justify-center text-sm font-normal">
             No recent alerts
           </div>
         )}
 
         {reportsData &&
-          reportsData?.data.map((report) =>
+          reportsData?.data?.data.map((report) =>
             report.title.toLowerCase().includes("temperature") ? (
               <PressureAlertCard
                 key={report.id}
@@ -86,3 +76,18 @@ export const Rightbar = async () => {
     </div>
   );
 };
+
+export const ConditionsArr = [
+  {
+    colour: "#F94144",
+    status: "Critical",
+  },
+  // {
+  //   colour: "#D48A2E",
+  //   status: "Warning",
+  // },
+  {
+    colour: "#3F9360",
+    status: "Resolved",
+  },
+];

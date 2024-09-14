@@ -24,26 +24,26 @@ interface FetchGeneralInsightsParams {
 }
 
 
-export const useFetchGeneralInsights = ({
-  data,
-  token,
-}: FetchGeneralInsightsParams) => {
-  if (!token) {
-    throw new Error("Token is required");
-  }
-  return useMutation<GeneralInsightsAPIResponse>({
-    mutationFn: () => {
-      return fetcher<GeneralInsightsAPIResponse>(
-        `${process.env.NEXT_PUBLIC_BASEURL}/record-gateway/get-graph-data`,
-        {
-          method: "POST",
-          data,
-          token
-        },
-      );
-    },
-  });
-};
+// export const useFetchGeneralInsights = ({
+//   data,
+//   token,
+// }: FetchGeneralInsightsParams) => {
+//   if (!token) {
+//     throw new Error("Token is required");
+//   }
+//   return useMutation<GeneralInsightsAPIResponse>({
+//     mutationFn: () => {
+//       return fetcher<GeneralInsightsAPIResponse>(
+//         `${process.env.NEXT_PUBLIC_BASEURL}/record-gateway/get-graph-data`,
+//         {
+//           method: "POST",
+//           data,
+//           token
+//         },
+//       );
+//     },
+//   });
+// };
 
 // export const useFetchGeneralInsights = ({
 //   data,

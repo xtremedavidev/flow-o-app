@@ -31,7 +31,6 @@ export interface ReportTableHeaderResponse {
   }[];
 }
 
-
 // ---------------------
 
 interface DataRecord {
@@ -69,4 +68,20 @@ interface Data {
 export interface RecordsData {
   message: string;
   data: Data[];
+}
+
+// ---------------------------------
+export interface RecommendationResponse {
+  message: string;
+  recommendation: RecommendationItem[];
+}
+
+export interface RecommendationItem {
+  id: string;
+  recommendations: string[];
+  question: string;
+  createdAt: string;
+  updatedAt: string;
+  reportId: string;
+  report: ReportsData;
 }

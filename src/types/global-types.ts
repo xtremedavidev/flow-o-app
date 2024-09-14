@@ -19,5 +19,7 @@ export interface AlertCardsProps {
   time: string;
   id: string;
   level: "Critical" | "Warning" | "Resolved";
-  handleResolve: (id: string) => Promise<void>;
+  handleResolve: (id: string) => Promise<{data: {message: string}
+error?: string
+}>;
 }

@@ -17,28 +17,17 @@ import { MdDateRange, MdOutlineTroubleshoot } from "react-icons/md";
 import { TbArrowsSort } from "react-icons/tb";
 import { decryptToken, fetcher } from "@/utils";
 import { cookies } from "next/headers";
-import { getRightbarData } from "@/actions";
-import { toast } from "react-toastify";
+import { getRightbarData, handleResolve } from "@/actions";
+// import { toast } from "react-toastify";
 import { ReportsResponse, SessionDataResponse } from "@/types";
 
 const DashboardActionCenter = async () => {
   const token = cookies().get("token")?.value;
-  const decryptedToken = token ? decryptToken(token) : undefined;
+  const decryptedToken = token
+    ? decryptToken(decodeURIComponent(token))
+    : undefined;
 
-  const { sessionData, reportsData } = await getRightbarData(decryptedToken);
-
-  async function handleResolve(id: string) {
-    "use server";
-    const res = await fetcher<{ message: string }>(
-      `${process.env.NEXT_PUBLIC_BASEURL}/record-gateway/resolve-report`,
-      {
-        method: "POST",
-        data: { reportId: id },
-        token: decryptedToken,
-      }
-    );
-    toast.success(res.message);
-  }
+  const { sessionData, reportsData } = await getRightbarData();
 
   const SwitcherOptionsElements = [
     <div key={"All"} className="w-full">
@@ -51,14 +40,14 @@ const DashboardActionCenter = async () => {
       </div>
 
       <div className="mt-[20px] flex flex-col gap-[14px]">
-        {reportsData && reportsData?.data.length < 1 && (
+        {reportsData && reportsData?.data?.data.length < 1 && (
           <div className="flex w-full justify-center text-sm font-normal">
             No recent alerts or notifications
           </div>
         )}
 
         {reportsData &&
-          reportsData?.data.map((report) =>
+          reportsData?.data?.data.map((report) =>
             report.title.toLowerCase().includes("temperature") ? (
               <PressureAlertCard
                 key={report.id}
@@ -94,14 +83,14 @@ const DashboardActionCenter = async () => {
       </div>
 
       <div className="mt-[20px] flex flex-col gap-[14px]">
-        {reportsData && reportsData?.data.length < 1 && (
+        {reportsData.data && reportsData.data?.data.length < 1 && (
           <div className="flex w-full justify-center text-sm font-normal">
             No recent alerts
           </div>
         )}
 
         {reportsData &&
-          reportsData?.data
+          reportsData.data?.data
             .filter((report) => report.type === "ALERT")
             .map((report) =>
               report.title.toLowerCase().includes("temperature") ? (
@@ -139,14 +128,14 @@ const DashboardActionCenter = async () => {
       </div>
 
       <div className="mt-[20px] flex flex-col gap-[14px]">
-        {reportsData && reportsData?.data.length < 1 && (
+        {reportsData.data && reportsData.data?.data.length < 1 && (
           <div className="flex w-full justify-center text-sm font-normal">
             No recent notifications
           </div>
         )}
 
-        {reportsData &&
-          reportsData?.data
+        {reportsData.data &&
+          reportsData.data?.data
             .filter((report) => report.type === "NOTIFICATION")
             .map((report) =>
               report.title.toLowerCase().includes("temperature") ? (
@@ -177,7 +166,10 @@ const DashboardActionCenter = async () => {
 
   return (
     <div>
-      <ActionCenterCard sessionData={sessionData} reportsData={reportsData} />
+      <ActionCenterCard
+        sessionData={sessionData.data ? sessionData.data : null}
+        reportsData={reportsData.data}
+      />
       <div className="my-8">
         <BaseSwitcher
           optionsLabel={SwitcherOptionsArr}
@@ -214,7 +206,7 @@ const ActionCenterCard: FC<ActionCenterCardProps> = ({
 
         <AveragesIndicator
           last_updated="22/06/2024"
-          average_resolution="2 Hours"
+          // average_resolution="2 Hours"
         />
       </div>
 
@@ -302,12 +294,12 @@ const NotificationConditionsArr = [
 
 interface AveragesIndicatorProps {
   last_updated: string;
-  average_resolution: string;
+  // average_resolution: string;
 }
 
 const AveragesIndicator: FC<AveragesIndicatorProps> = ({
   last_updated,
-  average_resolution,
+  // average_resolution,
 }) => {
   return (
     <div className="flex shrink-0 items-center gap-[17px]">
@@ -318,13 +310,13 @@ const AveragesIndicator: FC<AveragesIndicatorProps> = ({
         </div>
         <span className="font-normal">{last_updated}</span>
       </div>
-      <div className="flex items-center gap-[5px] text-[10px] font-semibold text-[#CCCCCC]">
+      {/* <div className="flex items-center gap-[5px] text-[10px] font-semibold text-[#CCCCCC]">
         <div className="flex items-center gap-[5px]">
           <PiSpeedometerFill color="#828282" size={16} />
           <span>Average Resolution:</span>
         </div>
         <span className="font-normal">{average_resolution}</span>
-      </div>
+      </div> */}
     </div>
   );
 };

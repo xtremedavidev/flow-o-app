@@ -2,7 +2,7 @@
 
 import { FC, useEffect, useMemo, useState } from "react";
 import { LineChart } from "../charts";
-import { GeneralInsightsData, useFetchGeneralInsights } from "@/hooks";
+import { GeneralInsightsData } from "@/hooks";
 // import { getToken } from "@/utils";
 import Cookies from "js-cookie";
 

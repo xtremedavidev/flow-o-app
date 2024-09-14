@@ -12,6 +12,7 @@ import { decryptToken, fetcher, getCurrentDate } from "@/utils";
 import { cookies } from "next/headers";
 import { DeviceData, DeviceDataResp } from "@/types";
 import { FC, useMemo, Suspense } from "react";
+import Link from "next/link";
 
 interface DeviceByDeviceIDPageProps {
   params: {
@@ -23,7 +24,9 @@ const DeviceByDeviceIDPage = async ({ params }: DeviceByDeviceIDPageProps) => {
   const deviceId = decryptToken(decodeURIComponent(params.deviceId));
 
   const token = cookies().get("token")?.value;
-  const decryptedToken = token ? decryptToken(token) : undefined;
+  const decryptedToken = token
+    ? decryptToken(decodeURIComponent(token))
+    : undefined;
 
   const deviceData = await fetcher<DeviceDataResp>(
     `${process.env.NEXT_PUBLIC_BASEURL}/iot-gateway/get`,
@@ -35,8 +38,6 @@ const DeviceByDeviceIDPage = async ({ params }: DeviceByDeviceIDPageProps) => {
       token: decryptedToken,
     }
   );
-
-  // console.log("single device data", deviceData);
 
   return (
     <div>
@@ -51,7 +52,7 @@ const DeviceByDeviceIDPage = async ({ params }: DeviceByDeviceIDPageProps) => {
       </div>
 
       <Suspense fallback={<FallbackLoader />}>
-        <DeviceDetailsCard deviceData={deviceData.data} />
+        <DeviceDetailsCard deviceData={deviceData.data?.data} />
       </Suspense>
 
       <DeviceActivities />
@@ -138,10 +139,10 @@ const DeviceDetailsCard: FC<DeviceDetailsCardProps> = ({ deviceData }) => {
 
       <div className="mt-[10px] flex w-full items-center justify-between rounded-lg border border-solid border-[#8F8F8F]/[0.31] px-[6px] py-1">
         <div>
-          <div className="flex items-center gap-[6px]">
+          <Link href={``} className="flex items-center gap-[6px]">
             <MdOutlineStickyNote2 size={12} color="#FFFFFF" />
             <span>Note:</span>
-          </div>
+          </Link>
           <div></div>
         </div>
         <div className="space-y-[2px] text-[10px] text-[#CCCCCC]">

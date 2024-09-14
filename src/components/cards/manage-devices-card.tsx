@@ -36,10 +36,10 @@ export const ManageDevicesCard: FC<ManageDevicesCardProps> = ({
           Active Devices: <span className="font-normal">{active_devices}</span>
         </p>
 
-        <div className="flex items-center gap-2">
+        {/* <div className="flex items-center gap-2">
           <StreamDetails type="up" value="2Tb" />
           <StreamDetails type="down" value="1Tb" />
-        </div>
+        </div> */}
       </div>
     </div>
   );

@@ -54,7 +54,9 @@ interface CreateDeviceResponse {
 export const AddNewDeviceModal: FC<ModalProps> = ({ isOpen, setIsOpen }) => {
   const { control, handleSubmit } = useForm<FormValues>();
   const token = Cookies.get("token");
-  const decryptedToken = token ? decryptToken(token) : undefined;
+  const decryptedToken = token
+    ? decryptToken(decodeURIComponent(token))
+    : undefined;
 
   const mutation = useMutation({
     mutationFn: (data: {
@@ -90,12 +92,12 @@ export const AddNewDeviceModal: FC<ModalProps> = ({ isOpen, setIsOpen }) => {
       formattedData,
       token: decryptedToken,
     });
-    if (createDeviceResp.message === "IoT device created successfully") {
-      toast.success(createDeviceResp.message);
+    if (createDeviceResp.data?.message === "IoT device created successfully") {
+      toast.success(createDeviceResp.data?.message);
       revalidatePath("/devices");
       setIsOpen(false);
     } else {
-      toast.error(createDeviceResp.message || "Failed to create device");
+      toast.error(createDeviceResp.data?.message || "Failed to create device");
     }
   };
 

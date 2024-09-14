@@ -6,7 +6,7 @@ import { DashboardPageWrapper } from "./dashboard-page-wrapper";
 
 interface DashboardChildrenWrapperProps {
   children: React.ReactNode;
-  rightbar?: React.ReactNode;
+  rightbar: React.ReactNode;
 }
 
 export const DashboardChildrenWrapper: FC<DashboardChildrenWrapperProps> = ({

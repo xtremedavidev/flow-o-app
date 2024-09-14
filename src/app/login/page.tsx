@@ -47,9 +47,9 @@ const Login = () => {
     try {
       const res = await mutation.mutateAsync(UserData);
 
-      if (res?.message === "success") {
-        const token = res?.token;
-        const encryptedToken = encryptToken(token);
+      if (res?.data?.message === "success") {
+        const token = res?.data?.token;
+        const encryptedToken = encodeURIComponent(encryptToken(token));
 
         Cookies.set("token", encryptedToken, {
           expires: rememberMe ? 30 : undefined,
@@ -58,8 +58,8 @@ const Login = () => {
         toast.success("Login Successful");
         router.push("/home");
       } else {
-        if (res?.message) {
-          toast.error(res?.message);
+        if (res?.data?.message) {
+          toast.error(res?.data?.message);
           console.log("else block res----", res);
         }
       }

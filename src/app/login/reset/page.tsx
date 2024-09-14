@@ -28,20 +28,20 @@ const ResetPassword = () => {
         {
           method: "POST",
           data,
-        },
+        }
       );
     },
   });
 
   const onSubmit: SubmitHandler<z.infer<typeof ResetPassowrdSchema>> = async (
-    data,
+    data
   ) => {
     if (!encryptedIdentifierFromURL) {
       toast.error("Invalid Identifier");
       router.push("/login/forgot-password");
     } else {
       const identifier = decodeURIComponent(
-        decryptToken(decodeURIComponent(encryptedIdentifierFromURL)),
+        decryptToken(decodeURIComponent(encryptedIdentifierFromURL))
       );
       const UserData = {
         identifier: identifier,
@@ -55,12 +55,12 @@ const ResetPassword = () => {
 
         console.log("res", res);
 
-        if (res?.message === "success") {
+        if (res?.data?.message === "success") {
           toast.success("Password Reset Successfully");
           router.push("/login");
         } else {
-          if (res?.message) {
-            toast.error(res?.message);
+          if (res?.data?.message) {
+            toast.error(res?.data?.message);
             console.log("hello 22", res);
           }
         }

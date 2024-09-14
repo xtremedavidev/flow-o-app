@@ -19,7 +19,9 @@ export const metadata: Metadata = {
 
 const DashboardDevices = async () => {
   const token = cookies().get("token")?.value;
-  const decryptedToken = token ? decryptToken(token) : undefined;
+  const decryptedToken = token
+    ? decryptToken(decodeURIComponent(token))
+    : undefined;
 
   const devicesData = await fetcher<DevicesDataResp>(
     `${process.env.NEXT_PUBLIC_BASEURL}/iot-gateway/get`,
@@ -38,8 +40,8 @@ const DashboardDevices = async () => {
     <div>
       <Suspense fallback={<FallbackLoader />}>
         <ManageDevicesCard
-          active_devices={devicesData.data.activeDevice}
-          total_devices={devicesData.data.totalDevice}
+          active_devices={devicesData.data?.data.activeDevice}
+          total_devices={devicesData.data?.data.totalDevice}
           last_updated={lastUpdated}
         />
       </Suspense>
@@ -57,7 +59,7 @@ const DashboardDevices = async () => {
 
       <div className="mt-[10px]">
         <Suspense fallback={<FallbackLoader />}>
-          <DeviceListTable devicesData={devicesData.data.devices} />
+          <DeviceListTable devicesData={devicesData.data?.data.devices} />
         </Suspense>
       </div>
     </div>

@@ -9,10 +9,15 @@ interface FetcherOptions {
   token?: string;
 }
 
+export interface FetcherResult<T> {
+  data: T;
+  error?: string;
+}
+
 export const fetcher = async <T>(
   url: string,
   options: FetcherOptions = {}
-): Promise<T> => {
+): Promise<FetcherResult<T>> => {
   const { method = "GET", data, config, token } = options;
 
     const headers = {
@@ -29,14 +34,15 @@ export const fetcher = async <T>(
       headers,
     });
 
-    return response.data;
+    return { data: response.data };
   } catch (error) {
     const axiosError = error as AxiosError<ErrorResponse>;
     console.error(axiosError);
 
     const errorMessage = axiosError.response?.data.details || axiosError.response?.data.error || "An error occurred";
-    toast.error(errorMessage);
+    // toast.error(errorMessage);
 
-    throw axiosError;
+    // throw new Error(errorMessage);
+     return { data: {} as T, error: errorMessage };
   }
 };

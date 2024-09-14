@@ -24,7 +24,7 @@ export default function ForgotPassword() {
         {
           method: "POST",
           data,
-        },
+        }
       );
     },
   });
@@ -39,15 +39,15 @@ export default function ForgotPassword() {
     try {
       const res = await mutation.mutateAsync(UserData);
 
-      if (res?.message === "success") {
+      if (res?.data?.message === "success") {
         toast.success("Success, please check your email for an OTP");
         router.push(
           "/login/verify?identifier=" +
-            encodeURIComponent(encryptToken(data.identifier)),
+            encodeURIComponent(encryptToken(data.identifier))
         );
       } else {
-        if (res?.message) {
-          toast.error(res?.message);
+        if (res?.data?.message) {
+          toast.error(res?.data?.message);
           console.log("hello 22", res);
         }
       }

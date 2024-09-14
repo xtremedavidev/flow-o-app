@@ -19,22 +19,24 @@ export const SystemEfficiencyCard: FC<SECardProps> = ({
   percentage,
 }) => {
   return (
-    <div className="w-full min-w-[250px] rounded-2xl bg-[#1E3647] px-[14px] py-[6px] text-white">
+    <div className="w-full min-w-[215px] rounded-2xl bg-[#1E3647] px-[14px] py-[6px] text-white @container">
       <div className="flex items-center gap-2">
         <div className="rounded-full bg-white/[0.19] p-[5.65px]">{icon}</div>
-        <h2 className="text-sm font-normal">{label}</h2>
+        <h2 className="text-[8px] font-normal @[9rem]:text-xs @[12rem]:text-sm">
+          {label}
+        </h2>
       </div>
 
       <div className="flex items-center justify-between">
         <div className="flex shrink-0 flex-col justify-center gap-1">
-          <div className="flex items-center gap-[5px] text-[10px] font-semibold text-[#CCCCCC]">
+          <div className="flex items-center gap-[5px] text-[8px] font-semibold text-[#CCCCCC] @[12rem]:text-[10px]">
             <div className="flex items-center gap-[5px]">
               <AverageTimeIcon />
               <span>Average Downtime:</span>
             </div>
             <span className="font-normal">{average_downtime}</span>
           </div>
-          <div className="flex items-center gap-[5px] text-[10px] font-semibold text-[#CCCCCC]">
+          <div className="flex items-center gap-[5px] text-[8px] font-semibold text-[#CCCCCC] @[12rem]:text-[10px]">
             <div className="flex items-center gap-[5px]">
               <PiSpeedometerFill color="#828282" size={16} />
               <span>Average Resolution:</span>

@@ -1,15 +1,36 @@
 "use server";
 
 import { GeneralInsightsAPIResponse } from "@/hooks";
-import { DevicesDataResp, RecordsData, ReportsResponse, ReportTableHeaderResponse, SessionDataResponse, SitesResponse, WellsResponse } from "@/types";
-import { fetcher } from "@/utils";
-import { redirect } from "next/navigation";
+import {
+  DevicesDataResp,
+  GetMultipleSitesResponse,
+  GetSingleSiteResponse,
+  GetSiteResponse,
+  RecommendationResponse,
+  RecordsData,
+  ReportsResponse,
+  ReportTableHeaderResponse,
+  SessionDataResponse,
+  SitesResponse,
+  WellsResponse,
+} from "@/types";
+import { decryptToken, fetcher } from "@/utils";
+import { revalidatePath } from "next/cache";
+import { cookies } from "next/headers";
 import { toast } from "react-toastify";
+import { FetcherResult } from '../utils/fetcher';
+// import { redirect } from "next/navigation";
+// import { toast } from "react-toastify";
 
-export async function getDashboardCardData(decryptedToken: string | undefined) {
+export async function getDashboardCardData() {
+
+    const token = cookies().get("token")?.value;
+  const decryptedToken = token
+    ? decryptToken(decodeURIComponent(token))
+    : undefined;
+
   if (!decryptedToken) {
-    toast.error("Session expired. Please login again");
-    redirect("/login");
+    throw new Error("Session expired. Please login again");
   }
 
   const wellsDataPromise = fetcher<WellsResponse>(
@@ -46,28 +67,29 @@ export async function getDashboardCardData(decryptedToken: string | undefined) {
   ]);
 
   if (!wellsData) {
-    console.error("Failed to fetch wells data");
-    toast.error("Failed to fetch wells data");
+    throw new Error("Failed to fetch wells data");
   }
 
   if (!devicesData) {
-    console.error("Failed to fetch devices data");
-    toast.error("Failed to fetch devices data");
+    throw new Error("Failed to fetch devices data");
   }
 
   if (!sitesData) {
-    console.error("Failed to fetch sites data");
-    toast.error("Failed to fetch sites data");
+    throw new Error("Failed to fetch sites data");
   }
 
   return { wellsData, devicesData, sitesData };
 }
 
+export async function getReports() {
 
-export async function getReports(decryptedToken: string | undefined){
-   if (!decryptedToken) {
-    toast.error("Session expired. Please login again");
-    redirect("/login");
+    const token = cookies().get("token")?.value;
+  const decryptedToken = token
+    ? decryptToken(decodeURIComponent(token))
+    : undefined;
+
+  if (!decryptedToken) {
+    throw new Error("Session expired. Please login again");
   }
 
   const reportsData = await fetcher<ReportsResponse>(
@@ -80,18 +102,21 @@ export async function getReports(decryptedToken: string | undefined){
   );
 
   if (!reportsData) {
-    console.error("Failed to fetch reports data");
-    toast.error("Failed to fetch reports data");
-    return null;
+    throw new Error("Failed to fetch reports data");
   }
 
   return reportsData;
 }
 
-export async function getSessionData(decryptedToken: string | undefined){
-   if (!decryptedToken) {
-    toast.error("Session expired. Please login again");
-    redirect("/login");
+export async function getSessionData() {
+
+  const token = cookies().get("token")?.value;
+  const decryptedToken = token
+    ? decryptToken(decodeURIComponent(token))
+    : undefined;
+
+  if (!decryptedToken) {
+    throw new Error("Session expired. Please login again");
   }
 
   const sessionData = await fetcher<SessionDataResponse>(
@@ -104,26 +129,31 @@ export async function getSessionData(decryptedToken: string | undefined){
   );
 
   if (!sessionData) {
-    console.error("Failed to fetch reports data");
-    toast.error("Failed to fetch reports data");
-    return null;
+    throw new Error("Failed to fetch reports data");
   }
 
   return sessionData;
 }
 
-export async function getRightbarData(decryptedToken: string | undefined){
-  const sessionData = await getSessionData(decryptedToken);
-  const reportsData = await getReports(decryptedToken);
+export async function getRightbarData() {
+
+  const sessionData = await getSessionData();
+  const reportsData = await getReports();
 
   return { sessionData, reportsData };
 }
 
+export async function getTableHeaderForReportData(
+ 
+) {
 
-export async function getTableHeaderForReportData(decryptedToken: string | undefined){
-   if (!decryptedToken) {
-    toast.error("Session expired. Please login again");
-    redirect("/login");
+  const token = cookies().get("token")?.value;
+  const decryptedToken = token
+    ? decryptToken(decodeURIComponent(token))
+    : undefined;
+
+  if (!decryptedToken) {
+    throw new Error("Session expired. Please login again");
   }
 
   const reportTableHeaderData = await fetcher<ReportTableHeaderResponse>(
@@ -136,18 +166,21 @@ export async function getTableHeaderForReportData(decryptedToken: string | undef
   );
 
   if (!reportTableHeaderData) {
-    console.error("Failed to fetch reports table header data");
-    toast.error("Failed to fetch reports table header data");
-    return null;
+    throw new Error("Failed to fetch reports table header data");
   }
 
   return reportTableHeaderData;
 }
 
-export async function getRecords(decryptedToken: string | undefined){
-   if (!decryptedToken) {
-    toast.error("Session expired. Please login again");
-    redirect("/login");
+export async function getRecords() {
+
+  const token = cookies().get("token")?.value;
+  const decryptedToken = token
+    ? decryptToken(decodeURIComponent(token))
+    : undefined;
+
+  if (!decryptedToken) {
+    throw new Error("Session expired. Please login again");
   }
 
   const recordsData = await fetcher<RecordsData>(
@@ -160,19 +193,24 @@ export async function getRecords(decryptedToken: string | undefined){
   );
 
   if (!recordsData) {
-    console.error("Failed to fetch reports data");
-    toast.error("Failed to fetch reports data");
-    return null;
+    throw new Error("Failed to fetch reports data");
   }
 
   return recordsData;
 }
 
+export async function getGeneralInsightsChartData(
 
-export async function getGeneralInsightsChartData(decryptedToken: string | undefined, wellID: string){
-   if (!decryptedToken) {
-    toast.error("Session expired. Please login again");
-    redirect("/login");
+  wellID: string
+) {
+
+  const token = cookies().get("token")?.value;
+  const decryptedToken = token
+    ? decryptToken(decodeURIComponent(token))
+    : undefined;
+
+  if (!decryptedToken) {
+    throw new Error("Session expired. Please login again");
   }
 
   const generalInsightsChartData = await fetcher<GeneralInsightsAPIResponse>(
@@ -187,10 +225,169 @@ export async function getGeneralInsightsChartData(decryptedToken: string | undef
   );
 
   if (!generalInsightsChartData) {
-    console.error("Failed to fetch reports data");
-    toast.error("Failed to fetch reports data");
-    return null;
+    throw new Error("Failed to fetch reports data");
   }
 
   return generalInsightsChartData;
+}
+
+export async function handleResolve(id: string) {
+  const token = cookies().get("token")?.value;
+  const decryptedToken = token
+    ? decryptToken(decodeURIComponent(token))
+    : undefined;
+
+    const decryptedID = decryptToken(decodeURIComponent(id));
+
+  const res = await fetcher<{ message: string }>(
+    `${process.env.NEXT_PUBLIC_BASEURL}/record-gateway/resolve-report`,
+    {
+      method: "POST",
+      data: { reportId: decryptedID },
+      token: decryptedToken,
+    }
+  );
+
+  console.log("resolved---------------->", res);
+  
+  revalidatePath("/")
+  revalidatePath("/action-center")
+  return res;
+}
+
+
+export async function getRecommendations(id: string) {
+  const token = cookies().get("token")?.value;
+  const decryptedToken = token
+    ? decryptToken(decodeURIComponent(token))
+    : undefined;
+
+     if (!decryptedToken) {
+    throw new Error("Session expired. Please login again");
+  }
+
+  const recommendationData = await fetcher<RecommendationResponse>(
+    `${process.env.NEXT_PUBLIC_BASEURL}/record-gateway/get-recommendations`,
+    {
+      method: "POST",
+      data: { reportId: id },
+      token: decryptedToken,
+    }
+  );
+
+   if (!recommendationData) {
+    throw new Error("Failed to fetch recommendation data");
+  }
+
+  // console.log("recData=---------------->", recommendationData.data.recommendation[recommendationData.data.recommendation.length - 1].recommendations);
+  
+  return recommendationData;
+}
+
+export async function getRecommendationsChat(id: string, question: string) {
+  const token = cookies().get("token")?.value;
+  const decryptedToken = token
+    ? decryptToken(decodeURIComponent(token))
+    : undefined;
+
+     if (!decryptedToken) {
+    throw new Error("Session expired. Please login again");
+  }
+
+  const recommendationChatData = await fetcher<RecommendationResponse>(
+    `${process.env.NEXT_PUBLIC_BASEURL}/record-gateway/send-question-recommendation-chat`,
+    {
+      method: "POST",
+      data: { question: question, reportId: id },
+      token: decryptedToken,
+    }
+  );
+
+   if (!recommendationChatData) {
+    throw new Error("Failed to fetch recommendation chat data");
+  }
+
+  
+  return recommendationChatData;
+}
+
+export async function getSites(id: string): Promise<FetcherResult<GetSingleSiteResponse>>; 
+export async function getSites(id?: undefined): Promise<FetcherResult<GetMultipleSitesResponse>>; 
+
+export async function getSites(id?: string): Promise<FetcherResult<GetSiteResponse<typeof id>>> {
+  const token = cookies().get("token")?.value;
+  const decryptedToken = token
+    ? decryptToken(decodeURIComponent(token))
+    : undefined;
+
+  if (!decryptedToken) {
+    throw new Error("Session expired. Please login again");
+  }
+
+  const sitesData = await fetcher<GetSiteResponse<typeof id>>(
+    `${process.env.NEXT_PUBLIC_BASEURL}/site-gateway/get`,
+    {
+      method: "POST",
+      data: { id },
+      token: decryptedToken,
+    }
+  );
+
+  if (!sitesData) {
+    throw new Error("Failed to fetch sites data");
+  }
+
+  return sitesData;
+}
+
+export async function getWells(id?: string, siteId?:string ){
+  const token = cookies().get("token")?.value;
+  const decryptedToken = token
+    ? decryptToken(decodeURIComponent(token))
+    : undefined;
+
+  if (!decryptedToken) {
+    throw new Error("Session expired. Please login again");
+  }
+
+  const wellsData = await fetcher<WellsResponse>(
+    `${process.env.NEXT_PUBLIC_BASEURL}/well-gateway/get`,
+    {
+      method: "POST",
+      data: { id , siteId },
+      token: decryptedToken,
+    }
+  );
+
+  if (!wellsData) {
+    throw new Error("Failed to fetch wells data");
+  }
+
+  return wellsData;
+}
+
+export async function getDevices(id?: string, wellId?:string ){
+  const token = cookies().get("token")?.value;
+  const decryptedToken = token
+    ? decryptToken(decodeURIComponent(token))
+    : undefined;
+
+  if (!decryptedToken) {
+    throw new Error("Session expired. Please login again");
+  }
+
+  const devicesData = await fetcher<DevicesDataResp>(
+    `${process.env.NEXT_PUBLIC_BASEURL}/iot-gateway/get`,
+    {
+      method: "POST",
+      data: { id , wellId },
+      token: decryptedToken,
+    }
+  );
+
+  if (!devicesData) {
+    throw new Error("Failed to fetch devices data");
+  }
+
+  return devicesData;
 }

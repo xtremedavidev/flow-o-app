@@ -9,19 +9,20 @@ import {
   FallbackLoader,
   GeneralInsightsCard,
   ListWrapper,
-  LocateWellCard,
+  // LocateWellCard,
   ReportDataTable,
   SiteItem,
   SwitcherSitesWells,
   SystemEfficiencyCard,
-  WellActivityCard,
+  // WellActivityCard,
   WellChartAndMap,
 } from "@/components";
-import { GeneralInsightsAPIResponse } from "@/hooks";
-import { decryptToken, fetcher, getCurrentDate } from "@/utils";
+// import { GeneralInsightsAPIResponse } from "@/hooks";
+import { decryptToken, encryptToken, getCurrentDate } from "@/utils";
 
 import { Metadata } from "next";
 import { cookies } from "next/headers";
+import Link from "next/link";
 import { Suspense } from "react";
 import { BsFillDeviceSsdFill } from "react-icons/bs";
 
@@ -32,14 +33,14 @@ export const metadata: Metadata = {
 
 const DashboardHome = async () => {
   const token = cookies().get("token")?.value;
-  const decryptedToken = token ? decryptToken(token) : undefined;
+  const decryptedToken = token
+    ? decryptToken(decodeURIComponent(token))
+    : undefined;
 
-  const { wellsData, devicesData, sitesData } =
-    await getDashboardCardData(decryptedToken);
-  const recordsData = await getRecords(decryptedToken);
+  const { wellsData, devicesData, sitesData } = await getDashboardCardData();
+  const recordsData = await getRecords();
 
   const generalInsightsChartData = await getGeneralInsightsChartData(
-    decryptedToken,
     "7206bdaf-79af-4a11-89b6-7fa14de2db7c"
   );
 
@@ -48,40 +49,50 @@ const DashboardHome = async () => {
   const SwitcherSitesWellsViewArr = [
     <ListWrapper key="list-wrapper-for-all-sites" listTitle="Sites">
       <Suspense fallback={<FallbackLoader />}>
-        {sitesData.data.length < 1 ? (
+        {sitesData.data?.data.length < 1 ? (
           <div className="flex w-full justify-center">No site data</div>
         ) : (
-          sitesData.data.map((site) => (
-            <SiteItem
+          sitesData.data?.data.map((site) => (
+            <Link
               key={site.id}
-              id={site.id}
-              name={site.name}
-              coordinate={site.location}
-              lastUpdated={date}
-              location={site.location}
-              numberOfWells={0}
-              status={site.status}
-            />
+              href={`/home/site/${encodeURIComponent(encryptToken(site.id))}`}
+            >
+              <SiteItem
+                key={site.id}
+                id={site.id}
+                name={site.name}
+                coordinate={site.location}
+                lastUpdated={date}
+                location={site.location}
+                numberOfWells={0}
+                status={site.status}
+              />
+            </Link>
           ))
         )}
       </Suspense>
     </ListWrapper>,
     <ListWrapper key="list-wrapper-for-all-wells" listTitle="Wells">
       <Suspense fallback={<FallbackLoader />}>
-        {wellsData.data.wells.length < 1 ? (
+        {wellsData.data?.data.wells.length < 1 ? (
           <div className="flex w-full justify-center">No well data</div>
         ) : (
-          wellsData.data.wells.map((well) => (
-            <SiteItem
+          wellsData.data?.data.wells.map((well) => (
+            <Link
               key={well.id}
-              id={well.id}
-              name={well.name}
-              coordinate={well.location}
-              lastUpdated={date}
-              location={well.location}
-              numberOfWells={0}
-              status={well.status}
-            />
+              href={`/home/well/${encodeURIComponent(encryptToken(well.id))}`}
+            >
+              <SiteItem
+                key={well.id}
+                id={well.id}
+                name={well.name}
+                coordinate={well.location}
+                lastUpdated={date}
+                location={well.location}
+                numberOfWells={0}
+                status={well.status}
+              />
+            </Link>
           ))
         )}
       </Suspense>
@@ -96,22 +107,25 @@ const DashboardHome = async () => {
         <ActivesCard
           icon={<BsFillDeviceSsdFill />}
           label="Active Wells"
-          amount={`${wellsData.data.activeWell}`}
-          desc={`of ${wellsData.data.totalWell} total`}
+          amount={`${wellsData.data?.data.activeWell}`}
+          desc={`of ${wellsData.data?.data.totalWell} total`}
           percentage={
-            wellsData.data.totalWell > 0
-              ? (wellsData.data.activeWell / wellsData.data.totalWell) * 100
+            wellsData.data?.data.totalWell > 0
+              ? (wellsData.data?.data.activeWell /
+                  wellsData.data?.data.totalWell) *
+                100
               : 0
           }
         />
         <ActivesCard
           icon={<BsFillDeviceSsdFill />}
           label="Active Devices"
-          amount={`${devicesData.data.activeDevice}`}
-          desc={`of ${devicesData.data.totalDevice} total`}
+          amount={`${devicesData.data?.data.activeDevice}`}
+          desc={`of ${devicesData.data?.data.totalDevice} total`}
           percentage={
-            devicesData.data.totalDevice > 0
-              ? (devicesData.data.activeDevice / devicesData.data.totalDevice) *
+            devicesData.data?.data.totalDevice > 0
+              ? (devicesData.data?.data.activeDevice /
+                  devicesData.data?.data.totalDevice) *
                 100
               : 0
           }
@@ -130,7 +144,7 @@ const DashboardHome = async () => {
 
       {generalInsightsChartData && (
         <GeneralInsightsCard
-          generalInsightsChartData={generalInsightsChartData.data}
+          generalInsightsChartData={generalInsightsChartData.data?.data}
         />
       )}
 
@@ -139,7 +153,7 @@ const DashboardHome = async () => {
       <div className="mt-10 rounded-[27px] bg-[#297FB8]/[0.1] p-3">
         <h1 className="mb-5 text-center text-xl font-medium">Report Data</h1>
         <div className="w-full overflow-x-auto">
-          <ReportDataTable recordsData={recordsData} />
+          <ReportDataTable recordsData={recordsData?.data} />
         </div>
 
         <h1 className="mb-5 mt-10 text-center text-xl font-medium">
