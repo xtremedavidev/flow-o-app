@@ -8,11 +8,12 @@ import { MdAccessTimeFilled } from "react-icons/md";
 import { TiUser } from "react-icons/ti";
 import { MdLocationOn } from "react-icons/md";
 import { MdOutlineStickyNote2 } from "react-icons/md";
-import { decryptToken, fetcher, getCurrentDate } from "@/utils";
+import { decryptToken, encryptToken, fetcher, getCurrentDate } from "@/utils";
 import { cookies } from "next/headers";
 import { DeviceData, DeviceDataResp } from "@/types";
 import { FC, useMemo, Suspense } from "react";
 import Link from "next/link";
+import { getDevices } from "@/actions";
 
 interface DeviceByDeviceIDPageProps {
   params: {
@@ -28,16 +29,7 @@ const DeviceByDeviceIDPage = async ({ params }: DeviceByDeviceIDPageProps) => {
     ? decryptToken(decodeURIComponent(token))
     : undefined;
 
-  const deviceData = await fetcher<DeviceDataResp>(
-    `${process.env.NEXT_PUBLIC_BASEURL}/iot-gateway/get`,
-    {
-      method: "POST",
-      data: {
-        id: deviceId,
-      },
-      token: decryptedToken,
-    }
-  );
+  const deviceData = await getDevices(deviceId);
 
   return (
     <div>
@@ -52,7 +44,7 @@ const DeviceByDeviceIDPage = async ({ params }: DeviceByDeviceIDPageProps) => {
       </div>
 
       <Suspense fallback={<FallbackLoader />}>
-        <DeviceDetailsCard deviceData={deviceData.data?.data} />
+        <DeviceDetailsCard deviceData={deviceData.data?.data.devices[0]} />
       </Suspense>
 
       <DeviceActivities />
@@ -139,7 +131,10 @@ const DeviceDetailsCard: FC<DeviceDetailsCardProps> = ({ deviceData }) => {
 
       <div className="mt-[10px] flex w-full items-center justify-between rounded-lg border border-solid border-[#8F8F8F]/[0.31] px-[6px] py-1">
         <div>
-          <Link href={``} className="flex items-center gap-[6px]">
+          <Link
+            href={`/devices/${encodeURIComponent(encryptToken(deviceData.id))}/notes`}
+            className="flex items-center gap-[6px]"
+          >
             <MdOutlineStickyNote2 size={12} color="#FFFFFF" />
             <span>Note:</span>
           </Link>

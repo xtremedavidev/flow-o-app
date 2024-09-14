@@ -4,6 +4,7 @@ import { GeneralInsightsAPIResponse } from "@/hooks";
 import {
   DevicesDataResp,
   GetMultipleSitesResponse,
+  GetNotesResponse,
   GetSingleSiteResponse,
   GetSiteResponse,
   RecommendationResponse,
@@ -390,4 +391,56 @@ export async function getDevices(id?: string, wellId?:string ){
   }
 
   return devicesData;
+}
+
+export async function createNote(text: string, deviceID: string) {
+  const token = cookies().get("token")?.value;
+  const decryptedToken = token
+    ? decryptToken(decodeURIComponent(token))
+    : undefined;
+
+  if (!decryptedToken) {
+    throw new Error("Session expired. Please login again");
+  }
+
+  const noteData = await fetcher<{message: string}>(
+    `${process.env.NEXT_PUBLIC_BASEURL}/record-gateway/create-note`,
+    {
+      method: "POST",
+      data: { text: text , iotId: deviceID },
+      token: decryptedToken,
+    }
+  );
+
+  if (!noteData) {
+    throw new Error("Failed to create note");
+  }
+
+  return noteData;
+}
+
+export async function getNotes(deviceID: string) {
+  const token = cookies().get("token")?.value;
+  const decryptedToken = token
+    ? decryptToken(decodeURIComponent(token))
+    : undefined;
+
+  if (!decryptedToken) {
+    throw new Error("Session expired. Please login again");
+  }
+
+  const notesData = await fetcher<GetNotesResponse>(
+    `${process.env.NEXT_PUBLIC_BASEURL}/record-gateway/get-notes`,
+    {
+      method: "GET",
+      data: { iotId: deviceID },
+      token: decryptedToken,
+    }
+  );
+
+  if (!notesData) {
+    throw new Error("Failed to create note");
+  }
+
+  return notesData;
 }

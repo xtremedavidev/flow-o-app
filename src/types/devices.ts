@@ -25,3 +25,26 @@ export interface DevicesDataResp {
     devices: DeviceData[];
   };
 }
+
+// -----------------------
+
+interface User {
+  first_name: string;
+  last_name: string;
+}
+
+interface Note {
+  id: string;
+  note: string;
+  iotId: string;
+  createdAt: string;
+  updatedAt: string;
+  user_id: string;
+  user: User;
+  iot: DeviceData;
+}
+
+export interface GetNotesResponse {
+  message: string;
+  notes: Note[];
+}
