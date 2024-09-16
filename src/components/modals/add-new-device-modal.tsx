@@ -14,8 +14,10 @@ import {
 } from "react-hook-form";
 import Cookies from "js-cookie";
 import { toast } from "react-toastify";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { revalidatePath } from "next/cache";
+import { useRouter } from "next/navigation";
+import { getSites, getWells } from "@/actions";
 
 interface FormValues {
   deviceName: string;
@@ -57,6 +59,7 @@ export const AddNewDeviceModal: FC<ModalProps> = ({ isOpen, setIsOpen }) => {
   const decryptedToken = token
     ? decryptToken(decodeURIComponent(token))
     : undefined;
+  const router = useRouter();
 
   const mutation = useMutation({
     mutationFn: (data: {
@@ -94,12 +97,55 @@ export const AddNewDeviceModal: FC<ModalProps> = ({ isOpen, setIsOpen }) => {
     });
     if (createDeviceResp.data?.message === "IoT device created successfully") {
       toast.success(createDeviceResp.data?.message);
-      revalidatePath("/devices");
       setIsOpen(false);
+      router.refresh();
     } else {
       toast.error(createDeviceResp.data?.message || "Failed to create device");
     }
   };
+
+  const sitesOptions = useQuery({
+    queryKey: ["sites"],
+    queryFn: () => getSites(),
+  });
+
+  const wellOptions = useQuery({
+    queryKey: ["wells"],
+    queryFn: () => getWells(),
+  });
+
+  const formFields = [
+    { name: "deviceName", label: "Device Name", type: "text" },
+    { name: "deviceBondingCode", label: "Device Bonding Code", type: "text" },
+    {
+      name: "measurementType",
+      label: "Measurement Type",
+      type: "select",
+      options: [
+        { value: "temperature", label: "Temperature" },
+        { value: "pressure", label: "Pressure" },
+        { value: "humidity", label: "Humidity" },
+      ],
+    },
+    {
+      name: "attachSite",
+      label: "Attach Site",
+      type: "select",
+      options: sitesOptions.data?.data.data.map((site) => ({
+        value: site.name,
+        label: site.name,
+      })),
+    },
+    {
+      name: "attachWell",
+      label: "Attach Well",
+      type: "select",
+      options: wellOptions.data?.data.data.wells.map((well) => ({
+        value: well.name,
+        label: well.name,
+      })),
+    },
+  ];
 
   if (!isOpen) return null;
   return (
@@ -205,48 +251,3 @@ const ModalInput = <T extends FieldValues>({
 };
 
 ModalInput.displayName = "ModalInput";
-
-const formFields = [
-  { name: "deviceName", label: "Device Name", type: "text" },
-  { name: "deviceBondingCode", label: "Device Bonding Code", type: "text" },
-  {
-    name: "measurementType",
-    label: "Measurement Type",
-    type: "select",
-    options: [
-      { value: "temperature", label: "Temperature" },
-      { value: "pressure", label: "Pressure" },
-      { value: "humidity", label: "Humidity" },
-    ],
-  },
-  // {
-  //   name: "unit",
-  //   label: "Unit",
-  //   type: "select",
-  //   options: [
-  //     { value: "celsius", label: "Celsius" },
-  //     { value: "psi", label: "PSI" },
-  //     { value: "percentage", label: "Percentage" },
-  //   ],
-  // },
-  {
-    name: "attachSite",
-    label: "Attach Site",
-    type: "select",
-    options: [
-      { value: "siteA", label: "Site A" },
-      { value: "siteB", label: "Site B" },
-      { value: "siteC", label: "Site C" },
-    ],
-  },
-  {
-    name: "attachWell",
-    label: "Attach Well",
-    type: "select",
-    options: [
-      { value: "well1", label: "Well 1" },
-      { value: "well2", label: "Well 2" },
-      { value: "well3", label: "Well 3" },
-    ],
-  },
-];

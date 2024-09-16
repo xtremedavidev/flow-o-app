@@ -8,12 +8,18 @@ import { MdAccessTimeFilled } from "react-icons/md";
 import { TiUser } from "react-icons/ti";
 import { MdLocationOn } from "react-icons/md";
 import { MdOutlineStickyNote2 } from "react-icons/md";
-import { decryptToken, encryptToken, fetcher, getCurrentDate } from "@/utils";
+import {
+  decryptToken,
+  encryptToken,
+  fetcher,
+  FetcherResult,
+  getCurrentDate,
+} from "@/utils";
 import { cookies } from "next/headers";
-import { DeviceData, DeviceDataResp } from "@/types";
+import { DeviceData, DeviceDataResp, GetNotesResponse } from "@/types";
 import { FC, useMemo, Suspense } from "react";
 import Link from "next/link";
-import { getDevices } from "@/actions";
+import { getDevices, getNotes } from "@/actions";
 
 interface DeviceByDeviceIDPageProps {
   params: {
@@ -31,6 +37,8 @@ const DeviceByDeviceIDPage = async ({ params }: DeviceByDeviceIDPageProps) => {
 
   const deviceData = await getDevices(deviceId);
 
+  const notesData = await getNotes(deviceId);
+
   return (
     <div>
       <div className="mb-[10px] flex items-center gap-4">
@@ -44,7 +52,10 @@ const DeviceByDeviceIDPage = async ({ params }: DeviceByDeviceIDPageProps) => {
       </div>
 
       <Suspense fallback={<FallbackLoader />}>
-        <DeviceDetailsCard deviceData={deviceData.data?.data.devices[0]} />
+        <DeviceDetailsCard
+          deviceData={deviceData.data?.data.devices[0]}
+          notesData={notesData}
+        />
       </Suspense>
 
       <DeviceActivities />
@@ -56,9 +67,13 @@ export default DeviceByDeviceIDPage;
 
 interface DeviceDetailsCardProps {
   deviceData: DeviceData;
+  notesData: FetcherResult<GetNotesResponse>;
 }
 
-const DeviceDetailsCard: FC<DeviceDetailsCardProps> = ({ deviceData }) => {
+const DeviceDetailsCard: FC<DeviceDetailsCardProps> = ({
+  deviceData,
+  notesData,
+}) => {
   // console.log("catching???", deviceData);
 
   const deviceInfo = useMemo(
@@ -130,16 +145,18 @@ const DeviceDetailsCard: FC<DeviceDetailsCardProps> = ({ deviceData }) => {
       </div>
 
       <div className="mt-[10px] flex w-full items-center justify-between rounded-lg border border-solid border-[#8F8F8F]/[0.31] px-[6px] py-1">
-        <div>
-          <Link
-            href={`/devices/${encodeURIComponent(encryptToken(deviceData.id))}/notes`}
-            className="flex items-center gap-[6px]"
-          >
+        <Link
+          href={`/devices/${encodeURIComponent(encryptToken(deviceData.id))}/notes`}
+          className="flex items-center gap-2"
+        >
+          <div className="flex items-center gap-[6px]">
             <MdOutlineStickyNote2 size={12} color="#FFFFFF" />
-            <span>Note:</span>
-          </Link>
-          <div></div>
-        </div>
+            <span>Notes:</span>
+          </div>
+          <div className="flex aspect-square h-[20px] w-[20px] shrink-0 items-center justify-center rounded-full bg-[#1A1C1E]/[0.4] text-[8px] text-white">
+            +{notesData.data.notes.length}
+          </div>
+        </Link>
         <div className="space-y-[2px] text-[10px] text-[#CCCCCC]">
           <p className="font-semibold">Last updated</p>
           <p className="font-normal italic">{lastUpdated.date}</p>

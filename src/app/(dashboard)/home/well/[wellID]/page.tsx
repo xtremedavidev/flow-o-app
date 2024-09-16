@@ -2,20 +2,21 @@ import {
   getDevices,
   getGeneralInsightsChartData,
   getRecords,
+  getSystemEfficiency,
   getWells,
 } from "@/actions";
 import {
-  ActivesCard,
+  // ActivesCard,
   BackArrowButton,
   EventLogTable,
   GeneralInsightsCard,
   GeneralInsightsWellsDashboard,
   ReportDataTable,
-  SystemEfficiencyCard,
+  // SystemEfficiencyCard,
 } from "@/components";
 import { decryptToken, getCurrentDate } from "@/utils";
 import { FC } from "react";
-import { BsFillDeviceSsdFill } from "react-icons/bs";
+// import { BsFillDeviceSsdFill } from "react-icons/bs";
 
 interface WellDashboardProps {
   params: { wellID: string };
@@ -28,6 +29,7 @@ const WellDashboad: FC<WellDashboardProps> = async ({ params }) => {
   const wellsData = await getWells(wellID);
   const devicesData = await getDevices(undefined, wellID);
   const recordsData = await getRecords();
+  const sysEffData = await getSystemEfficiency(wellID);
 
   const generalInsightsChartData = await getGeneralInsightsChartData(
     "7206bdaf-79af-4a11-89b6-7fa14de2db7c"
@@ -46,11 +48,13 @@ const WellDashboad: FC<WellDashboardProps> = async ({ params }) => {
         date={date}
         devicesData={devicesData}
         wellsData={wellsData}
+        sysEffData={sysEffData}
       />
 
       {generalInsightsChartData && (
         <GeneralInsightsCard
-          generalInsightsChartData={generalInsightsChartData.data?.data}
+          // generalInsightsChartData={generalInsightsChartData.data?.data}
+          wellsData={wellsData}
         />
       )}
 

@@ -1,20 +1,14 @@
 import { SemiPieChart } from "../charts";
-// import { ConditionsArr } from "@/libs";
 import { ConditionsItem } from "../ui";
 import { PressureAlertCard, SaveEnergyAlertCard } from "../cards";
 import { getRightbarData, handleResolve } from "@/actions";
-// import { cookies } from "next/headers";
-import { decryptToken, fetcher } from "@/utils";
-// import { toast } from "react-toastify";
-import Cookies from "js-cookie";
 
 export const Rightbar = async () => {
-  const token = Cookies.get("token");
-  const decryptedToken = token
-    ? decryptToken(decodeURIComponent(token))
-    : undefined;
-
   const { sessionData, reportsData } = await getRightbarData();
+
+  const filteredReports = reportsData?.data?.data.filter(
+    (report) => report.status !== "RESOLVED"
+  );
 
   return (
     <div className="flex h-full w-full max-w-[30%] shrink-0 flex-col overflow-y-auto rounded-2xl bg-[#333333] px-[14px] py-[19px] @container">
@@ -42,14 +36,14 @@ export const Rightbar = async () => {
       <h2 className="my-4 text-sm font-medium">Recent Alerts</h2>
 
       <div className="flex flex-col gap-[10px]">
-        {reportsData && reportsData?.data?.data.length < 1 && (
+        {reportsData && filteredReports.length < 1 && (
           <div className="flex w-full justify-center text-sm font-normal">
             No recent alerts
           </div>
         )}
 
         {reportsData &&
-          reportsData?.data?.data.map((report) =>
+          filteredReports.map((report) =>
             report.title.toLowerCase().includes("temperature") ? (
               <PressureAlertCard
                 key={report.id}

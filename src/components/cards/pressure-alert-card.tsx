@@ -5,12 +5,13 @@ import { LiaOilCanSolid } from "react-icons/lia";
 import { RxExternalLink } from "react-icons/rx";
 import { BiTask } from "react-icons/bi";
 // import { GotoerIfLink } from "../common";
-import { FC } from "react";
+import { FC, useState } from "react";
 import { encryptToken, formatDate } from "@/utils";
 import Link from "next/link";
 import { AlertCardsProps } from "@/types";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
+import { TbLoader2 } from "react-icons/tb";
 
 interface PressureAlertCardProps extends AlertCardsProps {}
 
@@ -25,6 +26,7 @@ export const PressureAlertCard: FC<PressureAlertCardProps> = ({
   const formattedtime = formatDate(time);
   const encryptID = encodeURIComponent(encryptToken(id));
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
 
   return (
     // <GotoerIfLink url={`/action-center/${encryptID}`}>
@@ -76,12 +78,21 @@ export const PressureAlertCard: FC<PressureAlertCardProps> = ({
         </Link>
         <button
           onClick={async () => {
-            const res = await handleResolve(encryptID);
+            setIsLoading(true);
+            const res = await handleResolve(encryptID).finally(() =>
+              setIsLoading(false)
+            );
             toast.info(res.data.message || res.error);
           }}
           className="flex shrink-0 items-center justify-center gap-1 rounded-md bg-[#1F7541] px-2 py-[5px] text-[10px] font-normal"
         >
-          <BiTask size={12} color="#ffffff" /> Mark Resolved
+          {isLoading ? (
+            <TbLoader2 size={12} color="#ffffff" className="animate-spin" />
+          ) : (
+            <>
+              <BiTask size={12} color="#ffffff" /> Mark Resolved
+            </>
+          )}
         </button>
       </div>
     </div>

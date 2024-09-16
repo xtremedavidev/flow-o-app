@@ -7,7 +7,9 @@ import {
 } from "@/components";
 import { FC, PropsWithChildren } from "react";
 
-const DashboardLayout: FC<PropsWithChildren> = ({ children }) => {
+interface DashboardLayoutProps extends PropsWithChildren {}
+
+const DashboardLayout: FC<DashboardLayoutProps> = ({ children }) => {
   return (
     <ProtectedRouteWrapper>
       <main className="flex h-screen w-full overflow-hidden">

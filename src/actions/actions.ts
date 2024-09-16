@@ -13,19 +13,20 @@ import {
   ReportTableHeaderResponse,
   SessionDataResponse,
   SitesResponse,
+  SystemEfficiency,
   WellsResponse,
 } from "@/types";
 import { decryptToken, fetcher } from "@/utils";
-import { revalidatePath } from "next/cache";
+import { revalidateTag } from "next/cache";
 import { cookies } from "next/headers";
-import { toast } from "react-toastify";
-import { FetcherResult } from '../utils/fetcher';
+// import { toast } from "react-toastify";
+import { FetcherResult } from "../utils/fetcher";
+import { unstable_cache } from "next/cache";
 // import { redirect } from "next/navigation";
 // import { toast } from "react-toastify";
 
 export async function getDashboardCardData() {
-
-    const token = cookies().get("token")?.value;
+  const token = cookies().get("token")?.value;
   const decryptedToken = token
     ? decryptToken(decodeURIComponent(token))
     : undefined;
@@ -83,34 +84,43 @@ export async function getDashboardCardData() {
 }
 
 export async function getReports() {
+  const token = cookies().get("token")?.value;
 
-    const token = cookies().get("token")?.value;
-  const decryptedToken = token
-    ? decryptToken(decodeURIComponent(token))
-    : undefined;
+  const resp = unstable_cache(
+    async () => {
+      const decryptedToken = token
+        ? decryptToken(decodeURIComponent(token))
+        : undefined;
 
-  if (!decryptedToken) {
-    throw new Error("Session expired. Please login again");
-  }
+      if (!decryptedToken) {
+        throw new Error("Session expired. Please login again");
+      }
 
-  const reportsData = await fetcher<ReportsResponse>(
-    `${process.env.NEXT_PUBLIC_BASEURL}/record-gateway/get-reports`,
-    {
-      method: "GET",
-      data: {},
-      token: decryptedToken,
-    }
+      const reportsData = await fetcher<ReportsResponse>(
+        `${process.env.NEXT_PUBLIC_BASEURL}/record-gateway/get-reports`,
+        {
+          method: "GET",
+          data: {},
+          token: decryptedToken,
+        }
+      );
+
+      if (!reportsData) {
+        throw new Error("Failed to fetch reports data");
+      }
+
+      return reportsData;
+    },
+    undefined,
+    { tags: ["getReportsTag"] }
   );
 
-  if (!reportsData) {
-    throw new Error("Failed to fetch reports data");
-  }
+  const data = await resp();
 
-  return reportsData;
+  return data;
 }
 
 export async function getSessionData() {
-
   const token = cookies().get("token")?.value;
   const decryptedToken = token
     ? decryptToken(decodeURIComponent(token))
@@ -137,17 +147,13 @@ export async function getSessionData() {
 }
 
 export async function getRightbarData() {
-
   const sessionData = await getSessionData();
   const reportsData = await getReports();
 
   return { sessionData, reportsData };
 }
 
-export async function getTableHeaderForReportData(
- 
-) {
-
+export async function getTableHeaderForReportData() {
   const token = cookies().get("token")?.value;
   const decryptedToken = token
     ? decryptToken(decodeURIComponent(token))
@@ -174,7 +180,6 @@ export async function getTableHeaderForReportData(
 }
 
 export async function getRecords() {
-
   const token = cookies().get("token")?.value;
   const decryptedToken = token
     ? decryptToken(decodeURIComponent(token))
@@ -200,11 +205,7 @@ export async function getRecords() {
   return recordsData;
 }
 
-export async function getGeneralInsightsChartData(
-
-  wellID: string
-) {
-
+export async function getGeneralInsightsChartData(wellID: string) {
   const token = cookies().get("token")?.value;
   const decryptedToken = token
     ? decryptToken(decodeURIComponent(token))
@@ -238,7 +239,7 @@ export async function handleResolve(id: string) {
     ? decryptToken(decodeURIComponent(token))
     : undefined;
 
-    const decryptedID = decryptToken(decodeURIComponent(id));
+  const decryptedID = decryptToken(decodeURIComponent(id));
 
   const res = await fetcher<{ message: string }>(
     `${process.env.NEXT_PUBLIC_BASEURL}/record-gateway/resolve-report`,
@@ -250,40 +251,50 @@ export async function handleResolve(id: string) {
   );
 
   console.log("resolved---------------->", res);
-  
-  revalidatePath("/")
-  revalidatePath("/action-center")
+
+  revalidateTag("getReportsTag");
   return res;
 }
 
-
-export async function getRecommendations(id: string) {
+export const getRecommendations = async (id: string) => {
   const token = cookies().get("token")?.value;
-  const decryptedToken = token
-    ? decryptToken(decodeURIComponent(token))
-    : undefined;
 
-     if (!decryptedToken) {
-    throw new Error("Session expired. Please login again");
-  }
+  const resp = unstable_cache(
+    async () => {
+      const decryptedToken = token
+        ? decryptToken(decodeURIComponent(token))
+        : undefined;
 
-  const recommendationData = await fetcher<RecommendationResponse>(
-    `${process.env.NEXT_PUBLIC_BASEURL}/record-gateway/get-recommendations`,
+      if (!decryptedToken) {
+        throw new Error("Session expired. Please login again");
+      }
+
+      const recommendationData = await fetcher<RecommendationResponse>(
+        `${process.env.NEXT_PUBLIC_BASEURL}/record-gateway/get-recommendations`,
+        {
+          method: "POST",
+          data: { reportId: id },
+          token: decryptedToken,
+        }
+      );
+
+      if (!recommendationData) {
+        throw new Error("Failed to fetch recommendation data");
+      }
+
+      // console.log("recData=---------------->", recommendationData.data.recommendation[recommendationData.data.recommendation.length - 1].recommendations);
+
+      return recommendationData;
+    },
+    undefined,
     {
-      method: "POST",
-      data: { reportId: id },
-      token: decryptedToken,
+      tags: ["getRecommendationsTag"],
     }
   );
 
-   if (!recommendationData) {
-    throw new Error("Failed to fetch recommendation data");
-  }
-
-  // console.log("recData=---------------->", recommendationData.data.recommendation[recommendationData.data.recommendation.length - 1].recommendations);
-  
-  return recommendationData;
-}
+  const data = await resp();
+  return data;
+};
 
 export async function getRecommendationsChat(id: string, question: string) {
   const token = cookies().get("token")?.value;
@@ -291,7 +302,7 @@ export async function getRecommendationsChat(id: string, question: string) {
     ? decryptToken(decodeURIComponent(token))
     : undefined;
 
-     if (!decryptedToken) {
+  if (!decryptedToken) {
     throw new Error("Session expired. Please login again");
   }
 
@@ -304,18 +315,23 @@ export async function getRecommendationsChat(id: string, question: string) {
     }
   );
 
-   if (!recommendationChatData) {
+  if (!recommendationChatData) {
     throw new Error("Failed to fetch recommendation chat data");
   }
 
-  
   return recommendationChatData;
 }
 
-export async function getSites(id: string): Promise<FetcherResult<GetSingleSiteResponse>>; 
-export async function getSites(id?: undefined): Promise<FetcherResult<GetMultipleSitesResponse>>; 
+export async function getSites(
+  id: string
+): Promise<FetcherResult<GetSingleSiteResponse>>;
+export async function getSites(
+  id?: undefined
+): Promise<FetcherResult<GetMultipleSitesResponse>>;
 
-export async function getSites(id?: string): Promise<FetcherResult<GetSiteResponse<typeof id>>> {
+export async function getSites(
+  id?: string
+): Promise<FetcherResult<GetSiteResponse<typeof id>>> {
   const token = cookies().get("token")?.value;
   const decryptedToken = token
     ? decryptToken(decodeURIComponent(token))
@@ -341,7 +357,7 @@ export async function getSites(id?: string): Promise<FetcherResult<GetSiteRespon
   return sitesData;
 }
 
-export async function getWells(id?: string, siteId?:string ){
+export async function getWells(id?: string, siteId?: string) {
   const token = cookies().get("token")?.value;
   const decryptedToken = token
     ? decryptToken(decodeURIComponent(token))
@@ -355,7 +371,7 @@ export async function getWells(id?: string, siteId?:string ){
     `${process.env.NEXT_PUBLIC_BASEURL}/well-gateway/get`,
     {
       method: "POST",
-      data: { id , siteId },
+      data: { id, siteId },
       token: decryptedToken,
     }
   );
@@ -367,7 +383,7 @@ export async function getWells(id?: string, siteId?:string ){
   return wellsData;
 }
 
-export async function getDevices(id?: string, wellId?:string ){
+export async function getDevices(id?: string, wellId?: string) {
   const token = cookies().get("token")?.value;
   const decryptedToken = token
     ? decryptToken(decodeURIComponent(token))
@@ -381,7 +397,7 @@ export async function getDevices(id?: string, wellId?:string ){
     `${process.env.NEXT_PUBLIC_BASEURL}/iot-gateway/get`,
     {
       method: "POST",
-      data: { id , wellId },
+      data: { id, wellId },
       token: decryptedToken,
     }
   );
@@ -403,11 +419,11 @@ export async function createNote(text: string, deviceID: string) {
     throw new Error("Session expired. Please login again");
   }
 
-  const noteData = await fetcher<{message: string}>(
+  const noteData = await fetcher<{ message: string }>(
     `${process.env.NEXT_PUBLIC_BASEURL}/record-gateway/create-note`,
     {
       method: "POST",
-      data: { text: text , iotId: deviceID },
+      data: { note: text, iotId: deviceID },
       token: decryptedToken,
     }
   );
@@ -419,7 +435,47 @@ export async function createNote(text: string, deviceID: string) {
   return noteData;
 }
 
-export async function getNotes(deviceID: string) {
+
+export const getNotes = async (deviceID: string) => {
+  const token = cookies().get("token")?.value;
+
+  const resp = unstable_cache(
+    async function () {
+      const decryptedToken = token
+        ? decryptToken(decodeURIComponent(token))
+        : undefined;
+
+      if (!decryptedToken) {
+        throw new Error("Session expired. Please login again");
+      }
+
+      const notesData = await fetcher<GetNotesResponse>(
+        `${process.env.NEXT_PUBLIC_BASEURL}/record-gateway/get-notes`,
+        {
+          method: "GET",
+          data: { iotId: deviceID },
+          token: decryptedToken,
+        }
+      );
+
+      if (!notesData) {
+        throw new Error("Failed to create note");
+      }
+
+      return notesData;
+    },
+    undefined,
+    {
+      tags: ["getNotesTag"],
+    }
+  );
+
+  const data = await resp();
+
+  return data;
+};
+
+export async function getSystemEfficiency(wellId: string) {
   const token = cookies().get("token")?.value;
   const decryptedToken = token
     ? decryptToken(decodeURIComponent(token))
@@ -429,18 +485,18 @@ export async function getNotes(deviceID: string) {
     throw new Error("Session expired. Please login again");
   }
 
-  const notesData = await fetcher<GetNotesResponse>(
-    `${process.env.NEXT_PUBLIC_BASEURL}/record-gateway/get-notes`,
+  const sysEffData = await fetcher<SystemEfficiency>(
+    `${process.env.NEXT_PUBLIC_BASEURL}/record-gateway/get-system-efficiency`,
     {
       method: "GET",
-      data: { iotId: deviceID },
+      data: { wellId },
       token: decryptedToken,
     }
   );
 
-  if (!notesData) {
-    throw new Error("Failed to create note");
+  if (!sysEffData) {
+    throw new Error("Failed to get system efficiency");
   }
 
-  return notesData;
+  return sysEffData;
 }

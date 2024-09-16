@@ -4,11 +4,12 @@ import {
   FallbackLoader,
   FilterButton,
   ManageDevicesCard,
+  SortArrow,
 } from "@/components";
 import { decryptToken, fetcher, getCurrentDate } from "@/utils";
 import { TbArrowsSort } from "react-icons/tb";
 import { cookies } from "next/headers";
-import { Suspense } from "react";
+import { FC, Suspense } from "react";
 import { DevicesDataResp } from "@/types";
 import { Metadata } from "next";
 
@@ -17,7 +18,15 @@ export const metadata: Metadata = {
   description: "Dashboard for FlowOptix",
 };
 
-const DashboardDevices = async () => {
+interface DashboardDevicesParams {
+  searchParams: { [key: string]: string | undefined };
+}
+
+const DashboardDevices: FC<DashboardDevicesParams> = async ({
+  searchParams,
+}) => {
+  const sortVal = searchParams.sort || "acc";
+
   const token = cookies().get("token")?.value;
   const decryptedToken = token
     ? decryptToken(decodeURIComponent(token))
@@ -31,6 +40,11 @@ const DashboardDevices = async () => {
       token: decryptedToken,
     }
   );
+
+  const sortedDevicesData =
+    sortVal === "acc"
+      ? devicesData.data?.data.devices
+      : devicesData.data?.data.devices.reverse();
 
   const lastUpdated = getCurrentDate();
 
@@ -53,13 +67,13 @@ const DashboardDevices = async () => {
       </div>
 
       <div className="flex w-full items-center justify-end gap-[10px]">
-        <TbArrowsSort size={24} color="#ABAAAA" />
-        <FilterButton />
+        <SortArrow />
+        {/* <FilterButton /> */}
       </div>
 
       <div className="mt-[10px]">
         <Suspense fallback={<FallbackLoader />}>
-          <DeviceListTable devicesData={devicesData.data?.data.devices} />
+          <DeviceListTable devicesData={sortedDevicesData} />
         </Suspense>
       </div>
     </div>

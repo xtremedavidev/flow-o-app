@@ -1,7 +1,7 @@
 import { createNote, getNotes } from "@/actions";
 import { NotesPrompt } from "@/components";
 import { decryptToken } from "@/utils";
-import { revalidatePath } from "next/cache";
+import { revalidateTag } from "next/cache";
 import { FC } from "react";
 
 interface NotesPageProps {
@@ -18,7 +18,7 @@ const NotesPage: FC<NotesPageProps> = async ({ params }) => {
   const handleCreatNote = async (text: string, deviceID: string) => {
     "use server";
     const res = await createNote(text, deviceID);
-    revalidatePath(`/devices/[deviceId]/notes`, "page");
+    revalidateTag("getNotesTag");
     return res;
   };
 
@@ -35,7 +35,7 @@ const NotesPage: FC<NotesPageProps> = async ({ params }) => {
       </div>
 
       <div className="h-full max-h-[calc(100%-130px)] space-y-4 overflow-y-auto pr-2">
-        {notesData.data.notes.map((note) => (
+        {notesData.data.notes.reverse().map((note) => (
           <NotesItem
             key={note.id}
             username={`${note.user.first_name} ${note.user.last_name}`}

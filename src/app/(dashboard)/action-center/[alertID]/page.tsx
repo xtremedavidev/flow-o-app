@@ -13,7 +13,7 @@ import { BsStars } from "react-icons/bs";
 import { FaMagic, FaRegClock } from "react-icons/fa";
 import { decryptToken, formatDateToLocalString } from "@/utils";
 import { getRecommendations, getRecommendationsChat } from "@/actions";
-import { revalidatePath } from "next/cache";
+import { revalidateTag } from "next/cache";
 
 export const dynamic = "force-dynamic";
 
@@ -31,7 +31,7 @@ const AlertsPage: FC<AlertsPageProps> = async ({ params }) => {
   const handlePrompt = async (text: string) => {
     "use server";
     const resp = await getRecommendationsChat(alertID, text);
-    revalidatePath(`/action-center/[alertID]`, "page");
+    // revalidateTag("getRecommendationsTag");
     return resp;
   };
 

@@ -5,7 +5,7 @@ import { useMutation } from "@tanstack/react-query";
 import Cookies from "js-cookie";
 import { decryptToken, fetcher } from "@/utils";
 import { RecommendationResponse } from "@/types";
-import { revalidatePath } from "next/cache";
+import { revalidateTag } from "next/cache";
 
 interface RegenerateBtnProps {
   // handleRenerate: () => Promise<void>;
@@ -46,7 +46,7 @@ export const RegenerateBtn: FC<RegenerateBtnProps> = ({ alertID }) => {
     mutationFn: (id: string) => getRecommendations(id),
     onSuccess: () => {
       setIsLoading(false);
-      revalidatePath(`/action-center/[alertID]`, "page");
+      revalidateTag("getRecommendationsTag");
     },
   });
 

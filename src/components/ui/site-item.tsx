@@ -1,34 +1,9 @@
 import { FC } from "react";
-import { StatusSelect } from "../selects";
-import { FilterButton } from "../buttons";
-
-interface ListWrapperProps {
-  children: React.ReactNode;
-  listTitle: string;
-}
-
-export const ListWrapper: FC<ListWrapperProps> = ({ listTitle, children }) => {
-  return (
-    <div className="overflow-hidden rounded-[27px] bg-[#297FB8]/[0.1] px-3 py-4">
-      <div className="flex items-center justify-between px-[14px]">
-        <h2 className="text-base font-medium">List of {listTitle}</h2>
-        <div className="flex items-center gap-[10px]">
-          <StatusSelect />
-          <FilterButton />
-        </div>
-      </div>
-
-      <div className="mt-4 h-full max-h-[500px] space-y-[6px] overflow-y-auto">
-        {children}
-      </div>
-    </div>
-  );
-};
 
 interface SiteItemProps {
   location: string;
   coordinate: string;
-  numberOfWells: number;
+  numberOfWells?: number;
   status: string;
   lastUpdated: string;
   name: string;
@@ -60,11 +35,13 @@ export const SiteItem: FC<SiteItemProps> = ({
         </div>
       </div>
 
-      <div className="text-[10px] font-normal text-white">
-        <p>
-          <span className="font-semibold">Number of wells:</span>{" "}
-          {numberOfWells}
-        </p>
+      <div className="flex flex-col items-end text-[10px] font-normal text-white">
+        {numberOfWells && (
+          <p>
+            <span className="font-semibold">Number of wells:</span>{" "}
+            {numberOfWells}
+          </p>
+        )}
         <p className="flex items-center gap-[6px]">
           <StatusIndicator status="no alerts" />
           <span className="font-semibold">Status:</span> {status}

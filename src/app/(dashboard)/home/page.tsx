@@ -6,24 +6,17 @@ import {
 import {
   ActivesCard,
   EventLogTable,
-  FallbackLoader,
   GeneralInsightsCard,
   ListWrapper,
   // LocateWellCard,
   ReportDataTable,
-  SiteItem,
   SwitcherSitesWells,
   SystemEfficiencyCard,
   // WellActivityCard,
   WellChartAndMap,
 } from "@/components";
 // import { GeneralInsightsAPIResponse } from "@/hooks";
-import { decryptToken, encryptToken, getCurrentDate } from "@/utils";
-
 import { Metadata } from "next";
-import { cookies } from "next/headers";
-import Link from "next/link";
-import { Suspense } from "react";
 import { BsFillDeviceSsdFill } from "react-icons/bs";
 
 export const metadata: Metadata = {
@@ -32,11 +25,6 @@ export const metadata: Metadata = {
 };
 
 const DashboardHome = async () => {
-  const token = cookies().get("token")?.value;
-  const decryptedToken = token
-    ? decryptToken(decodeURIComponent(token))
-    : undefined;
-
   const { wellsData, devicesData, sitesData } = await getDashboardCardData();
   const recordsData = await getRecords();
 
@@ -44,66 +32,27 @@ const DashboardHome = async () => {
     "7206bdaf-79af-4a11-89b6-7fa14de2db7c"
   );
 
-  const { date } = getCurrentDate();
-
   const SwitcherSitesWellsViewArr = [
-    <ListWrapper key="list-wrapper-for-all-sites" listTitle="Sites">
-      <Suspense fallback={<FallbackLoader />}>
-        {sitesData.data?.data.length < 1 ? (
-          <div className="flex w-full justify-center">No site data</div>
-        ) : (
-          sitesData.data?.data.map((site) => (
-            <Link
-              key={site.id}
-              href={`/home/site/${encodeURIComponent(encryptToken(site.id))}`}
-            >
-              <SiteItem
-                key={site.id}
-                id={site.id}
-                name={site.name}
-                coordinate={site.location}
-                lastUpdated={date}
-                location={site.location}
-                numberOfWells={0}
-                status={site.status}
-              />
-            </Link>
-          ))
-        )}
-      </Suspense>
-    </ListWrapper>,
-    <ListWrapper key="list-wrapper-for-all-wells" listTitle="Wells">
-      <Suspense fallback={<FallbackLoader />}>
-        {wellsData.data?.data.wells.length < 1 ? (
-          <div className="flex w-full justify-center">No well data</div>
-        ) : (
-          wellsData.data?.data.wells.map((well) => (
-            <Link
-              key={well.id}
-              href={`/home/well/${encodeURIComponent(encryptToken(well.id))}`}
-            >
-              <SiteItem
-                key={well.id}
-                id={well.id}
-                name={well.name}
-                coordinate={well.location}
-                lastUpdated={date}
-                location={well.location}
-                numberOfWells={0}
-                status={well.status}
-              />
-            </Link>
-          ))
-        )}
-      </Suspense>
-    </ListWrapper>,
+    <ListWrapper
+      key="list-wrapper-for-all-sites"
+      listTitle="Sites"
+      baseUrl="/home/site/"
+      listData={sitesData.data?.data}
+    />,
+    <ListWrapper
+      key="list-wrapper-for-all-wells"
+      listTitle="Wells"
+      baseUrl="/home/well/"
+      listData={wellsData.data?.data.wells}
+      // noOfWells={wellsData.data?.data.totalWell}
+    />,
   ];
 
   return (
     <div className="flex flex-col gap-7">
       <h1 className="text-2xl font-semibold">Dashboard</h1>
 
-      <div className="flex items-center gap-6">
+      <div className="flex w-full items-center justify-between gap-6">
         <ActivesCard
           icon={<BsFillDeviceSsdFill />}
           label="Active Wells"
@@ -131,20 +80,21 @@ const DashboardHome = async () => {
           }
         />
 
-        <SystemEfficiencyCard
+        {/* <SystemEfficiencyCard
           average_downtime="5 mins"
           average_resolution="2 Hours"
           icon={<BsFillDeviceSsdFill />}
           label="System Efficiency"
           percentage={92}
-        />
+        /> */}
       </div>
 
       <WellChartAndMap />
 
       {generalInsightsChartData && (
         <GeneralInsightsCard
-          generalInsightsChartData={generalInsightsChartData.data?.data}
+          wellsData={wellsData}
+          // generalInsightsChartData={generalInsightsChartData.data?.data}
         />
       )}
 

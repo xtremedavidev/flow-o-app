@@ -10,9 +10,18 @@ import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import Cookies from "js-cookie";
+import { useUserStore } from "@/managers";
 
 interface LoginResponse extends DefaultResponse {
   token: string;
+  user: {
+    id: string;
+    first_name: string;
+    last_name: string;
+    email: string;
+    phone: string;
+    onBoardingDone: string;
+  };
 }
 
 const Login = () => {
@@ -23,6 +32,7 @@ const Login = () => {
   } = useForm<LoginInputs>();
 
   const [rememberMe, setRememberMe] = useState(true);
+  const setUser = useUserStore((state) => state.setUser);
 
   const router = useRouter();
 
@@ -56,6 +66,7 @@ const Login = () => {
         });
         // localStorage.setItem("token", encryptedToken);
         toast.success("Login Successful");
+        setUser(res.data.user);
         router.push("/home");
       } else {
         if (res?.data?.message) {

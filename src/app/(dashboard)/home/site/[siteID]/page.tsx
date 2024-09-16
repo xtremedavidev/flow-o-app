@@ -9,17 +9,17 @@ import {
   ActivesCard,
   BackArrowButton,
   EventLogTable,
-  FallbackLoader,
+  // FallbackLoader,
   GeneralInsightsCard,
   ListWrapper,
   ReportDataTable,
-  SiteItem,
-  SystemEfficiencyCard,
+  // SiteItem,
+  // SystemEfficiencyCard,
   WellChartAndMap,
 } from "@/components";
-import { decryptToken, encryptToken, getCurrentDate } from "@/utils";
-import Link from "next/link";
-import { FC, Suspense } from "react";
+import { decryptToken } from "@/utils";
+// import Link from "next/link";
+import { FC } from "react";
 import { BsFillDeviceSsdFill } from "react-icons/bs";
 
 interface SiteDashboardProps {
@@ -38,7 +38,7 @@ const SiteDashboard: FC<SiteDashboardProps> = async ({ params }) => {
     "7206bdaf-79af-4a11-89b6-7fa14de2db7c"
   );
 
-  const { date } = getCurrentDate();
+  // const { date } = getCurrentDate();
 
   return (
     <div className="flex flex-col gap-7">
@@ -47,7 +47,7 @@ const SiteDashboard: FC<SiteDashboardProps> = async ({ params }) => {
         <span className="text-xs">/ {siteData.data.data.name}</span>
       </h1>
 
-      <div className="flex items-center gap-6">
+      <div className="flex w-full items-center justify-between gap-6">
         <ActivesCard
           icon={<BsFillDeviceSsdFill />}
           label="Active Wells"
@@ -75,48 +75,31 @@ const SiteDashboard: FC<SiteDashboardProps> = async ({ params }) => {
           }
         /> */}
 
-        <SystemEfficiencyCard
+        {/* <SystemEfficiencyCard
           average_downtime="5 mins"
           average_resolution="2 Hours"
           icon={<BsFillDeviceSsdFill />}
           label="System Efficiency"
           percentage={92}
-        />
+        /> */}
       </div>
 
       <WellChartAndMap />
 
       {generalInsightsChartData && (
         <GeneralInsightsCard
-          generalInsightsChartData={generalInsightsChartData.data?.data}
+          // generalInsightsChartData={generalInsightsChartData.data?.data}
+          wellsData={wellsData}
         />
       )}
 
-      <ListWrapper key="list-wrapper-for-all-wells" listTitle="Wells">
-        <Suspense fallback={<FallbackLoader />}>
-          {wellsData.data?.data.wells.length < 1 ? (
-            <div className="flex w-full justify-center">No well data</div>
-          ) : (
-            wellsData.data?.data.wells.map((well) => (
-              <Link
-                key={well.id}
-                href={`/home/well/${encodeURIComponent(encryptToken(well.id))}`}
-              >
-                <SiteItem
-                  key={well.id}
-                  id={well.id}
-                  name={well.name}
-                  coordinate={well.location}
-                  lastUpdated={date}
-                  location={well.location}
-                  numberOfWells={0}
-                  status={well.status}
-                />
-              </Link>
-            ))
-          )}
-        </Suspense>
-      </ListWrapper>
+      <ListWrapper
+        key="list-wrapper-for-all-wells"
+        listTitle="Wells"
+        baseUrl="/home/well/"
+        listData={wellsData.data?.data.wells}
+        noOfWells={wellsData.data?.data.totalWell}
+      />
 
       <div className="mt-10 rounded-[27px] bg-[#297FB8]/[0.1] p-3">
         <h1 className="mb-5 text-center text-xl font-medium">Report Data</h1>

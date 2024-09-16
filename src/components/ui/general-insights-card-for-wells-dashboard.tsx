@@ -4,18 +4,19 @@ import { BsFillDeviceSsdFill } from "react-icons/bs";
 import { ActivesCard, SystemEfficiencyCard } from "../cards";
 import { FC, useState } from "react";
 import { FetcherResult } from "@/utils";
-import { DevicesDataResp, WellsResponse } from "@/types";
+import { DevicesDataResp, SystemEfficiency, WellsResponse } from "@/types";
 import { FaAngleDown } from "react-icons/fa6";
 
 interface GeneralInsightsWellsDashboardProps {
   wellsData: FetcherResult<WellsResponse>;
   devicesData: FetcherResult<DevicesDataResp>;
   date: string;
+  sysEffData: FetcherResult<SystemEfficiency>;
 }
 
 export const GeneralInsightsWellsDashboard: FC<
   GeneralInsightsWellsDashboardProps
-> = ({ wellsData, devicesData, date }) => {
+> = ({ wellsData, devicesData, date, sysEffData }) => {
   const [isVisible, setIsVisible] = useState(false);
 
   return (
@@ -76,11 +77,11 @@ export const GeneralInsightsWellsDashboard: FC<
           }
         />
         <SystemEfficiencyCard
-          average_downtime="5 mins"
-          average_resolution="2 Hours"
+          average_downtime={`${sysEffData.data.averageDowntime}`}
+          average_resolution={`${Number(sysEffData.data.averageResolutionTime.toFixed(2))}`}
           icon={<BsFillDeviceSsdFill />}
           label="System Efficiency"
-          percentage={92}
+          percentage={sysEffData.data.ResolutionRate}
         />
       </div>
 

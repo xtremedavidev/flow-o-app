@@ -6,48 +6,62 @@ import {
   PressureAlertCard,
   SaveEnergyAlertCard,
   SemiPieChart,
+  SortArrow,
 } from "@/components";
 import { ConditionsArr } from "@/libs";
 import { FC } from "react";
 import { GoAlertFill } from "react-icons/go";
-import { PiSpeedometerFill } from "react-icons/pi";
 import { IoNotifications } from "react-icons/io5";
 import { IconType } from "react-icons";
 import { MdDateRange, MdOutlineTroubleshoot } from "react-icons/md";
 import { TbArrowsSort } from "react-icons/tb";
-import { decryptToken, fetcher } from "@/utils";
-import { cookies } from "next/headers";
 import { getRightbarData, handleResolve } from "@/actions";
-// import { toast } from "react-toastify";
 import { ReportsResponse, SessionDataResponse } from "@/types";
+import { Metadata } from "next";
 
-const DashboardActionCenter = async () => {
-  const token = cookies().get("token")?.value;
-  const decryptedToken = token
-    ? decryptToken(decodeURIComponent(token))
-    : undefined;
+export const metadata: Metadata = {
+  title: "FlowOptix | Action Center",
+  description: "Action Center for FlowOptix",
+};
+
+interface DashboardActionCenterProps {
+  searchParams: { [key: string]: string | undefined };
+}
+
+const DashboardActionCenter: FC<DashboardActionCenterProps> = async ({
+  searchParams,
+}) => {
+  const sortVal = searchParams.sort || "acc";
 
   const { sessionData, reportsData } = await getRightbarData();
+
+  const filteredReports =
+    sortVal === "acc"
+      ? reportsData?.data?.data.filter((report) => report.status !== "RESOLVED")
+      : reportsData?.data?.data
+          .filter((report) => report.status !== "RESOLVED")
+          .reverse();
 
   const SwitcherOptionsElements = [
     <div key={"All"} className="w-full">
       <div className="flex items-center justify-end">
         <div className="flex w-full items-center justify-end gap-[10px]">
-          <MdDateRange size={24} color="#ffffff" />
-          <TbArrowsSort size={24} color="#ABAAAA" />
-          <FilterButton />
+          {/* <MdDateRange size={24} color="#ffffff" /> */}
+          {/* <TbArrowsSort size={24} color="#ABAAAA" /> */}
+          <SortArrow />
+          {/* <FilterButton /> */}
         </div>
       </div>
 
       <div className="mt-[20px] flex flex-col gap-[14px]">
-        {reportsData && reportsData?.data?.data.length < 1 && (
+        {reportsData && filteredReports.length < 1 && (
           <div className="flex w-full justify-center text-sm font-normal">
             No recent alerts or notifications
           </div>
         )}
 
         {reportsData &&
-          reportsData?.data?.data.map((report) =>
+          filteredReports.map((report) =>
             report.title.toLowerCase().includes("temperature") ? (
               <PressureAlertCard
                 key={report.id}
@@ -76,21 +90,21 @@ const DashboardActionCenter = async () => {
     <div key={"Alerts"} className="w-full">
       <div className="flex items-center justify-end">
         <div className="flex w-full items-center justify-end gap-[10px]">
-          <MdDateRange size={24} color="#ffffff" />
+          {/* <MdDateRange size={24} color="#ffffff" /> */}
           <TbArrowsSort size={24} color="#ABAAAA" />
-          <FilterButton />
+          {/* <FilterButton /> */}
         </div>
       </div>
 
       <div className="mt-[20px] flex flex-col gap-[14px]">
-        {reportsData.data && reportsData.data?.data.length < 1 && (
+        {reportsData.data && filteredReports.length < 1 && (
           <div className="flex w-full justify-center text-sm font-normal">
             No recent alerts
           </div>
         )}
 
         {reportsData &&
-          reportsData.data?.data
+          filteredReports
             .filter((report) => report.type === "ALERT")
             .map((report) =>
               report.title.toLowerCase().includes("temperature") ? (
@@ -121,21 +135,21 @@ const DashboardActionCenter = async () => {
     <div key={"Notifications"} className="w-full">
       <div className="flex items-center justify-end">
         <div className="flex w-full items-center justify-end gap-[10px]">
-          <MdDateRange size={24} color="#ffffff" />
+          {/* <MdDateRange size={24} color="#ffffff" /> */}
           <TbArrowsSort size={24} color="#ABAAAA" />
-          <FilterButton />
+          {/* <FilterButton /> */}
         </div>
       </div>
 
       <div className="mt-[20px] flex flex-col gap-[14px]">
-        {reportsData.data && reportsData.data?.data.length < 1 && (
+        {reportsData.data && filteredReports.length < 1 && (
           <div className="flex w-full justify-center text-sm font-normal">
             No recent notifications
           </div>
         )}
 
         {reportsData.data &&
-          reportsData.data?.data
+          filteredReports
             .filter((report) => report.type === "NOTIFICATION")
             .map((report) =>
               report.title.toLowerCase().includes("temperature") ? (

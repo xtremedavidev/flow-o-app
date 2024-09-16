@@ -14,7 +14,7 @@ export type RecordActions = {
 
 export type RecordStore = RecordState & RecordActions
 
-export const defaultInitState: RecordState = {
+const defaultInitState: RecordState = {
   recommendationChat: null,
 }
 
