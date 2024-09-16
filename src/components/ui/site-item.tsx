@@ -42,10 +42,10 @@ export const SiteItem: FC<SiteItemProps> = ({
             {numberOfWells}
           </p>
         )}
-        <p className="flex items-center gap-[6px]">
+        <div className="flex items-center gap-[6px]">
           <StatusIndicator status="no alerts" />
           <span className="font-semibold">Status:</span> {status}
-        </p>
+        </div>
         <p>
           <span className="font-semibold">Last Updated:</span> {lastUpdated}
         </p>

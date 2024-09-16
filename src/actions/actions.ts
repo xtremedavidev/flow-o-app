@@ -215,12 +215,18 @@ export async function getGeneralInsightsChartData(wellID: string) {
     throw new Error("Session expired. Please login again");
   }
 
+  const today = new Date();
+const formattedDate = today.toISOString().split('T')[0];
+
   const generalInsightsChartData = await fetcher<GeneralInsightsAPIResponse>(
     `${process.env.NEXT_PUBLIC_BASEURL}/record-gateway/get-graph-data`,
     {
       method: "POST",
       data: {
         well: wellID,
+        startDate: "2020-08-19",
+        endDate: formattedDate,
+
       },
       token: decryptedToken,
     }

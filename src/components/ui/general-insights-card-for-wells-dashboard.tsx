@@ -35,11 +35,11 @@ export const GeneralInsightsWellsDashboard: FC<
           </div>
 
           <div className="text-[10px] font-normal text-white">
-            <p className="flex items-center gap-[6px]">
+            <div className="flex items-center gap-[6px]">
               <StatusIndicator status="no alerts" />
               <span className="font-semibold">Status:</span>{" "}
               {wellsData.data.data.wells[0].status}
-            </p>
+            </div>
             <p>
               <span className="font-semibold">Last Updated:</span> {date}
             </p>

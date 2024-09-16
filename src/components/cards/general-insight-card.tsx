@@ -12,16 +12,16 @@ import { WellsResponse } from "@/types";
 import { TbLoader2 } from "react-icons/tb";
 
 interface OriginalData {
-  x: string; // Time in HH:mm format
-  y: string; // Value as string
-  dataTypeName: string; // Category name
-  date: string; // Date in ISO format
+  x: string;
+  y: string;
+  dataTypeName: string;
+  date: string;
 }
 
 interface TransformedData {
-  date: number; // Timestamp for the X-axis
-  value: number; // Numerical value for the Y-axis
-  category: string; // Category (e.g., "Flow Temp", "Pipeline Press.")
+  date: number;
+  value: number;
+  category: string;
 }
 
 interface GeneralInsightsCardProps {
@@ -38,32 +38,23 @@ export const GeneralInsightsCard: FC<GeneralInsightsCardProps> = ({
 
   const generalInsightsChartData = useQuery({
     queryKey: ["generalInsightsChartData", selectedCategory],
-    queryFn: () =>
-      getGeneralInsightsChartData(
-        // "7206bdaf-79af-4a11-89b6-7fa14de2db7c"
-        selectedCategory
-      ),
-    enabled: !!selectedCategory, // Only fetch when a category is selected
+    queryFn: () => getGeneralInsightsChartData(selectedCategory),
+    enabled: !!selectedCategory,
   });
 
   useEffect(() => {
-    if (generalInsightsChartData.isSuccess) {
-      const transformedData = transformData(
+    if (generalInsightsChartData.data?.data.data) {
+      const newTransformedData = transformData(
         generalInsightsChartData.data.data.data
       );
-      setTransformedData(transformedData);
+      setTransformedData(newTransformedData);
     }
-  }, [generalInsightsChartData.isSuccess]);
+  }, [
+    generalInsightsChartData.isSuccess,
+    generalInsightsChartData.data?.data.data,
+  ]);
 
-  // const transformedData = generalInsightsChartData.data
-  //   ? transformData(generalInsightsChartData.data.data.data)
-  //   : [];
-
-  const lineChartData = useMemo(
-    () => transformedData,
-    // [generalInsightsChartData.data?.data.data]
-    [transformedData]
-  );
+  const lineChartData = useMemo(() => transformedData, [transformedData]);
 
   if (!wellsData) {
     return (
@@ -77,7 +68,9 @@ export const GeneralInsightsCard: FC<GeneralInsightsCardProps> = ({
 
       <select
         className="mt-[10px] border-none bg-transparent text-xs font-normal text-[#BDBDBD] outline-none"
-        onChange={(e) => setSelectedCategory(e.target.value)}
+        onChange={(e) => {
+          setSelectedCategory(e.target.value);
+        }}
       >
         <option value="" disabled selected>
           Select Category
@@ -105,9 +98,9 @@ export const GeneralInsightsCard: FC<GeneralInsightsCardProps> = ({
           </div>
         )}
 
-      {selectedCategory !== "" &&
-        generalInsightsChartData.data?.data.data &&
-        generalInsightsChartData.data?.data.data?.length >= 1 && (
+      {generalInsightsChartData.isSuccess &&
+        generalInsightsChartData.data !== undefined &&
+        generalInsightsChartData.data.data.data.length >= 1 && (
           <LineChart data={lineChartData} />
         )}
 
