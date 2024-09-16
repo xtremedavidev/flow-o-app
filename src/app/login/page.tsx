@@ -61,8 +61,14 @@ const Login = () => {
         const token = res?.data?.token;
         const encryptedToken = encodeURIComponent(encryptToken(token));
 
-        Cookies.set("token", encryptedToken, {
-          expires: rememberMe ? 30 : undefined,
+        //  Cookies.set("token", encryptedToken, {
+        //   expires: rememberMe ? 30 : undefined,
+        // });
+        await new Promise<void>((resolve) => {
+          Cookies.set("token", encryptedToken, {
+            expires: rememberMe ? 30 : undefined,
+          });
+          resolve();
         });
         // localStorage.setItem("token", encryptedToken);
         toast.success("Login Successful");
