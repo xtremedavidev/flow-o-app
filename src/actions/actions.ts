@@ -2,6 +2,7 @@
 
 import { GeneralInsightsAPIResponse } from "@/hooks";
 import {
+  DefaultResponse,
   DevicesDataResp,
   GetMultipleSitesResponse,
   GetNotesResponse,
@@ -16,8 +17,8 @@ import {
   SystemEfficiency,
   WellsResponse,
 } from "@/types";
-import { decryptToken, fetcher } from "@/utils";
-import { revalidateTag } from "next/cache";
+import { decryptToken, encryptToken, fetcher } from "@/utils";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { cookies } from "next/headers";
 // import { toast } from "react-toastify";
 import { FetcherResult } from "../utils/fetcher";
@@ -31,9 +32,9 @@ export async function getDashboardCardData() {
     ? decryptToken(decodeURIComponent(token))
     : undefined;
 
-  if (!decryptedToken) {
-    throw new Error("Session expired. Please login again");
-  }
+  // if (!token) {
+  //   throw new Error("Session expired. Please login again");
+  // }
 
   const wellsDataPromise = fetcher<WellsResponse>(
     `${process.env.NEXT_PUBLIC_BASEURL}/well-gateway/get`,
@@ -41,6 +42,7 @@ export async function getDashboardCardData() {
       method: "POST",
       data: {},
       token: decryptedToken,
+      // enabled: decryptedToken !== undefined && decryptedToken ? true : false,
     }
   );
 
@@ -50,6 +52,7 @@ export async function getDashboardCardData() {
       method: "POST",
       data: {},
       token: decryptedToken,
+      // enabled: decryptedToken !== undefined && decryptedToken ? true : false,
     }
   );
 
@@ -59,6 +62,7 @@ export async function getDashboardCardData() {
       method: "POST",
       data: {},
       token: decryptedToken,
+      // enabled: decryptedToken !== undefined && decryptedToken ? true : false,
     }
   );
 
@@ -86,15 +90,16 @@ export async function getDashboardCardData() {
 export async function getReports() {
   const token = cookies().get("token")?.value;
 
-  const resp = unstable_cache(
+  const resp = 
+  // unstable_cache(
     async () => {
       const decryptedToken = token
         ? decryptToken(decodeURIComponent(token))
         : undefined;
 
-      if (!decryptedToken) {
-        throw new Error("Session expired. Please login again");
-      }
+      // if (!token) {
+      //   throw new Error("Session expired. Please login again");
+      // }
 
       const reportsData = await fetcher<ReportsResponse>(
         `${process.env.NEXT_PUBLIC_BASEURL}/record-gateway/get-reports`,
@@ -102,6 +107,7 @@ export async function getReports() {
           method: "GET",
           data: {},
           token: decryptedToken,
+          // enabled: decryptedToken !== undefined && decryptedToken ? true : false,
         }
       );
 
@@ -110,14 +116,16 @@ export async function getReports() {
       }
 
       return reportsData;
-    },
-    undefined,
-    { tags: ["getReportsTag"] }
-  );
+    }
+    // ,
+    // undefined,
+    // { tags: ["getReportsTag"], revalidate: 60 }
+  // );
 
   const data = await resp();
 
   return data;
+
 }
 
 export async function getSessionData() {
@@ -126,9 +134,9 @@ export async function getSessionData() {
     ? decryptToken(decodeURIComponent(token))
     : undefined;
 
-  if (!decryptedToken) {
-    throw new Error("Session expired. Please login again");
-  }
+  // if (!token) {
+  //   throw new Error("Session expired. Please login again");
+  // }
 
   const sessionData = await fetcher<SessionDataResponse>(
     `${process.env.NEXT_PUBLIC_BASEURL}/record-gateway/get-session-data`,
@@ -136,6 +144,7 @@ export async function getSessionData() {
       method: "GET",
       data: {},
       token: decryptedToken,
+      // enabled: decryptedToken !== undefined && decryptedToken ? true : false,
     }
   );
 
@@ -159,9 +168,9 @@ export async function getTableHeaderForReportData() {
     ? decryptToken(decodeURIComponent(token))
     : undefined;
 
-  if (!decryptedToken) {
-    throw new Error("Session expired. Please login again");
-  }
+  // if (!token) {
+  //   throw new Error("Session expired. Please login again");
+  // }
 
   const reportTableHeaderData = await fetcher<ReportTableHeaderResponse>(
     `${process.env.NEXT_PUBLIC_BASEURL}/record-gateway/get-flow-datas`,
@@ -169,6 +178,7 @@ export async function getTableHeaderForReportData() {
       method: "GET",
       data: {},
       token: decryptedToken,
+      // enabled: decryptedToken !== undefined && decryptedToken ? true : false,
     }
   );
 
@@ -185,9 +195,9 @@ export async function getRecords() {
     ? decryptToken(decodeURIComponent(token))
     : undefined;
 
-  if (!decryptedToken) {
-    throw new Error("Session expired. Please login again");
-  }
+  // if (!token) {
+  //   throw new Error("Session expired. Please login again");
+  // }
 
   const recordsData = await fetcher<RecordsData>(
     `${process.env.NEXT_PUBLIC_BASEURL}/record-gateway/get`,
@@ -195,6 +205,7 @@ export async function getRecords() {
       method: "POST",
       data: {},
       token: decryptedToken,
+      // enabled: decryptedToken !== undefined && decryptedToken ? true : false,
     }
   );
 
@@ -211,9 +222,9 @@ export async function getGeneralInsightsChartData(wellID: string) {
     ? decryptToken(decodeURIComponent(token))
     : undefined;
 
-  if (!decryptedToken) {
-    throw new Error("Session expired. Please login again");
-  }
+  // if (!token) {
+  //   throw new Error("Session expired. Please login again");
+  // }
 
   const today = new Date();
 const formattedDate = today.toISOString().split('T')[0];
@@ -229,6 +240,7 @@ const formattedDate = today.toISOString().split('T')[0];
 
       },
       token: decryptedToken,
+      // enabled: decryptedToken !== undefined && decryptedToken ? true : false,
     }
   );
 
@@ -253,12 +265,14 @@ export async function handleResolve(id: string) {
       method: "POST",
       data: { reportId: decryptedID },
       token: decryptedToken,
+      // enabled: decryptedToken !== undefined && decryptedToken ? true : false,
     }
   );
 
   console.log("resolved---------------->", res);
 
-  revalidateTag("getReportsTag");
+  revalidatePath("/");
+  revalidatePath("/action-center");
   return res;
 }
 
@@ -271,9 +285,9 @@ export const getRecommendations = async (id: string) => {
         ? decryptToken(decodeURIComponent(token))
         : undefined;
 
-      if (!decryptedToken) {
-        throw new Error("Session expired. Please login again");
-      }
+      // if (!token) {
+      //   throw new Error("Session expired. Please login again");
+      // }
 
       const recommendationData = await fetcher<RecommendationResponse>(
         `${process.env.NEXT_PUBLIC_BASEURL}/record-gateway/get-recommendations`,
@@ -281,6 +295,7 @@ export const getRecommendations = async (id: string) => {
           method: "POST",
           data: { reportId: id },
           token: decryptedToken,
+          // enabled: decryptedToken !== undefined && decryptedToken ? true : false,
         }
       );
 
@@ -308,9 +323,9 @@ export async function getRecommendationsChat(id: string, question: string) {
     ? decryptToken(decodeURIComponent(token))
     : undefined;
 
-  if (!decryptedToken) {
-    throw new Error("Session expired. Please login again");
-  }
+  // if (!token) {
+  //   throw new Error("Session expired. Please login again");
+  // }
 
   const recommendationChatData = await fetcher<RecommendationResponse>(
     `${process.env.NEXT_PUBLIC_BASEURL}/record-gateway/send-question-recommendation-chat`,
@@ -318,6 +333,7 @@ export async function getRecommendationsChat(id: string, question: string) {
       method: "POST",
       data: { question: question, reportId: id },
       token: decryptedToken,
+      // enabled: decryptedToken !== undefined && decryptedToken ? true : false,
     }
   );
 
@@ -343,9 +359,9 @@ export async function getSites(
     ? decryptToken(decodeURIComponent(token))
     : undefined;
 
-  if (!decryptedToken) {
-    throw new Error("Session expired. Please login again");
-  }
+  // if (!token) {
+  //   throw new Error("Session expired. Please login again");
+  // }
 
   const sitesData = await fetcher<GetSiteResponse<typeof id>>(
     `${process.env.NEXT_PUBLIC_BASEURL}/site-gateway/get`,
@@ -353,6 +369,7 @@ export async function getSites(
       method: "POST",
       data: { id },
       token: decryptedToken,
+      // enabled: decryptedToken !== undefined && decryptedToken ? true : false,
     }
   );
 
@@ -369,9 +386,9 @@ export async function getWells(id?: string, siteId?: string) {
     ? decryptToken(decodeURIComponent(token))
     : undefined;
 
-  if (!decryptedToken) {
-    throw new Error("Session expired. Please login again");
-  }
+  // if (!token) {
+  //   throw new Error("Session expired. Please login again");
+  // }
 
   const wellsData = await fetcher<WellsResponse>(
     `${process.env.NEXT_PUBLIC_BASEURL}/well-gateway/get`,
@@ -379,6 +396,7 @@ export async function getWells(id?: string, siteId?: string) {
       method: "POST",
       data: { id, siteId },
       token: decryptedToken,
+      // enabled: decryptedToken !== undefined && decryptedToken ? true : false,
     }
   );
 
@@ -395,9 +413,9 @@ export async function getDevices(id?: string, wellId?: string) {
     ? decryptToken(decodeURIComponent(token))
     : undefined;
 
-  if (!decryptedToken) {
-    throw new Error("Session expired. Please login again");
-  }
+  // if (!token) {
+  //   throw new Error("Session expired. Please login again");
+  // }
 
   const devicesData = await fetcher<DevicesDataResp>(
     `${process.env.NEXT_PUBLIC_BASEURL}/iot-gateway/get`,
@@ -405,6 +423,7 @@ export async function getDevices(id?: string, wellId?: string) {
       method: "POST",
       data: { id, wellId },
       token: decryptedToken,
+      // enabled: decryptedToken !== undefined && decryptedToken ? true : false,
     }
   );
 
@@ -421,16 +440,17 @@ export async function createNote(text: string, deviceID: string) {
     ? decryptToken(decodeURIComponent(token))
     : undefined;
 
-  if (!decryptedToken) {
-    throw new Error("Session expired. Please login again");
-  }
+  // if (!token) {
+  //   throw new Error("Session expired. Please login again");
+  // }
 
   const noteData = await fetcher<{ message: string }>(
-    `${process.env.NEXT_PUBLIC_BASEURL}/record-gateway/create-note`,
+   ` ${process.env.NEXT_PUBLIC_BASEURL}/record-gateway/create-note`,
     {
       method: "POST",
       data: { note: text, iotId: deviceID },
       token: decryptedToken,
+      // enabled: decryptedToken !== undefined && decryptedToken ? true : false,
     }
   );
 
@@ -445,15 +465,16 @@ export async function createNote(text: string, deviceID: string) {
 export const getNotes = async (deviceID: string) => {
   const token = cookies().get("token")?.value;
 
-  const resp = unstable_cache(
+  const resp = 
+  // unstable_cache(
     async function () {
       const decryptedToken = token
         ? decryptToken(decodeURIComponent(token))
         : undefined;
 
-      if (!decryptedToken) {
-        throw new Error("Session expired. Please login again");
-      }
+      // if (!token) {
+      //   throw new Error("Session expired. Please login again");
+      // }
 
       const notesData = await fetcher<GetNotesResponse>(
         `${process.env.NEXT_PUBLIC_BASEURL}/record-gateway/get-notes`,
@@ -461,6 +482,7 @@ export const getNotes = async (deviceID: string) => {
           method: "GET",
           data: { iotId: deviceID },
           token: decryptedToken,
+          // enabled: decryptedToken !== undefined && decryptedToken ? true : false,
         }
       );
 
@@ -469,12 +491,13 @@ export const getNotes = async (deviceID: string) => {
       }
 
       return notesData;
-    },
-    undefined,
-    {
-      tags: ["getNotesTag"],
     }
-  );
+  //   ,
+  //   undefined,
+  //   {
+  //     tags: ["getNotesTag"],
+  //   }
+  // );
 
   const data = await resp();
 
@@ -487,16 +510,17 @@ export async function getSystemEfficiency(wellId: string) {
     ? decryptToken(decodeURIComponent(token))
     : undefined;
 
-  if (!decryptedToken) {
-    throw new Error("Session expired. Please login again");
-  }
+  // if (!token) {
+  //   throw new Error("Session expired. Please login again");
+  // }
 
-  const sysEffData = await fetcher<SystemEfficiency>(
-    `${process.env.NEXT_PUBLIC_BASEURL}/record-gateway/get-system-efficiency`,
+  const sysEffData = await fetcher<SystemEfficiency>(`
+    ${process.env.NEXT_PUBLIC_BASEURL}/record-gateway/get-system-efficiency`,
     {
       method: "GET",
       data: { wellId },
       token: decryptedToken,
+      // enabled: decryptedToken !== undefined && decryptedToken ? true : false,
     }
   );
 
@@ -505,4 +529,40 @@ export async function getSystemEfficiency(wellId: string) {
   }
 
   return sysEffData;
+}
+
+interface LoginResponse extends DefaultResponse {
+  token: string;
+  user: {
+    id: string;
+    first_name: string;
+    last_name: string;
+    email: string;
+    phone: string;
+    onBoardingDone: string;
+  };
+}
+
+export async function handleLogin(identifier: string, password: string) {
+  const loginData = await fetcher<LoginResponse>(
+        `${process.env.NEXT_PUBLIC_BASEURL}/user-gateway/login`,
+        {
+          method: "POST",
+          data: { identifier, password },
+        }
+      );
+
+  if (loginData?.data?.message !== "success") {
+    return { error: loginData?.data?.message };
+  }
+
+  if (loginData.error){
+    return { error: loginData.error };
+  }
+
+   const encryptedToken = encodeURIComponent(encryptToken(loginData.data.token));
+
+  await cookies().set("token", encryptedToken);
+
+  return {loginData: loginData.data};
 }

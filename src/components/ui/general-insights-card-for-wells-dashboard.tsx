@@ -77,7 +77,7 @@ export const GeneralInsightsWellsDashboard: FC<
           }
         />
         <SystemEfficiencyCard
-          average_downtime={`${sysEffData.data.averageDowntime}`}
+          average_downtime={`${Number(sysEffData.data.averageDowntime.toFixed(2))}`}
           average_resolution={`${Number(sysEffData.data.averageResolutionTime.toFixed(2))}`}
           icon={<BsFillDeviceSsdFill />}
           label="System Efficiency"

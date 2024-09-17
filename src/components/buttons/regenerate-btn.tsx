@@ -22,9 +22,9 @@ export const RegenerateBtn: FC<RegenerateBtnProps> = ({ alertID }) => {
       ? decryptToken(decodeURIComponent(token))
       : undefined;
 
-    if (!decryptedToken) {
-      throw new Error("Session expired. Please login again");
-    }
+    // if (!decryptedToken) {
+    //   throw new Error("Session expired. Please login again");
+    // }
 
     const recommendationData = await fetcher<RecommendationResponse>(
       `${process.env.NEXT_PUBLIC_BASEURL}/record-gateway/get-recommendations`,
@@ -32,6 +32,7 @@ export const RegenerateBtn: FC<RegenerateBtnProps> = ({ alertID }) => {
         method: "POST",
         data: { reportId: id },
         token: decryptedToken,
+        // enabled: decryptedToken !== undefined && decryptedToken ? true : false,
       }
     );
 

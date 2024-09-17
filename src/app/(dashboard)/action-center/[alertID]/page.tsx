@@ -125,7 +125,7 @@ const AlertsPage: FC<AlertsPageProps> = async ({ params }) => {
         <div className="w-full space-y-[10px]">
           {recommendationData.data &&
             recommendationData.data?.recommendation[0].recommendations.map(
-              (rec, index) => {
+              (rec: any, index: number) => {
                 return (
                   <AISuggestionItem
                     key={index}
@@ -147,7 +147,7 @@ const AlertsPage: FC<AlertsPageProps> = async ({ params }) => {
         <MagicCardIcon />
       </p>
 
-      <ChatPrompt handlePrompt={handlePrompt} />
+      <ChatPrompt handlePrompt={handlePrompt as any} />
     </div>
   );
 };

@@ -10,6 +10,7 @@ export const PageLoader = () => {
           height={200}
           width={400}
           className="h-[200px] w-[280px] object-center"
+          unoptimized={true}
         />
         <p className="text-2xl font-semibold">Loading...</p>
         <p className="mt-[10px] text-sm font-medium">

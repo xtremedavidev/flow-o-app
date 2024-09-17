@@ -8,10 +8,12 @@ import Cookies from "js-cookie";
 
 interface ProtectedRouteWrapperProps {
   children: React.ReactNode;
+  // token: string;
 }
 
 export const ProtectedRouteWrapper: FC<ProtectedRouteWrapperProps> = ({
   children,
+  // token,
 }) => {
   const router = useRouter();
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
@@ -19,7 +21,6 @@ export const ProtectedRouteWrapper: FC<ProtectedRouteWrapperProps> = ({
   useEffect(() => {
     const checkAuthentication = async () => {
       const token = Cookies.get("token");
-      // const token = localStorage.getItem("token");
 
       if (!token) {
         toast.error(

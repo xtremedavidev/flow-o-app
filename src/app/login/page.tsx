@@ -11,6 +11,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import Cookies from "js-cookie";
 import { useUserStore } from "@/managers";
+import { handleLogin } from "@/actions";
 
 interface LoginResponse extends DefaultResponse {
   token: string;
@@ -33,6 +34,7 @@ const Login = () => {
 
   const [rememberMe, setRememberMe] = useState(true);
   const setUser = useUserStore((state) => state.setUser);
+  const [isLoading, setIsLoading] = useState(false);
 
   const router = useRouter();
 
@@ -49,39 +51,27 @@ const Login = () => {
   });
 
   const onSubmit: SubmitHandler<LoginInputs> = async (data) => {
+    setIsLoading(true);
     const UserData = {
       identifier: data.email,
       password: data.password,
     };
 
-    try {
-      const res = await mutation.mutateAsync(UserData);
+    const resp = await handleLogin(
+      UserData.identifier,
+      UserData.password
+    ).finally(() => {
+      setIsLoading(false);
+    });
 
-      if (res?.data?.message === "success") {
-        const token = res?.data?.token;
-        const encryptedToken = encodeURIComponent(encryptToken(token));
+    if (resp.error) {
+      toast.error(resp.error);
+    }
 
-        //  Cookies.set("token", encryptedToken, {
-        //   expires: rememberMe ? 30 : undefined,
-        // });
-        await new Promise<void>((resolve) => {
-          Cookies.set("token", encryptedToken, {
-            expires: rememberMe ? 30 : undefined,
-          });
-          resolve();
-        });
-        // localStorage.setItem("token", encryptedToken);
-        toast.success("Login Successful");
-        setUser(res.data.user);
-        router.push("/home");
-      } else {
-        if (res?.data?.message) {
-          toast.error(res?.data?.message);
-          console.log("else block res----", res);
-        }
-      }
-    } catch (error) {
-      console.error(error);
+    if (resp.loginData) {
+      toast.success("Login Successful");
+      setUser(resp.loginData.user);
+      router.push("/home");
     }
   };
 
@@ -130,9 +120,11 @@ const Login = () => {
 
       <button
         type="submit"
-        className={`h-[48px] w-full items-center justify-center rounded-[17px] bg-[#297FB8] text-base font-semibold ${mutation.isPending && "animate-pulse"}`}
+        disabled={isLoading}
+        className={`h-[48px] w-full items-center justify-center rounded-[17px] bg-[#297FB8] text-base font-semibold ${isLoading && "animate-pulse"} `}
       >
-        {mutation.isPending ? "Loading..." : "Log In"}
+        {/* {mutation.isPending ? "Loading..." : "Log In"} */}
+        {isLoading ? "Loading..." : "Log In"}
       </button>
     </form>
   );

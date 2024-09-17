@@ -1,7 +1,7 @@
 import { createNote, getNotes } from "@/actions";
 import { NotesPrompt } from "@/components";
 import { decryptToken } from "@/utils";
-import { revalidateTag } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { FC } from "react";
 
 interface NotesPageProps {
@@ -18,7 +18,8 @@ const NotesPage: FC<NotesPageProps> = async ({ params }) => {
   const handleCreatNote = async (text: string, deviceID: string) => {
     "use server";
     const res = await createNote(text, deviceID);
-    revalidateTag("getNotesTag");
+    // revalidateTag("getNotesTag");
+    revalidatePath("/devices/[deviceId]/notes", "page");
     return res;
   };
 
