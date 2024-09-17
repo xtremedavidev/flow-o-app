@@ -57,21 +57,25 @@ const Login = () => {
       password: data.password,
     };
 
-    const resp = await handleLogin(
-      UserData.identifier,
-      UserData.password
-    ).finally(() => {
-      setIsLoading(false);
-    });
+    try {
+      const resp = await handleLogin(
+        UserData.identifier,
+        UserData.password
+      ).finally(() => {
+        setIsLoading(false);
+      });
 
-    if (resp.error) {
-      toast.error(resp.error);
-    }
+      if (resp.error) {
+        toast.error(resp.error);
+      }
 
-    if (resp.loginData) {
-      toast.success("Login Successful");
-      setUser(resp.loginData.user);
-      router.push("/home");
+      if (resp.loginData) {
+        toast.success("Login Successful");
+        setUser(resp.loginData.user);
+        router.push("/home");
+      }
+    } catch (error) {
+      console.error(error);
     }
   };
 

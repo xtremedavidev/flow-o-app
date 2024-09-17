@@ -553,11 +553,7 @@ export async function handleLogin(identifier: string, password: string) {
       );
 
   if (loginData?.data?.message !== "success") {
-    return { error: loginData?.data?.message };
-  }
-
-  if (loginData.error){
-    return { error: loginData.error };
+    return { error: loginData?.data?.message || loginData.error };
   }
 
    const encryptedToken = encodeURIComponent(encryptToken(loginData.data.token));

@@ -1,5 +1,4 @@
 import axios, { AxiosError, AxiosRequestConfig, Method } from "axios";
-import { toast } from "react-toastify";
 import { ErrorResponse } from "@/types"; 
 
 interface FetcherOptions {
