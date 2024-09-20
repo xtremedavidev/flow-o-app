@@ -2,7 +2,7 @@
 
 import { RecommendationItem } from '@/types'
 import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
+import { createJSONStorage, persist } from 'zustand/middleware'
 
 export type RecordState = {
   recommendationChat: RecommendationItem[] | null
@@ -25,6 +25,6 @@ export const useRecordStore =  create<RecordStore>()(
     setRecommendationChat: (newRecommendationChat) => set({ recommendationChat: newRecommendationChat}),
   }), {
       name: 'record-storage', 
-      getStorage: () => localStorage, 
+      storage: createJSONStorage(() => localStorage), 
     }))
 

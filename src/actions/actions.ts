@@ -510,9 +510,7 @@ export async function getSystemEfficiency(wellId: string) {
     ? decryptToken(decodeURIComponent(token))
     : undefined;
 
-  // if (!token) {
-  //   throw new Error("Session expired. Please login again");
-  // }
+  
 
   const sysEffData = await fetcher<SystemEfficiency>(`
     ${process.env.NEXT_PUBLIC_BASEURL}/record-gateway/get-system-efficiency`,
@@ -524,11 +522,11 @@ export async function getSystemEfficiency(wellId: string) {
     }
   );
 
-  if (!sysEffData) {
-    throw new Error("Failed to get system efficiency");
+   if (sysEffData.error) {
+    return { error: sysEffData.error };
   }
 
-  return sysEffData;
+  return sysEffData.data;
 }
 
 interface LoginResponse extends DefaultResponse {

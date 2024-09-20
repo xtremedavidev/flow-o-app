@@ -34,9 +34,9 @@ const SiteDashboard: FC<SiteDashboardProps> = async ({ params }) => {
   const devicesData = await getDevices(undefined, siteID);
   const recordsData = await getRecords();
 
-  const generalInsightsChartData = await getGeneralInsightsChartData(
-    "7206bdaf-79af-4a11-89b6-7fa14de2db7c"
-  );
+  // const generalInsightsChartData = await getGeneralInsightsChartData(
+  //   "7206bdaf-79af-4a11-89b6-7fa14de2db7c"
+  // );
 
   // const { date } = getCurrentDate();
 
@@ -86,12 +86,12 @@ const SiteDashboard: FC<SiteDashboardProps> = async ({ params }) => {
 
       <WellChartAndMap />
 
-      {generalInsightsChartData && (
-        <GeneralInsightsCard
-          // generalInsightsChartData={generalInsightsChartData.data?.data}
-          wellsData={wellsData}
-        />
-      )}
+      {/* {generalInsightsChartData && ( */}
+      <GeneralInsightsCard
+        // generalInsightsChartData={generalInsightsChartData.data?.data}
+        wellsData={wellsData}
+      />
+      {/* )} */}
 
       <ListWrapper
         key="list-wrapper-for-all-wells"

@@ -43,8 +43,8 @@ export const ListWrapper: FC<ListWrapperProps> = ({
       filterStatus === "all"
         ? listData
         : filterStatus === "active"
-          ? listData.filter((item) => item.status === "ACTIVE")
-          : listData.filter((item) => item.status === "INACTIVE"),
+          ? listData?.filter((item) => item.status === "ACTIVE")
+          : listData?.filter((item) => item.status === "INACTIVE"),
     [effectFilter, listData]
   );
 

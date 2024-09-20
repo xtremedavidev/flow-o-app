@@ -34,7 +34,7 @@ export const ActivesCard: FC<ActivesCardProps> = ({
         </div>
 
         <div>
-          <CircularProgressBar percentage={percentage} />
+          <CircularProgressBar percentage={Number(percentage.toFixed(2))} />
         </div>
       </div>
     </div>

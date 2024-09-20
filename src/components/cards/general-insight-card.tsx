@@ -75,7 +75,7 @@ export const GeneralInsightsCard: FC<GeneralInsightsCardProps> = ({
         <option value="" disabled selected>
           Select Category
         </option>
-        {wellsData.data.data.wells.map((well) => (
+        {wellsData.data?.data.wells.map((well) => (
           <option key={well.id} value={well.id}>
             {well.name}
           </option>

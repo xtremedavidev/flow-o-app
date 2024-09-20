@@ -55,6 +55,8 @@ export const ReportDataTable: FC<ReportDataTableProps> = async ({
     return [];
   };
 
+  // console.log("kiejje", recordsData?.data.length);
+
   const tableDataffs = transformHeaders(recordsData);
 
   return tableDataffs.length < 1 ? (
@@ -73,11 +75,23 @@ export const ReportDataTable: FC<ReportDataTableProps> = async ({
         </tr>
       </thead>
       <tbody>
-        {tableDataffs.map((row, index) => (
+        {/* {tableDataffs.map((row, index) => (
           <tr key={row.id} className="bg-gray-700 text-white">
             <td className="border-b px-4 py-2 text-center">
               {row.value || "N/A"}
             </td>
+          </tr>
+        ))} */}
+        {recordsData?.data.map((row) => (
+          <tr key={row.id} className="bg-gray-700 text-white">
+            {row.recordTypes[0].dataRecords.map((dataRecord, idx) => (
+              <td
+                key={dataRecord.id}
+                className={`border-b ${row.recordTypes[0].dataRecords.length - 1 !== idx ? "border-r" : ""} px-4 py-2 text-center`}
+              >
+                {dataRecord.value || "N/A"}
+              </td>
+            ))}
           </tr>
         ))}
       </tbody>

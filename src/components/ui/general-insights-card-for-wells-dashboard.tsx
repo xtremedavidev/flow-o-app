@@ -6,18 +6,23 @@ import { FC, useState } from "react";
 import { FetcherResult } from "@/utils";
 import { DevicesDataResp, SystemEfficiency, WellsResponse } from "@/types";
 import { FaAngleDown } from "react-icons/fa6";
+import { toast } from "react-toastify";
 
 interface GeneralInsightsWellsDashboardProps {
   wellsData: FetcherResult<WellsResponse>;
   devicesData: FetcherResult<DevicesDataResp>;
   date: string;
-  sysEffData: FetcherResult<SystemEfficiency>;
+  sysEffData: SystemEfficiency | { error: string };
 }
 
 export const GeneralInsightsWellsDashboard: FC<
   GeneralInsightsWellsDashboardProps
 > = ({ wellsData, devicesData, date, sysEffData }) => {
   const [isVisible, setIsVisible] = useState(false);
+
+  if ("error" in sysEffData) {
+    toast.error(sysEffData.error);
+  }
 
   return (
     <div className="rounded-[10px] bg-[#292929] p-3 transition-all duration-300 ease-linear">
@@ -76,13 +81,15 @@ export const GeneralInsightsWellsDashboard: FC<
               : 0
           }
         />
-        <SystemEfficiencyCard
-          average_downtime={`${Number(sysEffData.data.averageDowntime.toFixed(2))}`}
-          average_resolution={`${Number(sysEffData.data.averageResolutionTime.toFixed(2))}`}
-          icon={<BsFillDeviceSsdFill />}
-          label="System Efficiency"
-          percentage={sysEffData.data.ResolutionRate}
-        />
+        {"error" in sysEffData ? null : (
+          <SystemEfficiencyCard
+            average_downtime={`${Number(sysEffData.averageDowntime.toFixed(2))}`}
+            average_resolution={`${Number(sysEffData.averageResolutionTime.toFixed(2))}`}
+            icon={<BsFillDeviceSsdFill />}
+            label="System Efficiency"
+            percentage={Number(sysEffData.ResolutionRate.toFixed(2))}
+          />
+        )}
       </div>
 
       <div className="mt-[10px] flex w-full justify-center">

@@ -40,7 +40,7 @@ export const LineChart: React.FC<LineChartProps> = ({ data }) => {
         wheelY: "zoomX",
         maxTooltipDistance: 0,
         pinchZoomX: true,
-      }),
+      })
     );
 
     // Create axes
@@ -50,7 +50,7 @@ export const LineChart: React.FC<LineChartProps> = ({ data }) => {
         baseInterval: { timeUnit: "hour", count: 1 },
         renderer: am5xy.AxisRendererX.new(root, { minorGridEnabled: true }),
         tooltip: am5.Tooltip.new(root, {}),
-      }),
+      })
     );
 
     xAxis.get("renderer").labels.template.setAll({
@@ -61,7 +61,7 @@ export const LineChart: React.FC<LineChartProps> = ({ data }) => {
     let yAxis = chart.yAxes.push(
       am5xy.ValueAxis.new(root, {
         renderer: am5xy.AxisRendererY.new(root, {}),
-      }),
+      })
     );
 
     yAxis.get("renderer").labels.template.setAll({
@@ -73,7 +73,7 @@ export const LineChart: React.FC<LineChartProps> = ({ data }) => {
     const categories = Array.from(new Set(data.map((item) => item.category)));
 
     categories.forEach((category) => {
-      let seriesData = data.filter((item) => item.category === category);
+      let seriesData = data?.filter((item) => item.category === category);
 
       let series = chart.series.push(
         am5xy.LineSeries.new(root, {
@@ -87,7 +87,7 @@ export const LineChart: React.FC<LineChartProps> = ({ data }) => {
             pointerOrientation: "horizontal",
             labelText: "{valueY}",
           }),
-        }),
+        })
       );
 
       series.data.setAll(seriesData);
@@ -112,18 +112,18 @@ export const LineChart: React.FC<LineChartProps> = ({ data }) => {
       am5xy.XYCursor.new(root, {
         behavior: "none",
         snapToSeries: chart.series.values,
-      }),
+      })
     );
     cursor.lineY.set("visible", false);
 
     // Add scrollbars
     chart.set(
       "scrollbarX",
-      am5.Scrollbar.new(root, { orientation: "horizontal" }),
+      am5.Scrollbar.new(root, { orientation: "horizontal" })
     );
     chart.set(
       "scrollbarY",
-      am5.Scrollbar.new(root, { orientation: "vertical" }),
+      am5.Scrollbar.new(root, { orientation: "vertical" })
     );
 
     // Place the legend below the chart
@@ -132,7 +132,7 @@ export const LineChart: React.FC<LineChartProps> = ({ data }) => {
         layout: root.verticalLayout,
         width: am5.percent(100),
         height: am5.percent(100),
-      }),
+      })
     );
 
     legendContainer.children.push(chart);
@@ -145,7 +145,7 @@ export const LineChart: React.FC<LineChartProps> = ({ data }) => {
         layout: root.gridLayout,
         maxHeight: 100, // Limit the height to 20% of the container
         verticalScrollbar: am5.Scrollbar.new(root, { orientation: "vertical" }), // Add vertical scrollbar if necessary
-      }),
+      })
     );
 
     legend.labels.template.setAll({

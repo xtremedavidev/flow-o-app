@@ -1,6 +1,6 @@
 import {
   getDashboardCardData,
-  getGeneralInsightsChartData,
+  // getGeneralInsightsChartData,
   getRecords,
 } from "@/actions";
 import {
@@ -28,9 +28,9 @@ const DashboardHome = async () => {
   const { wellsData, devicesData, sitesData } = await getDashboardCardData();
   const recordsData = await getRecords();
 
-  const generalInsightsChartData = await getGeneralInsightsChartData(
-    "7206bdaf-79af-4a11-89b6-7fa14de2db7c"
-  );
+  // const generalInsightsChartData = await getGeneralInsightsChartData(
+  //   "7206bdaf-79af-4a11-89b6-7fa14de2db7c"
+  // );
 
   const SwitcherSitesWellsViewArr = [
     <ListWrapper
@@ -91,12 +91,12 @@ const DashboardHome = async () => {
 
       <WellChartAndMap />
 
-      {generalInsightsChartData && (
-        <GeneralInsightsCard
-          wellsData={wellsData}
-          // generalInsightsChartData={generalInsightsChartData.data?.data}
-        />
-      )}
+      {/* {generalInsightsChartData && ( */}
+      <GeneralInsightsCard
+        wellsData={wellsData}
+        // generalInsightsChartData={generalInsightsChartData.data?.data}
+      />
+      {/* )} */}
 
       <SwitcherSitesWells currentViewArr={SwitcherSitesWellsViewArr} />
 
