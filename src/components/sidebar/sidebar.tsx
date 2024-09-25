@@ -12,15 +12,33 @@ import React, { FC } from "react";
 import { usePathname } from "next/navigation";
 import { BiSolidLeaf } from "react-icons/bi";
 import Cookies from "js-cookie";
+import { cn } from "@/utils";
 
-export const Sidebar = () => {
+interface SidebarProps {
+  className?: string;
+  isNotMobile?: boolean;
+  handleMobileNav?: () => void;
+}
+
+export const Sidebar: FC<SidebarProps> = ({
+  className,
+  isNotMobile = true,
+  handleMobileNav,
+}) => {
   return (
-    <div className="flex h-screen w-[292px] shrink-0 flex-col overflow-y-auto border-r border-solid border-[#297FB8]/20 px-9 pb-6 pt-5 2xl:pb-[66px]">
-      <div className="flex h-[100px] items-center">
-        <div className="rounded-[25px] bg-[#424242]/15 px-4 py-[5px]">
-          <LogoWithText />
+    <div
+      className={cn(
+        `flex h-screen w-[292px] shrink-0 flex-col overflow-y-auto border-r border-solid border-[#297FB8]/20 px-9 pb-6 pt-5 2xl:pb-[66px]`,
+        className
+      )}
+    >
+      {isNotMobile && (
+        <div className="flex h-[100px] items-center">
+          <div className="rounded-[25px] bg-[#424242]/15 px-4 py-[5px]">
+            <LogoWithText />
+          </div>
         </div>
-      </div>
+      )}
 
       <div className="my-6 flex h-full flex-col justify-between gap-6 2xl:mt-[66px]">
         <div className="space-y-2 xl:space-y-3 2xl:space-y-4">
@@ -30,6 +48,7 @@ export const Sidebar = () => {
               label={item.label}
               icon={<item.icon size={24} color="#ffffff" />}
               href={item.href}
+              onClick={isNotMobile ? undefined : handleMobileNav}
             />
           ))}
         </div>
@@ -64,6 +83,7 @@ export const Sidebar = () => {
             onClick={() => {
               // localStorage.removeItem("token");
               Cookies.remove("token");
+              if (!isNotMobile) handleMobileNav;
             }}
             className="flex w-full items-center gap-[10px] rounded-[4px] bg-white/[0.08] px-4 py-3 text-base font-normal"
           >
@@ -94,8 +114,9 @@ const SidebarItem: FC<{
   label: string;
   icon: React.ReactNode;
   href: string;
+  onClick?: () => void;
   // isActive?: boolean;
-}> = ({ label, icon, href }) => {
+}> = ({ label, icon, href, onClick }) => {
   const pathname = usePathname();
 
   const isActive = pathname.startsWith(href);
@@ -103,6 +124,7 @@ const SidebarItem: FC<{
   return (
     <Link
       href={href}
+      onClick={onClick}
       className={`flex w-full items-center gap-[10px] rounded-[10px] px-4 py-3 ${isActive ? "bg-[#297FB8]" : "bg-transparent"}`}
     >
       {icon} <span className="text-base font-semibold text-white">{label}</span>

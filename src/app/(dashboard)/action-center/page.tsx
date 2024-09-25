@@ -13,7 +13,7 @@ import { FC } from "react";
 import { GoAlertFill } from "react-icons/go";
 import { IoNotifications } from "react-icons/io5";
 import { IconType } from "react-icons";
-import { MdDateRange, MdOutlineTroubleshoot } from "react-icons/md";
+import { MdOutlineTroubleshoot } from "react-icons/md";
 import { TbArrowsSort } from "react-icons/tb";
 import { getRightbarData, handleResolve } from "@/actions";
 import { ReportsResponse, SessionDataResponse } from "@/types";
@@ -208,7 +208,7 @@ const ActionCenterCard: FC<ActionCenterCardProps> = ({
   reportsData,
 }) => {
   return (
-    <div className="flex items-center justify-between rounded-[10px] bg-[#292929] px-[19px] py-[17px]">
+    <div className="flex flex-col gap-8 rounded-[10px] bg-[#292929] px-[19px] py-[17px] lg:flex-row lg:items-center lg:justify-between lg:gap-0">
       <div className="flex h-full flex-col justify-between gap-[22px]">
         <h1 className="text-xl font-medium">Action Center</h1>
 

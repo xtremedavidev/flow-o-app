@@ -3,17 +3,17 @@ import { FiSearch } from "react-icons/fi";
 import { IoMdNotifications } from "react-icons/io";
 import { ProfileWName } from "../ui";
 import { getCurrentDateInLocalString } from "@/utils";
+import { MobileTopbar } from "./mobile-topbar";
 
 export const Topbar = () => {
   const date = getCurrentDateInLocalString();
   return (
     <div className="flex h-[100px] w-full items-center justify-between border-b border-solid border-[#297FB8]/20 px-8">
-      <div className="flex items-center gap-2 text-sm font-normal">
+      <div className="hidden items-center gap-2 text-sm font-normal lg:flex">
         <MdDateRange size={24} color="#ffffff" />
         <span>{date.date}</span>
       </div>
-
-      <div className="relative h-12 rounded-xl bg-[#323233] text-base font-normal">
+      <div className="relative hidden h-12 rounded-xl bg-[#323233] text-base font-normal lg:block">
         <input
           type="text"
           className="h-full w-full rounded-xl bg-transparent pl-[18px] pr-[42px]"
@@ -25,12 +25,13 @@ export const Topbar = () => {
           color="#525256"
         />
       </div>
-
-      <div>
+      <div className="hidden lg:block">
         <IoMdNotifications color="#ffffff" size={24} />
       </div>
-
-      <ProfileWName />
+      <div className="hidden lg:block">
+        <ProfileWName />
+      </div>
+      <MobileTopbar />
     </div>
   );
 };

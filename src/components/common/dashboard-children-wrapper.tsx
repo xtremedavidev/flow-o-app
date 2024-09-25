@@ -3,17 +3,28 @@
 import { usePathname } from "next/navigation";
 import { FC } from "react";
 import { DashboardPageWrapper } from "./dashboard-page-wrapper";
+import { useUserStore } from "@/managers";
+import { DataTemplateModal } from "../modals";
+import { DataTemplate } from "@/types";
 
 interface DashboardChildrenWrapperProps {
   children: React.ReactNode;
   rightbar: React.ReactNode;
+  flowTempData: DataTemplate | { error: string };
 }
 
 export const DashboardChildrenWrapper: FC<DashboardChildrenWrapperProps> = ({
   children,
   rightbar,
+  flowTempData,
 }) => {
   const pathname = usePathname();
+  const user = useUserStore((state) => state.user);
+
+  if (user && user.onBoardingDone === false) {
+    return <DataTemplateModal flowTempData={flowTempData} />;
+  }
+
   return (
     <div className="flex h-[calc(100vh-100px)] justify-between gap-5 overflow-hidden py-3 pl-5">
       <div className="w-full overflow-hidden">

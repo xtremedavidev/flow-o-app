@@ -84,7 +84,7 @@ const SiteDashboard: FC<SiteDashboardProps> = async ({ params }) => {
         /> */}
       </div>
 
-      <WellChartAndMap />
+      <WellChartAndMap sitesData={siteData.data.data} />
 
       {/* {generalInsightsChartData && ( */}
       <GeneralInsightsCard

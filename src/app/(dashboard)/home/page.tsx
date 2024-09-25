@@ -1,21 +1,14 @@
-import {
-  getDashboardCardData,
-  // getGeneralInsightsChartData,
-  getRecords,
-} from "@/actions";
+import { getDashboardCardData, getRecords } from "@/actions";
+
 import {
   ActivesCard,
   EventLogTable,
   GeneralInsightsCard,
   ListWrapper,
-  // LocateWellCard,
   ReportDataTable,
   SwitcherSitesWells,
-  SystemEfficiencyCard,
-  // WellActivityCard,
   WellChartAndMap,
 } from "@/components";
-// import { GeneralInsightsAPIResponse } from "@/hooks";
 import { Metadata } from "next";
 import { BsFillDeviceSsdFill } from "react-icons/bs";
 
@@ -27,10 +20,6 @@ export const metadata: Metadata = {
 const DashboardHome = async () => {
   const { wellsData, devicesData, sitesData } = await getDashboardCardData();
   const recordsData = await getRecords();
-
-  // const generalInsightsChartData = await getGeneralInsightsChartData(
-  //   "7206bdaf-79af-4a11-89b6-7fa14de2db7c"
-  // );
 
   const SwitcherSitesWellsViewArr = [
     <ListWrapper
@@ -79,24 +68,11 @@ const DashboardHome = async () => {
               : 0
           }
         />
-
-        {/* <SystemEfficiencyCard
-          average_downtime="5 mins"
-          average_resolution="2 Hours"
-          icon={<BsFillDeviceSsdFill />}
-          label="System Efficiency"
-          percentage={92}
-        /> */}
       </div>
 
-      <WellChartAndMap />
+      <WellChartAndMap sitesData={sitesData.data.data} />
 
-      {/* {generalInsightsChartData && ( */}
-      <GeneralInsightsCard
-        wellsData={wellsData}
-        // generalInsightsChartData={generalInsightsChartData.data?.data}
-      />
-      {/* )} */}
+      <GeneralInsightsCard wellsData={wellsData} />
 
       <SwitcherSitesWells currentViewArr={SwitcherSitesWellsViewArr} />
 

@@ -9,6 +9,7 @@ interface ModalWrapperProps extends ModalProps {
   children: React.ReactNode;
   handleSave?: () => void;
   isPending: boolean;
+  isCloseable?: boolean;
 }
 
 export const ModalWrapper: FC<ModalWrapperProps> = ({
@@ -18,6 +19,7 @@ export const ModalWrapper: FC<ModalWrapperProps> = ({
   handleSave,
   children,
   isPending,
+  isCloseable = true,
 }) => {
   function handleModalClose() {
     setIsOpen(false);
@@ -34,12 +36,14 @@ export const ModalWrapper: FC<ModalWrapperProps> = ({
           onSubmit={handleSave}
           className="mt-[21px] flex items-center justify-between gap-3"
         >
-          <button
-            onClick={handleModalClose}
-            className="rounded-[28px] border border-solid border-[#B82932] px-9 py-3 text-xs font-medium text-[#EE4F4F]"
-          >
-            Cancel
-          </button>
+          {isCloseable && (
+            <button
+              onClick={handleModalClose}
+              className="rounded-[28px] border border-solid border-[#B82932] px-9 py-3 text-xs font-medium text-[#EE4F4F]"
+            >
+              Cancel
+            </button>
+          )}
           <button
             type="submit"
             disabled={isPending}

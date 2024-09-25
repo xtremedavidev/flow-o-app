@@ -22,7 +22,7 @@ export const Timeline: FC<TimelineProps> = ({ events }) => {
   const lastUpdated = getCurrentDate();
 
   return (
-    <div className="flex cursor-pointer flex-col p-4 text-white">
+    <div className="flex cursor-pointer flex-col p-1 text-white lg:p-4">
       {events.map((event, index) => (
         <TimelineItem key={index} event={event} lastUpdated={lastUpdated} />
       ))}
@@ -67,7 +67,7 @@ const TimelineItem: FC<TimelineItemProps> = ({ event, lastUpdated }) => {
         <div className="flex w-full items-center justify-between">
           <div>
             <h4 className="text-xs font-medium">{event.message}</h4>
-            <div className="mt-1 flex items-center gap-[10px] text-[8px] text-[#CCCCCC]">
+            <div className="mt-1 flex flex-col gap-[10px] text-[8px] text-[#CCCCCC] lg:flex-row lg:items-center">
               <span className="flex gap-[2px]">
                 <span className="font-semibold">Report ID:</span>
                 <span className="italic">{event.reportId}</span>
@@ -82,7 +82,7 @@ const TimelineItem: FC<TimelineItemProps> = ({ event, lastUpdated }) => {
             <p className="flex justify-end text-[8px] font-semibold text-[#CCCCCC]">
               Value:
             </p>
-            <div className="text-[20px] font-semibold leading-none text-white">
+            <div className="text-xs font-semibold leading-none text-white lg:text-[20px]">
               {event.value} psi
             </div>
           </div>

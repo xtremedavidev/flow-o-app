@@ -67,12 +67,13 @@ export const GeneralInsightsCard: FC<GeneralInsightsCardProps> = ({
       <h2 className="text-xl font-medium">General Insight</h2>
 
       <select
+        value=""
         className="mt-[10px] border-none bg-transparent text-xs font-normal text-[#BDBDBD] outline-none"
         onChange={(e) => {
           setSelectedCategory(e.target.value);
         }}
       >
-        <option value="" disabled selected>
+        <option value="" disabled>
           Select Category
         </option>
         {wellsData.data?.data.wells.map((well) => (

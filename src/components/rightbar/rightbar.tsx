@@ -11,7 +11,7 @@ export const Rightbar = async () => {
   );
 
   return (
-    <div className="flex h-full w-full max-w-[30%] shrink-0 flex-col overflow-y-auto rounded-2xl bg-[#333333] px-[14px] py-[19px] @container">
+    <div className="hidden h-full w-full max-w-[30%] shrink-0 flex-col overflow-y-auto rounded-2xl bg-[#333333] px-[14px] py-[19px] @container lg:flex">
       <div className="w-full rounded-2xl bg-[#CBCBCB]/[0.06] px-[18px] py-[14px]">
         <h2 className="mb-6 text-base font-medium">Updates</h2>
 

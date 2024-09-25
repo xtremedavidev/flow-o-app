@@ -23,7 +23,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.className} bg-[#202020] text-white`}>
-        <ToastContainer position="top-center" />
+        <ToastContainer position="top-center" className={"z-[99999]"} />
         <ProviderQueryclient>{children}</ProviderQueryclient>
       </body>
     </html>

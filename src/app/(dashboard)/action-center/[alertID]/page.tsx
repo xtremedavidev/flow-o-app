@@ -35,6 +35,10 @@ const AlertsPage: FC<AlertsPageProps> = async ({ params }) => {
     return resp;
   };
 
+  if (!recommendationData.data || !recommendationData) {
+    return <div>No recommendation data found, please try again</div>;
+  }
+
   return (
     <div className="flex h-full max-h-full flex-col justify-between overflow-hidden">
       <div className="mb-4">
@@ -43,8 +47,8 @@ const AlertsPage: FC<AlertsPageProps> = async ({ params }) => {
       <div className="h-full max-h-[calc(100%-130px)] overflow-y-auto pr-2">
         <div className="mt-[30px]">
           <h1 className="text-2xl font-bold">
-            {recommendationData.data &&
-              recommendationData.data?.recommendation[0].report.title}
+            {recommendationData?.data &&
+              recommendationData?.data?.recommendation[0].report.title}
           </h1>
           <div className="mt-2 flex items-center gap-[18px]">
             <span className="text-[10px] font-normal text-[#717579]">
@@ -52,19 +56,19 @@ const AlertsPage: FC<AlertsPageProps> = async ({ params }) => {
             </span>
             <span
               className={`rounded-md ${
-                recommendationData.data &&
-                recommendationData.data?.recommendation[0].report.level ===
+                recommendationData?.data &&
+                recommendationData?.data?.recommendation[0].report.level ===
                   "Critical"
                   ? "bg-[#FF4A4A]"
-                  : recommendationData.data &&
-                      recommendationData.data?.recommendation[0].report
+                  : recommendationData?.data &&
+                      recommendationData?.data?.recommendation[0].report
                         .level === "Warning"
                     ? "bg-[#d48a2e]"
                     : "bg-[#3f9360]"
               } px-2 py-1 text-xs font-normal text-white`}
             >
-              {recommendationData.data &&
-                recommendationData.data?.recommendation[0].report.level}
+              {recommendationData?.data &&
+                recommendationData?.data?.recommendation[0].report.level}
             </span>
           </div>
 
@@ -80,8 +84,8 @@ const AlertsPage: FC<AlertsPageProps> = async ({ params }) => {
 
                 <p className="text-[10px] font-normal text-[#717579]">
                   {formatDateToLocalString(
-                    recommendationData.data &&
-                      recommendationData.data?.recommendation[0].updatedAt
+                    recommendationData?.data &&
+                      recommendationData?.data?.recommendation[0].updatedAt
                   )}
                 </p>
               </div>
@@ -104,8 +108,8 @@ const AlertsPage: FC<AlertsPageProps> = async ({ params }) => {
           </h2>
 
           <p className="mt-[18px] text-xs font-normal text-[#F1F1F1]">
-            {recommendationData.data &&
-              recommendationData.data?.recommendation[0].report.description}
+            {recommendationData?.data &&
+              recommendationData?.data?.recommendation[0].report.description}
           </p>
         </div>
 
@@ -123,8 +127,8 @@ const AlertsPage: FC<AlertsPageProps> = async ({ params }) => {
         </div>
 
         <div className="w-full space-y-[10px]">
-          {recommendationData.data &&
-            recommendationData.data?.recommendation[0].recommendations.map(
+          {recommendationData?.data &&
+            recommendationData?.data?.recommendation[0].recommendations.map(
               (rec: any, index: number) => {
                 return (
                   <AISuggestionItem

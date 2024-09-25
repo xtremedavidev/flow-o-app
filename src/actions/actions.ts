@@ -2,6 +2,7 @@
 
 import { GeneralInsightsAPIResponse } from "@/hooks";
 import {
+  DataTemplate,
   DefaultResponse,
   DevicesDataResp,
   GetMultipleSitesResponse,
@@ -559,4 +560,56 @@ export async function handleLogin(identifier: string, password: string) {
   await cookies().set("token", encryptedToken);
 
   return {loginData: loginData.data};
+}
+
+export async function getDataTemplate() {
+  const token = cookies().get("token")?.value;
+  const decryptedToken = token
+    ? decryptToken(decodeURIComponent(token))
+    : undefined;
+
+  const flowDataTemp = await fetcher<DataTemplate>(`
+    ${process.env.NEXT_PUBLIC_BASEURL}/record-gateway/get-flow-datas`,
+    {
+      method: "GET",
+      data: {},
+      token: decryptedToken,
+      // enabled: decryptedToken !== undefined && decryptedToken ? true : false,
+    }
+  );
+
+   if (flowDataTemp.error) {
+    return { error: flowDataTemp.error };
+  }
+
+  return flowDataTemp.data;
+}
+
+export async function saveDataTemplate(compData: {
+    compData: { compDataName: string; flowDataName: string }[]
+}) {
+  const token = cookies().get("token")?.value;
+  const decryptedToken = token
+    ? decryptToken(decodeURIComponent(token))
+    : undefined;
+
+  const flowDataTemp = await fetcher<{
+    data: unknown
+    error: string}>(`
+    ${process.env.NEXT_PUBLIC_BASEURL}/record-gateway/save-company-data-type`,
+    {
+      method: "POST",
+      data: {compData: compData.compData},
+      token: decryptedToken,
+      // enabled: decryptedToken !== undefined && decryptedToken ? true : false,
+    }
+  );
+
+  
+
+   if (flowDataTemp.error) {
+    return { error: flowDataTemp.error };
+  }
+
+  return flowDataTemp.data;
 }

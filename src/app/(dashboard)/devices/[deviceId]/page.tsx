@@ -115,7 +115,7 @@ const DeviceDetailsCard: FC<DeviceDetailsCardProps> = ({
 
   return (
     <div className="mb-6 rounded-[10px] bg-[#292929] p-4">
-      <div className="flex justify-between gap-4">
+      <div className="flex flex-col gap-4 lg:flex-row lg:justify-between">
         <div className="space-y-[6px]">
           <h3 className="text-2xl font-medium">
             {deviceData.deviceName}/

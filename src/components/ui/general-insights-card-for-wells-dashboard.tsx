@@ -2,7 +2,7 @@
 
 import { BsFillDeviceSsdFill } from "react-icons/bs";
 import { ActivesCard, SystemEfficiencyCard } from "../cards";
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { FetcherResult } from "@/utils";
 import { DevicesDataResp, SystemEfficiency, WellsResponse } from "@/types";
 import { FaAngleDown } from "react-icons/fa6";
@@ -20,9 +20,11 @@ export const GeneralInsightsWellsDashboard: FC<
 > = ({ wellsData, devicesData, date, sysEffData }) => {
   const [isVisible, setIsVisible] = useState(false);
 
-  if ("error" in sysEffData) {
-    toast.error(sysEffData.error);
-  }
+  useEffect(() => {
+    if ("error" in sysEffData) {
+      toast.error(sysEffData.error);
+    }
+  }, [sysEffData]);
 
   return (
     <div className="rounded-[10px] bg-[#292929] p-3 transition-all duration-300 ease-linear">

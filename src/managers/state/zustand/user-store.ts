@@ -8,7 +8,7 @@ interface UserData {
     last_name: string;
     email: string;
     phone: string;
-    onBoardingDone: string;
+    onBoardingDone: boolean;
   }
 
 export interface UserState {

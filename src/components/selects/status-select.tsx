@@ -21,10 +21,11 @@ export const StatusSelect: FC<StatusSelectProps> = ({ onChange }) => {
     <select
       name="status"
       id="status"
+      value={""}
       className="h-full w-full border-none bg-transparent text-xs font-normal text-white outline-none ring-transparent"
       onChange={handleChange}
     >
-      <option value="" disabled selected>
+      <option value="" disabled>
         Status
       </option>
       <option value="all">All</option>
