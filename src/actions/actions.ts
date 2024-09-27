@@ -540,7 +540,7 @@ interface LoginResponse extends DefaultResponse {
     last_name: string;
     email: string;
     phone: string;
-    onBoardingDone: string;
+    onBoardingDone: boolean;
   };
 }
 
