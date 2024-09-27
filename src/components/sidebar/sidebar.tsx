@@ -13,6 +13,7 @@ import { usePathname } from "next/navigation";
 import { BiSolidLeaf } from "react-icons/bi";
 import Cookies from "js-cookie";
 import { cn } from "@/utils";
+import { ChatBot } from "../chatbot";
 
 interface SidebarProps {
   className?: string;
@@ -54,15 +55,7 @@ export const Sidebar: FC<SidebarProps> = ({
         </div>
 
         <div>
-          <button className="flex items-center gap-[10px] rounded-[10px] bg-[#297FB8] px-4 py-3 text-base font-normal">
-            <Image
-              alt="ai chatbot"
-              width={32}
-              height={32}
-              src="/images/ai-chatbot-icon.svg"
-            />
-            <span>AI chatbot</span>
-          </button>
+          <ChatBot />
         </div>
 
         <div className="space-y-[10px]">

@@ -55,7 +55,7 @@ export const GeneralInsightsWellsDashboard: FC<
       </div>
 
       <div
-        className={`${isVisible ? "flex" : "hidden"} items-center gap-6 transition-all duration-300 ease-linear`}
+        className={`${isVisible ? "flex" : "hidden"} flex-col items-center gap-6 transition-all duration-300 ease-linear lg:flex-row`}
       >
         <ActivesCard
           icon={<BsFillDeviceSsdFill />}

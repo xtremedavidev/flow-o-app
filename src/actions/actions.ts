@@ -5,6 +5,7 @@ import {
   DataTemplate,
   DefaultResponse,
   DevicesDataResp,
+  GetChatMsgResp,
   GetMultipleSitesResponse,
   GetNotesResponse,
   GetSingleSiteResponse,
@@ -13,6 +14,7 @@ import {
   RecordsData,
   ReportsResponse,
   ReportTableHeaderResponse,
+  SendChatMsgResponse,
   SessionDataResponse,
   SitesResponse,
   SystemEfficiency,
@@ -612,4 +614,55 @@ export async function saveDataTemplate(compData: {
   }
 
   return flowDataTemp.data;
+}
+
+export async function sendChatbotMsg(message: string) {
+  const token = cookies().get("token")?.value;
+  const decryptedToken = token
+    ? decryptToken(decodeURIComponent(token))
+    : undefined;
+
+  const sendMsgResp = await fetcher<SendChatMsgResponse>(`
+    ${process.env.NEXT_PUBLIC_BASEURL}/record-gateway/send-chat`,
+    {
+      method: "POST",
+      data: {message},
+      token: decryptedToken,
+      // enabled: decryptedToken !== undefined && decryptedToken ? true : false,
+    }
+  );
+
+  
+
+   if (sendMsgResp.error) {
+    return { error: sendMsgResp.error };
+  }
+
+  return sendMsgResp.data;
+}
+
+
+export async function getChatbotMsg(page: number) {
+  const token = cookies().get("token")?.value;
+  const decryptedToken = token
+    ? decryptToken(decodeURIComponent(token))
+    : undefined;
+
+  const getMsgResp = await fetcher<GetChatMsgResp>(`
+    ${process.env.NEXT_PUBLIC_BASEURL}/record-gateway/get-chat-history`,
+    {
+      method: "GET",
+      data: {page},
+      token: decryptedToken,
+      // enabled: decryptedToken !== undefined && decryptedToken ? true : false,
+    }
+  );
+
+  
+
+   if (getMsgResp.error) {
+    return { error: getMsgResp.error };
+  }
+
+  return getMsgResp.data;
 }
