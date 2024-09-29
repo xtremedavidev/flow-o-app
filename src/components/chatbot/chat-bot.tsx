@@ -7,7 +7,6 @@ import ReactDOM from "react-dom";
 import { RxCrossCircled } from "react-icons/rx";
 import { ChatBotInput } from "./chat-input";
 import { BotChatItem, UserChatItem } from "./chat-item";
-import { useQuery } from "@tanstack/react-query";
 import { getChatbotMsg, sendChatbotMsg } from "@/actions";
 import { useChatBotStore } from "@/managers";
 import { formatDate } from "@/utils";

@@ -5,6 +5,7 @@ import {
   DataTemplate,
   DefaultResponse,
   DevicesDataResp,
+  EnvTopicsAndTagsResp,
   GetChatMsgResp,
   GetMultipleSitesResponse,
   GetNotesResponse,
@@ -14,6 +15,7 @@ import {
   RecordsData,
   ReportsResponse,
   ReportTableHeaderResponse,
+  SearchEnvResp,
   SendChatMsgResponse,
   SessionDataResponse,
   SitesResponse,
@@ -691,4 +693,52 @@ export async function getWellActivityChart() {
   }
 
   return wellActivityChart;
+}
+
+export async function getEnvTopicsTags() {
+  const token = cookies().get("token")?.value;
+  const decryptedToken = token
+    ? decryptToken(decodeURIComponent(token))
+    : undefined;
+
+  const envTopicsAndTags = await fetcher<EnvTopicsAndTagsResp>(`
+    ${process.env.NEXT_PUBLIC_BASEURL}/record-gateway/get-topics-tags`,
+    {
+      method: "GET",
+      data: {},
+      token: decryptedToken,
+      // enabled: decryptedToken !== undefined && decryptedToken ? true : false,
+    }
+  );
+
+  
+
+   if (envTopicsAndTags.error) {
+    return { error: envTopicsAndTags.error };
+  }
+
+  return envTopicsAndTags;
+}
+
+export async function getEnvSearchResource(topic: string, tag: string) {
+  const token = cookies().get("token")?.value;
+  const decryptedToken = token
+    ? decryptToken(decodeURIComponent(token))
+    : undefined;
+
+  const envSearchResource = await fetcher<SearchEnvResp>(`
+    ${process.env.NEXT_PUBLIC_BASEURL}/record-gateway/get-search-resource`,
+    {
+      method: "GET",
+      data: {topic, tag},
+      token: decryptedToken,
+      // enabled: decryptedToken !== undefined && decryptedToken ? true : false,
+    }
+  );
+
+   if (envSearchResource.error) {
+    return { error: envSearchResource.error };
+  }
+
+  return envSearchResource;
 }

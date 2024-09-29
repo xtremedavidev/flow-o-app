@@ -31,7 +31,11 @@ export const DashboardChildrenWrapper: FC<DashboardChildrenWrapperProps> = ({
         <DashboardPageWrapper>{children}</DashboardPageWrapper>
       </div>
 
-      {!pathname.startsWith("/action-center") && rightbar}
+      {pathname.startsWith("/action-center")
+        ? null
+        : pathname.startsWith(`/env-compliance`)
+          ? null
+          : rightbar}
     </div>
   );
 };
