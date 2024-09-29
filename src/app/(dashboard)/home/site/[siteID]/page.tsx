@@ -3,6 +3,7 @@ import {
   getGeneralInsightsChartData,
   getRecords,
   getSites,
+  getWellActivityChart,
   getWells,
 } from "@/actions";
 import {
@@ -33,6 +34,7 @@ const SiteDashboard: FC<SiteDashboardProps> = async ({ params }) => {
   const wellsData = await getWells(undefined, siteID);
   const devicesData = await getDevices(undefined, siteID);
   const recordsData = await getRecords();
+  const wellChartData = await getWellActivityChart();
 
   // const generalInsightsChartData = await getGeneralInsightsChartData(
   //   "7206bdaf-79af-4a11-89b6-7fa14de2db7c"
@@ -84,7 +86,10 @@ const SiteDashboard: FC<SiteDashboardProps> = async ({ params }) => {
         /> */}
       </div>
 
-      <WellChartAndMap sitesData={siteData.data.data} />
+      <WellChartAndMap
+        sitesData={siteData.data.data}
+        wellChartData={wellChartData}
+      />
 
       {/* {generalInsightsChartData && ( */}
       <GeneralInsightsCard
