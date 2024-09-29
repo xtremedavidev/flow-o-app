@@ -2,13 +2,18 @@
 
 import { FC, useState } from "react";
 import { LocateWellCard, WellActivityCard } from "../cards";
-import { Site } from "@/types";
+import { Site, WellActivityChartResp } from "@/types";
+import { FetcherResult } from "@/utils";
 
 interface WellChartAndMapProps {
   sitesData: Site[] | Site;
+  wellChartData: FetcherResult<WellActivityChartResp[]> | { error: string };
 }
 
-export const WellChartAndMap: FC<WellChartAndMapProps> = ({ sitesData }) => {
+export const WellChartAndMap: FC<WellChartAndMapProps> = ({
+  sitesData,
+  wellChartData,
+}) => {
   const [showMap, setShowMap] = useState<boolean | null>(null);
 
   return (
@@ -26,7 +31,11 @@ export const WellChartAndMap: FC<WellChartAndMapProps> = ({ sitesData }) => {
       <div
         className={`min-h-[350px] ${showMap === true ? "hidden w-0" : showMap === false ? "w-full" : "w-full lg:w-[50%]"}`}
       >
-        <WellActivityCard showMap={showMap} setShowMap={setShowMap} />
+        <WellActivityCard
+          showMap={showMap}
+          setShowMap={setShowMap}
+          wellChartData={wellChartData}
+        />
       </div>
     </div>
   );

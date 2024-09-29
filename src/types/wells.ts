@@ -19,3 +19,9 @@ export interface WellsResponse {
   message: string;
   data: WellsData;
 }
+
+
+export interface WellActivityChartResp {
+  date: string;  
+  count: number; 
+}

@@ -18,6 +18,7 @@ import {
   SessionDataResponse,
   SitesResponse,
   SystemEfficiency,
+  WellActivityChartResp,
   WellsResponse,
 } from "@/types";
 import { decryptToken, encryptToken, fetcher } from "@/utils";
@@ -665,4 +666,29 @@ export async function getChatbotMsg(page: number) {
   }
 
   return getMsgResp.data;
+}
+
+export async function getWellActivityChart() {
+  const token = cookies().get("token")?.value;
+  const decryptedToken = token
+    ? decryptToken(decodeURIComponent(token))
+    : undefined;
+
+  const wellActivityChart = await fetcher<WellActivityChartResp[]>(`
+    ${process.env.NEXT_PUBLIC_BASEURL}/well-gateway/well-activity-graph`,
+    {
+      method: "GET",
+      data: {},
+      token: decryptedToken,
+      // enabled: decryptedToken !== undefined && decryptedToken ? true : false,
+    }
+  );
+
+  
+
+   if (wellActivityChart.error) {
+    return { error: wellActivityChart.error };
+  }
+
+  return wellActivityChart;
 }

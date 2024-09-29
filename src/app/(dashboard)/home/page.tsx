@@ -1,4 +1,8 @@
-import { getDashboardCardData, getRecords } from "@/actions";
+import {
+  getDashboardCardData,
+  getRecords,
+  getWellActivityChart,
+} from "@/actions";
 
 import {
   ActivesCard,
@@ -20,6 +24,7 @@ export const metadata: Metadata = {
 const DashboardHome = async () => {
   const { wellsData, devicesData, sitesData } = await getDashboardCardData();
   const recordsData = await getRecords();
+  const wellChartData = await getWellActivityChart();
 
   const SwitcherSitesWellsViewArr = [
     <ListWrapper
@@ -70,7 +75,10 @@ const DashboardHome = async () => {
         />
       </div>
 
-      <WellChartAndMap sitesData={sitesData.data.data} />
+      <WellChartAndMap
+        sitesData={sitesData.data.data}
+        wellChartData={wellChartData}
+      />
 
       <GeneralInsightsCard wellsData={wellsData} />
 

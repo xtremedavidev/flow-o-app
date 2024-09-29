@@ -3,15 +3,19 @@
 import { FC } from "react";
 import { ColumnChart } from "../charts";
 import { GiCancel } from "react-icons/gi";
+import { FetcherResult } from "@/utils";
+import { WellActivityChartResp } from "@/types";
 
 interface WellActivityProps {
   showMap: boolean | null;
   setShowMap: React.Dispatch<React.SetStateAction<boolean | null>>;
+  wellChartData: FetcherResult<WellActivityChartResp[]> | { error: string };
 }
 
 export const WellActivityCard: FC<WellActivityProps> = ({
   showMap,
   setShowMap,
+  wellChartData,
 }) => {
   return (
     <div className="h-full w-full rounded-2xl bg-[#297FB8]/10 px-[26px] py-[18px]">
@@ -42,7 +46,7 @@ export const WellActivityCard: FC<WellActivityProps> = ({
       </div>
 
       <div onClick={() => setShowMap(false)} className="relative h-full pt-3">
-        <ColumnChart />
+        <ColumnChart wellChartData={wellChartData} />
       </div>
     </div>
   );
