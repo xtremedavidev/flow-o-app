@@ -5,9 +5,11 @@ import { useComplianceStore } from "@/managers";
 import { useQuery } from "@tanstack/react-query";
 import Image from "next/image";
 import Link from "next/link";
-import { FC } from "react";
+import { FC, useState } from "react";
 import { MdReviews } from "react-icons/md";
 import { TbLoader2 } from "react-icons/tb";
+import { ResourcesListModal } from "../modals";
+import { ResourceList } from "@/types";
 
 interface ComplianceResourcesCardProps {
   topicsArr: string[];
@@ -24,10 +26,6 @@ export const ComplianceResourcesCard: FC<ComplianceResourcesCardProps> = ({
     queryKey: ["envSearchResource", tag, topic],
     queryFn: () => getEnvSearchResource(topic, tag),
   });
-
-  console.log("firsttttttttt", tag, topic);
-
-  console.log("helloooooooo", envSearchResource.data);
 
   if (envSearchResource.isLoading) {
     return (
@@ -75,7 +73,7 @@ export const ComplianceResourcesCard: FC<ComplianceResourcesCardProps> = ({
         ))}
       </div>
 
-      <div className="mt-5 flex flex-wrap items-center justify-between gap-4 pb-2">
+      <div className="mt-5 flex flex-wrap items-center justify-center gap-4 pb-2">
         {!envSearchResource.isLoading &&
           envSearchResource.data &&
           Object.keys(envSearchResource.data.data).length === 0 && (
@@ -93,7 +91,7 @@ export const ComplianceResourcesCard: FC<ComplianceResourcesCardProps> = ({
                   title={resource.name}
                   desc={resource.notes}
                   imgUrl={`/images/demo-img-env.png`}
-                  readMoreUrl={resource.resource_list[0].url}
+                  readMoreUrl={resource.resource_list}
                 />
               ))
             : null)}
@@ -127,7 +125,7 @@ interface TopicInfoCardProps {
   imgUrl: string;
   title: string;
   desc: string;
-  readMoreUrl: string;
+  readMoreUrl: ResourceList[];
 }
 
 const TopicInfoCard: FC<TopicInfoCardProps> = ({
@@ -136,6 +134,8 @@ const TopicInfoCard: FC<TopicInfoCardProps> = ({
   desc,
   readMoreUrl,
 }) => {
+  const [isOpen, setIsOpen] = useState(false);
+
   return (
     <div className="flex w-[239px] shrink-0 flex-col rounded-[20px] border border-solid border-[#297FB8] bg-black/45">
       <Image
@@ -150,15 +150,23 @@ const TopicInfoCard: FC<TopicInfoCardProps> = ({
 
         <p className="text-[8px] font-normal text-[#F1F1F1]">{desc}</p>
 
-        <Link
-          href={readMoreUrl}
-          target="_blank"
+        <button
+          // href={readMoreUrl}
+          // target="_blank"
+          onClick={() => setIsOpen(true)}
           className="flex w-full items-center justify-center gap-1 rounded-md bg-[#297FB8]/[0.53] py-[5px] text-[10px] font-normal"
         >
           Read more
           <MdReviews size={12} color="#ffffff" />
-        </Link>
+        </button>
       </div>
+
+      <ResourcesListModal
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        title="Resources List"
+        resourseList={readMoreUrl}
+      />
     </div>
   );
 };

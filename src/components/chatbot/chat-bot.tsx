@@ -80,7 +80,7 @@ const ChatModal: FC<ChatModalProps> = ({ isOpen, setIsOpen }) => {
 
   return ReactDOM.createPortal(
     <div className="fixed inset-0 z-[100] flex h-screen w-full items-center justify-center bg-black/80 px-[5%] backdrop-blur-md">
-      <div className="h-full max-h-[90vh] w-full max-w-[400px] overflow-hidden rounded-[20px]">
+      <div className="h-full max-h-[90dvh] w-full max-w-[400px] overflow-hidden rounded-[20px]">
         <div className="flex w-full items-center justify-between rounded-t-[20px] bg-[#185C9A] px-6 py-5">
           <LogoWithText />
           <RxCrossCircled

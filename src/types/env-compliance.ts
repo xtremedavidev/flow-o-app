@@ -12,7 +12,7 @@ export interface EnvTopicsAndTagsResp {
 }
 
 
-interface ResourceList {
+export interface ResourceList {
   cache_last_updated: string | null;
   cache_url: string | null;
   created: string;

@@ -149,9 +149,9 @@ export const EnvCompSelectTags: FC<EnvCompSelectTagsProps> = ({
   );
 };
 
-interface EnvCompClientWrapperProps extends PropsWithChildren {
-  envTopicsAndTags: FetcherResult<EnvTopicsAndTagsResp>;
-}
+// interface EnvCompClientWrapperProps extends PropsWithChildren {
+//   envTopicsAndTags: FetcherResult<EnvTopicsAndTagsResp>;
+// }
 
 // export const EnvCompClientWrapper: FC<EnvCompClientWrapperProps> = ({
 //   envTopicsAndTags,
