@@ -2,7 +2,7 @@ import Image from "next/image";
 
 export const PageLoader = () => {
   return (
-    <div className="fixed inset-0 z-[99] flex h-screen w-full items-center justify-center bg-black/80 backdrop-blur-md">
+    <div className="fixed inset-0 z-[99] flex h-[100dvh] w-full items-center justify-center bg-black/80 backdrop-blur-md">
       <div className="relative flex animate-pulse flex-col items-center gap-4">
         <Image
           alt="loader"

@@ -29,7 +29,7 @@ export const Sidebar: FC<SidebarProps> = ({
   return (
     <div
       className={cn(
-        `flex h-screen w-[292px] shrink-0 flex-col overflow-y-auto border-r border-solid border-[#297FB8]/20 px-9 pb-6 pt-5 2xl:pb-[66px]`,
+        `flex h-[100dvh] w-[292px] shrink-0 flex-col overflow-y-auto border-r border-solid border-[#297FB8]/20 px-9 pb-6 pt-5 2xl:pb-[66px]`,
         className
       )}
     >

@@ -3,7 +3,7 @@ import { FC, PropsWithChildren } from "react";
 
 export const AuthBgWrapper: FC<PropsWithChildren> = ({ children }) => {
   return (
-    <main className="custom-login-gradient relative flex min-h-screen items-center justify-center px-[5%]">
+    <main className="custom-login-gradient relative flex min-h-[100dvh] items-center justify-center px-[5%]">
       <Image
         src="/images/flowoptix-logo-big.svg"
         alt="FlowOptix"

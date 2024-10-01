@@ -28,7 +28,7 @@ export const ModalWrapper: FC<ModalWrapperProps> = ({
   if (!isOpen) return null;
 
   return ReactDOM.createPortal(
-    <div className="fixed inset-0 z-[70] flex h-screen w-full items-center justify-center bg-black/80 px-[5%] backdrop-blur-md">
+    <div className="fixed inset-0 z-[70] flex h-[100dvh] w-full items-center justify-center bg-black/80 px-[5%] backdrop-blur-md">
       <div className="w-full max-w-[500px] rounded-[26px] bg-[#272727] px-12 py-[22px]">
         <h1 className="mb-4 text-center text-base font-semibold">{title}</h1>
         {children}

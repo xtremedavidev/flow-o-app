@@ -742,3 +742,26 @@ export async function getEnvSearchResource(topic: string, tag: string) {
 
   return envSearchResource;
 }
+
+export async function getTotalSystemEff() {
+  const token = cookies().get("token")?.value;
+  const decryptedToken = token
+    ? decryptToken(decodeURIComponent(token))
+    : undefined;
+
+  const totalSysEff = await fetcher<SystemEfficiency>(`
+    ${process.env.NEXT_PUBLIC_BASEURL}/record-gateway/get-total-system-efficiency`,
+    {
+      method: "GET",
+      data: {},
+      token: decryptedToken,
+      // enabled: decryptedToken !== undefined && decryptedToken ? true : false,
+    }
+  );
+
+   if (totalSysEff.error) {
+    return { error: totalSysEff.error };
+  }
+
+  return totalSysEff;
+}

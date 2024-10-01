@@ -15,9 +15,9 @@ const DashboardLayout: FC<DashboardLayoutProps> = async ({ children }) => {
 
   return (
     <ProtectedRouteWrapper>
-      <main className="flex h-screen w-full overflow-hidden">
+      <main className="flex h-[100dvh] w-full overflow-hidden">
         <Sidebar className="hidden lg:flex" />
-        <div className="h-screen w-full overflow-hidden">
+        <div className="h-[100dvh] w-full overflow-hidden">
           <Topbar />
 
           <DashboardChildrenWrapper

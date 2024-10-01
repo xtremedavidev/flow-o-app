@@ -1,6 +1,7 @@
 import {
   getDashboardCardData,
   getRecords,
+  getTotalSystemEff,
   getWellActivityChart,
 } from "@/actions";
 
@@ -11,6 +12,7 @@ import {
   ListWrapper,
   ReportDataTable,
   SwitcherSitesWells,
+  SystemEfficiencyCard,
   WellChartAndMap,
 } from "@/components";
 import { Metadata } from "next";
@@ -25,6 +27,7 @@ const DashboardHome = async () => {
   const { wellsData, devicesData, sitesData } = await getDashboardCardData();
   const recordsData = await getRecords();
   const wellChartData = await getWellActivityChart();
+  const totalSysEffData = await getTotalSystemEff();
 
   const SwitcherSitesWellsViewArr = [
     <ListWrapper
@@ -73,6 +76,16 @@ const DashboardHome = async () => {
               : 0
           }
         />
+
+        {"error" in totalSysEffData ? null : (
+          <SystemEfficiencyCard
+            average_downtime={`${Number(totalSysEffData.data.averageDowntime.toFixed(2))}`}
+            average_resolution={`${Number(totalSysEffData.data.averageResolutionTime.toFixed(2))}`}
+            icon={<BsFillDeviceSsdFill />}
+            label="System Efficiency"
+            percentage={Number(totalSysEffData.data.ResolutionRate.toFixed(2))}
+          />
+        )}
       </div>
 
       <WellChartAndMap
