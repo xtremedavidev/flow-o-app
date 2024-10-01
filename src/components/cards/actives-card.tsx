@@ -17,7 +17,7 @@ export const ActivesCard: FC<ActivesCardProps> = ({
   percentage,
 }) => {
   return (
-    <div className="w-full max-w-[237px] rounded-2xl bg-[#1E3647] px-[14px] py-[6px] text-white @container">
+    <div className="w-full rounded-2xl bg-[#1E3647] px-[14px] py-[6px] text-white @container lg:max-w-[237px]">
       <div className="flex items-center gap-2">
         <div className="rounded-full bg-white/[0.19] p-[5.65px]">{icon}</div>
         <h2 className="text-[10px] font-normal @[9rem]:text-xs @[12rem]:text-sm">

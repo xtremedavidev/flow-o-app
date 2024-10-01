@@ -2,6 +2,7 @@ import Image from "next/image";
 import { FC } from "react";
 import { LiaClipboardListSolid } from "react-icons/lia";
 import { toast } from "react-toastify";
+import ReactMarkdown from "react-markdown";
 
 interface UserChatItemProps {
   message: string;
@@ -13,9 +14,9 @@ export const UserChatItem: FC<UserChatItemProps> = ({ message, time }) => {
     <div>
       <div className="flex flex-col items-end">
         <div className="relative z-[120] mr-[10px] w-full max-w-[80%] rounded-t-xl rounded-bl-xl bg-[#DEE2E6] pb-8 pl-5 pr-4 pt-4 text-black">
-          <p className="relative z-[120] text-wrap break-words text-xs font-normal">
-            {message}
-          </p>
+          <div className="relative z-[120] overflow-x-auto text-wrap break-words text-xs font-normal">
+            <ReactMarkdown>{message}</ReactMarkdown>
+          </div>
           <Image
             src="/images/user-chat-triangle.svg"
             alt=""
@@ -59,9 +60,9 @@ export const BotChatItem: FC<BotChatItemProps> = ({ message, time }) => {
     <div>
       <div className="flex flex-col items-start">
         <div className="relative z-[120] ml-[10px] w-full max-w-[80%] rounded-t-xl rounded-br-xl bg-[#232425] pb-8 pl-4 pr-5 pt-4 text-white">
-          <p className="relative z-[120] text-wrap break-words text-xs font-normal">
-            {message}
-          </p>
+          <div className="relative z-[120] overflow-x-auto text-wrap break-words text-xs font-normal">
+            <ReactMarkdown>{message}</ReactMarkdown>
+          </div>
           <div className="absolute bottom-0 right-[20px] flex w-fit translate-y-[50%] items-center justify-center rounded-lg bg-[#2C70BF] p-1">
             <LiaClipboardListSolid
               size={16}

@@ -49,7 +49,7 @@ export const ChatBotInput: FC<ChatPromptProps> = ({ handleSuccess, page }) => {
   }
 
   return (
-    <div className="mt-5 flex h-[64px] w-full justify-between gap-8 rounded-[14px] border-2 border-solid border-[#297FB8] bg-[#134663]/[0.11] px-[21px] py-[14px] text-sm font-normal">
+    <div className="mt-5 flex h-[64px] w-full justify-between justify-items-end gap-8 rounded-[14px] border-2 border-solid border-[#297FB8] bg-[#134663]/[0.11] px-[21px] py-[14px] text-sm font-normal">
       <textarea
         name="promt-input"
         id="prompt-input"

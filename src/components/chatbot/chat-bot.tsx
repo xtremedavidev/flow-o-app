@@ -10,7 +10,6 @@ import { BotChatItem, UserChatItem } from "./chat-item";
 import { getChatbotMsg, sendChatbotMsg } from "@/actions";
 import { useChatBotStore } from "@/managers";
 import { formatDate } from "@/utils";
-import { TbLoader2 } from "react-icons/tb";
 
 export const ChatBot = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -80,7 +79,7 @@ const ChatModal: FC<ChatModalProps> = ({ isOpen, setIsOpen }) => {
 
   return ReactDOM.createPortal(
     <div className="fixed inset-0 z-[100] flex h-[100dvh] w-full items-center justify-center bg-black/80 px-[5%] backdrop-blur-md">
-      <div className="h-full max-h-[90dvh] w-full max-w-[400px] overflow-hidden rounded-[20px]">
+      <div className="h-full max-h-[90%] w-full max-w-[400px] overflow-hidden rounded-[20px]">
         <div className="flex w-full items-center justify-between rounded-t-[20px] bg-[#185C9A] px-6 py-5">
           <LogoWithText />
           <RxCrossCircled
@@ -94,7 +93,7 @@ const ChatModal: FC<ChatModalProps> = ({ isOpen, setIsOpen }) => {
         <div className="flex h-full w-full flex-col rounded-b-[20px] bg-[#161515] p-4">
           <div
             ref={chatContainerRef}
-            className="h-full max-h-[calc(90vh-200px)] overflow-y-auto pr-2"
+            className="h-full max-h-[calc(100%-164px)] overflow-y-auto pr-2"
           >
             {!showChatHistory && (
               <div className="flex w-full justify-center text-center">

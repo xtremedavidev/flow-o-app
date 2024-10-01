@@ -2,6 +2,7 @@ import { FC } from "react";
 import { CircularProgressBar } from "../progress";
 import { AverageTimeIcon } from "../icons";
 import { PiSpeedometerFill } from "react-icons/pi";
+import { cn } from "@/utils";
 
 interface SECardProps {
   icon: React.ReactNode;
@@ -9,6 +10,7 @@ interface SECardProps {
   average_downtime: string;
   average_resolution: string;
   percentage: number;
+  className?: string;
 }
 
 export const SystemEfficiencyCard: FC<SECardProps> = ({
@@ -17,9 +19,15 @@ export const SystemEfficiencyCard: FC<SECardProps> = ({
   average_downtime,
   average_resolution,
   percentage,
+  className,
 }) => {
   return (
-    <div className="w-full min-w-[215px] rounded-2xl bg-[#1E3647] px-[14px] py-[6px] text-white @container">
+    <div
+      className={cn(
+        `@container" w-full min-w-[215px] rounded-2xl bg-[#1E3647] px-[14px] py-[6px] text-white`,
+        className
+      )}
+    >
       <div className="flex items-center gap-2">
         <div className="rounded-full bg-white/[0.19] p-[5.65px]">{icon}</div>
         <h2 className="text-[8px] font-normal @[9rem]:text-xs @[12rem]:text-sm">

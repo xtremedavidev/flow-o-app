@@ -49,7 +49,7 @@ const DashboardHome = async () => {
     <div className="flex flex-col gap-7">
       <h1 className="text-2xl font-semibold">Dashboard</h1>
 
-      <div className="flex w-full items-center justify-between gap-6">
+      <div className="flex w-full flex-col items-center justify-between gap-6 lg:flex-row">
         <ActivesCard
           icon={<BsFillDeviceSsdFill />}
           label="Active Wells"
@@ -79,6 +79,7 @@ const DashboardHome = async () => {
 
         {"error" in totalSysEffData ? null : (
           <SystemEfficiencyCard
+            className="lg:hidden xl:block"
             average_downtime={`${Number(totalSysEffData.data.averageDowntime.toFixed(2))}`}
             average_resolution={`${Number(totalSysEffData.data.averageResolutionTime.toFixed(2))}`}
             icon={<BsFillDeviceSsdFill />}
@@ -87,6 +88,17 @@ const DashboardHome = async () => {
           />
         )}
       </div>
+
+      {"error" in totalSysEffData ? null : (
+        <SystemEfficiencyCard
+          className="my-4 hidden w-full lg:block xl:hidden"
+          average_downtime={`${Number(totalSysEffData.data.averageDowntime.toFixed(2))}`}
+          average_resolution={`${Number(totalSysEffData.data.averageResolutionTime.toFixed(2))}`}
+          icon={<BsFillDeviceSsdFill />}
+          label="System Efficiency"
+          percentage={Number(totalSysEffData.data.ResolutionRate.toFixed(2))}
+        />
+      )}
 
       <WellChartAndMap
         sitesData={sitesData.data.data}

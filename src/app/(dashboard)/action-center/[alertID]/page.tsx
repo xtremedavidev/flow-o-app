@@ -14,6 +14,7 @@ import { FaMagic, FaRegClock } from "react-icons/fa";
 import { decryptToken, formatDateToLocalString } from "@/utils";
 import { getRecommendations, getRecommendationsChat } from "@/actions";
 import { revalidateTag } from "next/cache";
+import ReactMarkdown from "react-markdown";
 
 export const dynamic = "force-dynamic";
 
@@ -171,7 +172,9 @@ const AISuggestionItem: FC<AISuggestionItemProps> = ({ details }) => {
       </div>
       <div className="w-full rounded-[10px] bg-[#297FB8]/[0.3] px-4 py-[14px] text-[#D0D0D0]">
         {/* <h4 className="text-base font-semibold">{title}</h4> */}
-        <p className="text-sm font-normal">{details}</p>
+        <div className="overflow-x-auto text-sm font-normal">
+          <ReactMarkdown>{details}</ReactMarkdown>
+        </div>
       </div>
     </div>
   );

@@ -85,6 +85,7 @@ export const GeneralInsightsWellsDashboard: FC<
         />
         {"error" in sysEffData ? null : (
           <SystemEfficiencyCard
+            className="lg:hidden xl:block"
             average_downtime={`${Number(sysEffData.averageDowntime.toFixed(2))}`}
             average_resolution={`${Number(sysEffData.averageResolutionTime.toFixed(2))}`}
             icon={<BsFillDeviceSsdFill />}
@@ -93,6 +94,17 @@ export const GeneralInsightsWellsDashboard: FC<
           />
         )}
       </div>
+
+      {"error" in sysEffData ? null : (
+        <SystemEfficiencyCard
+          className="my-4 hidden w-full lg:block xl:hidden"
+          average_downtime={`${Number(sysEffData.averageDowntime.toFixed(2))}`}
+          average_resolution={`${Number(sysEffData.averageResolutionTime.toFixed(2))}`}
+          icon={<BsFillDeviceSsdFill />}
+          label="System Efficiency"
+          percentage={Number(sysEffData.ResolutionRate.toFixed(2))}
+        />
+      )}
 
       <div className="mt-[10px] flex w-full justify-center">
         <button
