@@ -22,35 +22,6 @@ export const ComplianceResourcesCard: FC<ComplianceResourcesCardProps> = ({
   const tag = useComplianceStore((state) => state.tag);
   const setTopic = useComplianceStore((state) => state.setTopic);
 
-  const envSearchResource = useQuery({
-    queryKey: ["envSearchResource", tag, topic],
-    queryFn: () => getEnvSearchResource(topic, tag),
-  });
-
-  if (envSearchResource.isLoading) {
-    return (
-      <div className="flex w-full justify-center">
-        <TbLoader2 size={28} color="white" className="animate-spin" />
-      </div>
-    );
-  }
-
-  if (!envSearchResource.isLoading && !envSearchResource.data) {
-    return (
-      <div className="text-center text-base font-medium text-white">
-        No environmental search resource data
-      </div>
-    );
-  }
-
-  if (envSearchResource.data && "error" in envSearchResource.data) {
-    return (
-      <div className="text-center text-base font-medium text-white">
-        Error occurred while getting environmental search resource
-      </div>
-    );
-  }
-
   return (
     <div className="rounded-[9px] bg-white/5 px-5 py-[10px] text-[#F3F3F3]">
       <h2 className="text-base font-semibold capitalize">{tag}</h2>
@@ -73,29 +44,73 @@ export const ComplianceResourcesCard: FC<ComplianceResourcesCardProps> = ({
         ))}
       </div>
 
-      <div className="mt-5 flex flex-wrap items-center justify-center gap-4 pb-2">
-        {!envSearchResource.isLoading &&
-          envSearchResource.data &&
-          Object.keys(envSearchResource.data.data).length === 0 && (
-            <div className="text-center text-base font-medium text-white">
-              No environmental search resource for tag: <b>{tag}</b> and topic:{" "}
-              <b>{topic}</b>
-            </div>
-          )}
+      <EnvSearchResource />
+    </div>
+  );
+};
 
-        {envSearchResource.data &&
-          (envSearchResource.data?.data?.status === "Success"
-            ? envSearchResource.data.data.resources.map((resource, index) => (
-                <TopicInfoCard
-                  key={resource.name}
-                  title={resource.name}
-                  desc={resource.notes}
-                  imgUrl={`/images/demo-img-env.png`}
-                  readMoreUrl={resource.resource_list}
-                />
-              ))
-            : null)}
+const EnvSearchResource = () => {
+  const topic = useComplianceStore((state) => state.topic);
+  const tag = useComplianceStore((state) => state.tag);
+
+  const envSearchResource = useQuery({
+    queryKey: ["envSearchResource", tag, topic],
+    queryFn: () => getEnvSearchResource(topic, tag),
+  });
+
+  console.log("hello", envSearchResource.data);
+
+  if (envSearchResource.isLoading) {
+    return (
+      <div className="my-4 flex w-full justify-center">
+        <TbLoader2 size={28} color="white" className="animate-spin" />
       </div>
+    );
+  }
+
+  if (!envSearchResource.isLoading && !envSearchResource.data) {
+    return (
+      <div className="my-4 text-center text-base font-medium text-white">
+        No environmental search resource data
+      </div>
+    );
+  }
+
+  if (
+    envSearchResource.data &&
+    ("error" in envSearchResource.data ||
+      envSearchResource.data.data.status === "Error")
+  ) {
+    return (
+      <div className="my-4 text-center text-base font-medium text-white">
+        Error occurred while getting environmental search resource
+      </div>
+    );
+  }
+
+  return (
+    <div className="mt-5 flex flex-wrap items-center justify-center gap-4 pb-2">
+      {!envSearchResource.isLoading &&
+        envSearchResource.data &&
+        Object.keys(envSearchResource.data.data).length === 0 && (
+          <div className="text-center text-base font-medium text-white">
+            No environmental search resource for tag: <b>{tag}</b> and topic:{" "}
+            <b>{topic}</b>
+          </div>
+        )}
+
+      {envSearchResource.data &&
+        (envSearchResource.data?.data?.status === "Success"
+          ? envSearchResource.data.data.resources.map((resource, index) => (
+              <TopicInfoCard
+                key={resource.name}
+                title={resource.name}
+                desc={resource.notes}
+                imgUrl={`/images/new-env-comp-img.svg`}
+                readMoreUrl={resource.resource_list}
+              />
+            ))
+          : null)}
     </div>
   );
 };
