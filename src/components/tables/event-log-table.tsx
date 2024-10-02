@@ -1,13 +1,15 @@
-import { getReports } from "@/actions";
-import { decryptToken, formatDate } from "@/utils";
-import Cookies from "js-cookie";
+import { getRecords } from "@/actions";
+import { formatDate } from "@/utils";
+// import Cookies from "js-cookie";
 
 export const EventLogTable = async () => {
-  const token = Cookies.get("token");
-  const decryptedToken = token
-    ? decryptToken(decodeURIComponent(token))
-    : undefined;
-  const reportsData = await getReports();
+  // const token = Cookies.get("token");
+  // const decryptedToken = token
+  //   ? decryptToken(decodeURIComponent(token))
+  //   : undefined;
+
+  // const reportsData = await getReports();
+  const reportsData = await getRecords();
 
   if (reportsData === null) {
     return <div>Failed to fetch reports data</div>;
@@ -28,7 +30,7 @@ export const EventLogTable = async () => {
           <th className="w-[500px] px-8 py-4">Description</th>
         </tr>
       </thead>
-      <tbody>
+      <tbody className="border-t">
         {reportsData?.data?.data.map((row, index) => {
           const { formattedDate, formattedTime } = formatDate(row.updatedAt);
 
@@ -39,10 +41,14 @@ export const EventLogTable = async () => {
             >
               <td className="border-b border-r px-4 py-4">{formattedDate}</td>
               <td className="border-b border-r px-4 py-4">{formattedTime}</td>
-              <td className="border-b border-r px-4 py-4">{row.user_id}</td>
-              <td className="border-b border-r px-4 py-4">{row.wellId}</td>
+              <td className="border-b border-r px-4 py-4">
+                {row.user.first_name} {row.user.last_name}
+              </td>
+              <td className="border-b border-r px-4 py-4">
+                {row.well.location}
+              </td>
               <td width="500px" className="border-b px-2 py-2">
-                {row.description}
+                {row.recordDescription}
               </td>
             </tr>
           );
