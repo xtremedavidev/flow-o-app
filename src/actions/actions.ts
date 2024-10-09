@@ -93,46 +93,7 @@ export async function getDashboardCardData() {
   return { wellsData, devicesData, sitesData };
 }
 
-export async function getReports() {
-  const token = cookies().get("token")?.value;
 
-  const resp = 
-  // unstable_cache(
-    async () => {
-      const decryptedToken = token
-        ? decryptToken(decodeURIComponent(token))
-        : undefined;
-
-      // if (!token) {
-      //   throw new Error("Session expired. Please login again");
-      // }
-
-      const reportsData = await fetcher<ReportsResponse>(
-        `${process.env.NEXT_PUBLIC_BASEURL}/record-gateway/get-reports`,
-        {
-          method: "GET",
-          data: {},
-          token: decryptedToken,
-          // enabled: decryptedToken !== undefined && decryptedToken ? true : false,
-        }
-      );
-
-      if (!reportsData) {
-        throw new Error("Failed to fetch reports data");
-      }
-
-      return reportsData;
-    }
-    // ,
-    // undefined,
-    // { tags: ["getReportsTag"], revalidate: 60 }
-  // );
-
-  const data = await resp();
-
-  return data;
-
-}
 
 export async function getSessionData() {
   const token = cookies().get("token")?.value;
@@ -160,6 +121,47 @@ export async function getSessionData() {
 
   return sessionData;
 }
+
+export async function getReports() {
+  const token = cookies().get("token")?.value;
+
+  const resp =
+    // unstable_cache(
+    async () => {
+      const decryptedToken = token
+        ? decryptToken(decodeURIComponent(token))
+        : undefined;
+
+      // if (!token) {
+      //   throw new Error("Session expired. Please login again");
+      // }
+
+      const reportsData = await fetcher<ReportsResponse>(
+        `${process.env.NEXT_PUBLIC_BASEURL}/record-gateway/get-reports`,
+        {
+          method: "GET",
+          data: {},
+          token: decryptedToken,
+          // enabled: decryptedToken !== undefined && decryptedToken ? true : false,
+        }
+      );
+
+      if (!reportsData) {
+        throw new Error("Failed to fetch reports data");
+      }
+
+      return reportsData;
+    };
+  // ,
+  // undefined,
+  // { tags: ["getReportsTag"], revalidate: 60 }
+  // );
+
+  const data = await resp();
+
+  return data;
+}
+
 
 export async function getRightbarData() {
   const sessionData = await getSessionData();

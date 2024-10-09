@@ -130,20 +130,72 @@ export const EnvCompSelectTags: FC<EnvCompSelectTagsProps> = ({
 
   return (
     <div className="h-full w-full overflow-y-auto rounded-[7px] bg-[#1B262D]/[0.59] px-[14px] py-5 lg:max-w-[30%]">
-      <h2 className="mb-[10px] text-xs font-semibold text-[#F3F3F3]">
-        Select tags
-      </h2>
+      <div className="space-y-4">
+        <div>
+          <h2 className="mb-[10px] text-xs font-semibold text-[#F3F3F3]">
+            Carbon and emissions
+          </h2>
+          <div className="flex flex-col gap-4">
+            {tagData.slice(0, 3).map((data, idx) => (
+              <TagItem
+                key={idx}
+                label={data.label}
+                tags={data.tags}
+                selectedTag={tag}
+                onTagChange={handleChange}
+              />
+            ))}
+          </div>
+        </div>
+        <div>
+          <h2 className="mb-[10px] text-xs font-semibold text-[#F3F3F3]">
+            Grants and Credits
+          </h2>
+          <div className="flex flex-col gap-4">
+            {tagData.slice(3, 4).map((data, idx) => (
+              <TagItem
+                key={idx}
+                label={data.label}
+                tags={data.tags}
+                selectedTag={tag}
+                onTagChange={handleChange}
+              />
+            ))}
+          </div>
+        </div>
 
-      <div className="flex flex-col gap-4">
-        {tagData.map((data, idx) => (
-          <TagItem
-            key={idx}
-            label={data.label}
-            tags={data.tags}
-            selectedTag={tag}
-            onTagChange={handleChange}
-          />
-        ))}
+        <div>
+          <h2 className="mb-[10px] text-xs font-semibold text-[#F3F3F3]">
+            Federal and Provincial Guidance
+          </h2>
+          <div className="flex flex-col gap-4">
+            {tagData.slice(4, 5).map((data, idx) => (
+              <TagItem
+                key={idx}
+                label={data.label}
+                tags={data.tags}
+                selectedTag={tag}
+                onTagChange={handleChange}
+              />
+            ))}
+          </div>
+        </div>
+        <div>
+          <h2 className="mb-[10px] text-xs font-semibold text-[#F3F3F3]">
+            Laws and Legislation
+          </h2>
+          <div className="flex flex-col gap-4">
+            {tagData.slice(5).map((data, idx) => (
+              <TagItem
+                key={idx}
+                label={data.label}
+                tags={data.tags}
+                selectedTag={tag}
+                onTagChange={handleChange}
+              />
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );

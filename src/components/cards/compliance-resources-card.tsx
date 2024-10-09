@@ -58,8 +58,6 @@ const EnvSearchResource = () => {
     queryFn: () => getEnvSearchResource(topic, tag),
   });
 
-  console.log("hello", envSearchResource.data);
-
   if (envSearchResource.isLoading) {
     return (
       <div className="my-4 flex w-full justify-center">

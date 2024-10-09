@@ -33,6 +33,7 @@ const DashboardActionCenter: FC<DashboardActionCenterProps> = async ({
 }) => {
   const sortVal = searchParams.sort || "acc";
 
+
   const { sessionData, reportsData } = await getRightbarData();
 
   const filteredReports =
