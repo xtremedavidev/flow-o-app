@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { FC } from "react";
+import { FC, useMemo } from "react";
 import { DashboardPageWrapper } from "./dashboard-page-wrapper";
 import { useUserStore } from "@/managers";
 import { DataTemplateModal } from "../modals";
@@ -21,6 +21,11 @@ export const DashboardChildrenWrapper: FC<DashboardChildrenWrapperProps> = ({
   const pathname = usePathname();
   const user = useUserStore((state) => state.user);
 
+  const shouldHideRightBar = useMemo(
+    () => pathsWithoutRightbar.some((path) => pathname.startsWith(path)),
+    [pathsWithoutRightbar, pathname]
+  );
+
   if (user && user.onBoardingDone === false) {
     return <DataTemplateModal flowTempData={flowTempData} />;
   }
@@ -31,11 +36,9 @@ export const DashboardChildrenWrapper: FC<DashboardChildrenWrapperProps> = ({
         <DashboardPageWrapper>{children}</DashboardPageWrapper>
       </div>
 
-      {pathname.startsWith("/action-center")
-        ? null
-        : pathname.startsWith(`/env-compliance`)
-          ? null
-          : rightbar}
+      {shouldHideRightBar ? null : rightbar}
     </div>
   );
 };
+
+const pathsWithoutRightbar = ["/action-center", "/env-compliance", "/settings"];
