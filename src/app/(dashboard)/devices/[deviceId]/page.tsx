@@ -11,15 +11,13 @@ import { MdOutlineStickyNote2 } from "react-icons/md";
 import {
   decryptToken,
   encryptToken,
-  fetcher,
   FetcherResult,
   getCurrentDate,
 } from "@/utils";
-import { cookies } from "next/headers";
-import { DeviceData, DeviceDataResp, GetNotesResponse } from "@/types";
+import { DeviceData, GetNotesResponse } from "@/types";
 import { FC, useMemo, Suspense } from "react";
 import Link from "next/link";
-import { getDevices, getNotes } from "@/actions";
+import { getDevices, getNotes } from "@/server";
 
 interface DeviceByDeviceIDPageProps {
   params: {
@@ -30,13 +28,7 @@ interface DeviceByDeviceIDPageProps {
 const DeviceByDeviceIDPage = async ({ params }: DeviceByDeviceIDPageProps) => {
   const deviceId = decryptToken(decodeURIComponent(params.deviceId));
 
-  const token = cookies().get("token")?.value;
-  const decryptedToken = token
-    ? decryptToken(decodeURIComponent(token))
-    : undefined;
-
   const deviceData = await getDevices(deviceId);
-
   const notesData = await getNotes(deviceId);
 
   return (

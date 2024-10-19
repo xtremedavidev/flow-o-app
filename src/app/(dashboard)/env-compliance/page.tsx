@@ -1,14 +1,12 @@
-import { getEnvTopicsTags } from "@/actions";
+import { getEnvTopicsTags } from "@/server";
 import {
   BackBtnWithText,
   EnvComplianceInfo,
   EnvCompSelectTags,
-  TagItem,
 } from "@/components";
 
 const EnvCompliance = async () => {
   const envTopicsAndTags = await getEnvTopicsTags();
-  // const envSearchResource = await getEnvSearchResource();
 
   if ("error" in envTopicsAndTags) {
     return (

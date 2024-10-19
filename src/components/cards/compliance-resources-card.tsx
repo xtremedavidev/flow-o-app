@@ -1,18 +1,44 @@
 "use client";
 
-import { getEnvSearchResource } from "@/actions";
 import { useComplianceStore } from "@/managers";
 import { useQuery } from "@tanstack/react-query";
 import Image from "next/image";
-import Link from "next/link";
 import { FC, useState } from "react";
 import { MdReviews } from "react-icons/md";
 import { TbLoader2 } from "react-icons/tb";
 import { ResourcesListModal } from "../modals";
-import { ResourceList } from "@/types";
+import { ResourceList, SearchEnvResp } from "@/types";
+import Cookies from "js-cookie";
+import { decryptToken, fetcher } from "@/utils";
 
 interface ComplianceResourcesCardProps {
   topicsArr: string[];
+}
+
+export async function getEnvSearchResource(
+  topic: string,
+  tag: string,
+  token: string | undefined
+) {
+  const decryptedToken = token
+    ? decryptToken(decodeURIComponent(token))
+    : undefined;
+
+  const envSearchResource = await fetcher<SearchEnvResp>(
+    `
+    ${process.env.NEXT_PUBLIC_BASEURL}/record-gateway/get-search-resource`,
+    {
+      method: "GET",
+      data: { topic, tag },
+      token: decryptedToken,
+    }
+  );
+
+  if (envSearchResource.error) {
+    return { error: envSearchResource.error };
+  }
+
+  return envSearchResource;
 }
 
 export const ComplianceResourcesCard: FC<ComplianceResourcesCardProps> = ({
@@ -52,10 +78,11 @@ export const ComplianceResourcesCard: FC<ComplianceResourcesCardProps> = ({
 const EnvSearchResource = () => {
   const topic = useComplianceStore((state) => state.topic);
   const tag = useComplianceStore((state) => state.tag);
+  const token = Cookies.get("token");
 
   const envSearchResource = useQuery({
     queryKey: ["envSearchResource", tag, topic],
-    queryFn: () => getEnvSearchResource(topic, tag),
+    queryFn: () => getEnvSearchResource(topic, tag, token),
   });
 
   if (envSearchResource.isLoading) {
@@ -183,31 +210,3 @@ const TopicInfoCard: FC<TopicInfoCardProps> = ({
     </div>
   );
 };
-
-const topicCardsArr = [
-  {
-    title:
-      "Ecology synergy for sustainable green economy using artificial intelligence",
-    desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris",
-  },
-  {
-    title:
-      "Ecology synergy for sustainable green economy using artificial intelligence",
-    desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris",
-  },
-  {
-    title:
-      "Ecology synergy for sustainable green economy using artificial intelligence",
-    desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris",
-  },
-  {
-    title:
-      "Ecology synergy for sustainable green economy using artificial intelligence",
-    desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris",
-  },
-  {
-    title:
-      "Ecology synergy for sustainable green economy using artificial intelligence",
-    desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris",
-  },
-];

@@ -1,27 +1,38 @@
 import { SemiPieChart } from "../charts";
 import { ConditionsItem } from "../ui";
 import { PressureAlertCard, SaveEnergyAlertCard } from "../cards";
-import { getRightbarData, handleResolve } from "@/actions";
+import { handleResolve } from "@/server";
+import { ReportsResponse, SessionDataResponse } from "@/types";
+import { FC } from "react";
 
-export const Rightbar = async () => {
-  const { sessionData, reportsData } = await getRightbarData();
+interface RightbarProps {
+  sessionData: SessionDataResponse | { error: string };
+  reportsData: ReportsResponse | { error: string };
+}
 
-  const filteredReports = reportsData?.data?.data.filter(
-    (report) => report.status !== "RESOLVED"
-  );
+export const Rightbar: FC<RightbarProps> = ({ sessionData, reportsData }) => {
+  // const { sessionData, reportsData } = await getRightbarData();
+
+  const filteredReports =
+    "error" in reportsData
+      ? null
+      : reportsData?.data?.filter((report) => report.status !== "RESOLVED");
 
   return (
     <div className="hidden h-full w-full max-w-[30%] shrink-0 flex-col overflow-y-auto rounded-2xl bg-[#333333] px-[14px] py-[19px] @container lg:flex">
       <div className="w-full rounded-2xl bg-[#CBCBCB]/[0.06] px-[18px] py-[14px]">
         <h2 className="mb-6 text-base font-medium">Updates</h2>
 
-        {!sessionData?.data && (
-          <div className="flex w-full justify-center text-sm font-normal">
-            No report data
-          </div>
-        )}
+        {"error" in sessionData ||
+          (!sessionData?.data && (
+            <div className="flex w-full justify-center text-sm font-normal">
+              Failed to get report data
+            </div>
+          ))}
 
-        {sessionData && <SemiPieChart sessionData={sessionData.data} />}
+        {"error" in sessionData
+          ? null
+          : sessionData && <SemiPieChart sessionData={sessionData} />}
         <div className="flex items-center justify-between">
           {ConditionsArr.map((condition, index) => (
             <ConditionsItem
@@ -36,13 +47,22 @@ export const Rightbar = async () => {
       <h2 className="my-4 text-sm font-medium">Recent Alerts</h2>
 
       <div className="flex flex-col gap-[10px]">
-        {reportsData && filteredReports.length < 1 && (
+        {"error" in reportsData && (
+          <div className="flex w-full justify-center text-sm font-normal">
+            Failed to get recent alerts
+          </div>
+        )}
+      </div>
+
+      <div className="flex flex-col gap-[10px]">
+        {reportsData && filteredReports && filteredReports.length < 1 && (
           <div className="flex w-full justify-center text-sm font-normal">
             No recent alerts
           </div>
         )}
 
         {reportsData &&
+          filteredReports &&
           filteredReports.map((report) =>
             report.title.toLowerCase().includes("temperature") ? (
               <PressureAlertCard

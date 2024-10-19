@@ -9,7 +9,7 @@ import { useForm } from "react-hook-form";
 import { cn } from "@/utils";
 // import { IoAddCircleOutline } from "react-icons/io5";
 import { useMutation } from "@tanstack/react-query";
-import { saveDataTemplate } from "@/actions";
+import { saveDataTemplate } from "@/server";
 import { useRouter } from "next/navigation";
 
 interface DataTemplateModalProps {

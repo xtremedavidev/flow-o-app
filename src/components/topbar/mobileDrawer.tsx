@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { FC } from "react";
 import { MobileDrawerWrapper } from "./mobileNavWrapper";
 import { Sidebar } from "../sidebar";

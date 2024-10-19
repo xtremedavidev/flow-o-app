@@ -58,7 +58,7 @@ export const SaveEnergyAlertCard: FC<PressureAlertCardProps> = ({
         </div>
       </div>
 
-      <div className="mt-[10px] flex w-full items-center justify-between gap-2 @md:flex @md:justify-end">
+      <div className="mt-[10px] flex w-full flex-col items-center justify-between gap-2 @[13rem]:flex-row @md:flex @md:justify-end">
         <Link
           href={`/action-center`}
           className="flex w-full items-center justify-center gap-1 rounded-md bg-[#24122D] py-[5px] text-[10px] font-normal @md:hidden @md:w-fit @md:px-14"

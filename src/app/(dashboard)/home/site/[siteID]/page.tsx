@@ -1,11 +1,10 @@
 import {
   getDevices,
-  getGeneralInsightsChartData,
   getRecords,
   getSites,
   getWellActivityChart,
   getWells,
-} from "@/actions";
+} from "@/server";
 import {
   ActivesCard,
   BackArrowButton,

@@ -69,7 +69,7 @@ export const PressureAlertCard: FC<PressureAlertCardProps> = ({
         </div>
       </div>
 
-      <div className="mt-[10px] flex items-center justify-between gap-2 @md:w-full @md:justify-end">
+      <div className="mt-[10px] flex flex-col items-center justify-between gap-2 @[13rem]:flex-row @md:w-full @md:justify-end">
         <Link
           href={`/action-center`}
           className="flex w-full items-center justify-center gap-1 rounded-md bg-[#297FB8] py-[5px] text-[10px] font-normal @md:hidden"

@@ -2,11 +2,8 @@
 
 import { FC, useEffect, useMemo, useState } from "react";
 import { LineChart } from "../charts";
-// import { GeneralInsightsData } from "@/hooks";
-// // import { getToken } from "@/utils";
-// import Cookies from "js-cookie";
 import { useQuery } from "@tanstack/react-query";
-import { getGeneralInsightsChartData } from "@/actions";
+import { getGeneralInsightsChartData } from "@/server";
 import { FetcherResult } from "@/utils";
 import { WellsResponse } from "@/types";
 import { TbLoader2 } from "react-icons/tb";
@@ -25,7 +22,6 @@ interface TransformedData {
 }
 
 interface GeneralInsightsCardProps {
-  // generalInsightsChartData?: GeneralInsightsData[];
   wellsData: FetcherResult<WellsResponse>;
 }
 

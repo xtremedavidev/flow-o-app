@@ -12,9 +12,9 @@ import {
 import { BsStars } from "react-icons/bs";
 import { FaMagic, FaRegClock } from "react-icons/fa";
 import { decryptToken, formatDateToLocalString } from "@/utils";
-import { getRecommendations, getRecommendationsChat } from "@/actions";
 import { revalidateTag } from "next/cache";
 import ReactMarkdown from "react-markdown";
+import { getRecommendations, getRecommendationsChat } from "@/server";
 
 export const dynamic = "force-dynamic";
 

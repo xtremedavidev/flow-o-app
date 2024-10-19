@@ -9,7 +9,7 @@ import Cookies from "js-cookie";
 import { toast } from "react-toastify";
 import { useMutation, useQuery, UseQueryResult } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import { getSites, getWells } from "@/actions";
+import { getSites, getWells } from "@/server";
 import { ModalInput } from "../inputs";
 
 interface FormValues {

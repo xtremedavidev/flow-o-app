@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, PropsWithChildren, useEffect } from "react";
+import { FC, useEffect } from "react";
 import { ComplianceResourcesCard } from "../cards";
 import { FetcherResult } from "@/utils";
 import { EnvTopicsAndTagsResp } from "@/types";

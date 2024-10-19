@@ -141,11 +141,11 @@ const SidebarListItemsArr = [
     icon: GoAlertFill,
     href: "/action-center",
   },
-  {
-    label: "Reports",
-    icon: MdPieChart,
-    href: "/reports",
-  },
+  // {
+  //   label: "Reports",
+  //   icon: MdPieChart,
+  //   href: "/reports",
+  // },
   {
     label: "Environmental \n Compliance",
     icon: BiSolidLeaf,

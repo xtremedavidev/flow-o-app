@@ -3,7 +3,7 @@ import {
   getRecords,
   getTotalSystemEff,
   getWellActivityChart,
-} from "@/actions";
+} from "@/server";
 
 import {
   ActivesCard,

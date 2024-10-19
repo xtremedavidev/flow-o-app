@@ -1,11 +1,12 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { FC, useMemo } from "react";
+import { FC, useEffect, useMemo } from "react";
 import { DashboardPageWrapper } from "./dashboard-page-wrapper";
 import { useUserStore } from "@/managers";
 import { DataTemplateModal } from "../modals";
 import { DataTemplate } from "@/types";
+import { toast } from "react-toastify";
 
 interface DashboardChildrenWrapperProps {
   children: React.ReactNode;
@@ -25,6 +26,29 @@ export const DashboardChildrenWrapper: FC<DashboardChildrenWrapperProps> = ({
     () => pathsWithoutRightbar.some((path) => pathname.startsWith(path)),
     [pathsWithoutRightbar, pathname]
   );
+
+  useEffect(() => {
+    const readAlert = () => {
+      if (typeof window !== undefined && "speechSynthesis" in window) {
+        window.speechSynthesis.cancel();
+        console.log("attempting to speak");
+
+        const utterance = new SpeechSynthesisUtterance(
+          `Hello, ${user?.first_name} ${user?.last_name}.`
+        );
+
+        window.speechSynthesis.speak(utterance);
+      } else {
+        toast.info("Sorry, your browser does not support text-to-speech.");
+      }
+    };
+
+    readAlert();
+
+    return () => {
+      window.speechSynthesis.cancel();
+    };
+  }, []);
 
   if (user && user.onBoardingDone === false) {
     return <DataTemplateModal flowTempData={flowTempData} />;

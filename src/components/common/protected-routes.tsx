@@ -1,27 +1,24 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { FC, useEffect, useState } from "react";
 import { PageLoader } from "../loaders";
 import { toast } from "react-toastify";
-import Cookies from "js-cookie";
+import { useRouter } from "next/navigation";
 
 interface ProtectedRouteWrapperProps {
   children: React.ReactNode;
-  // token: string;
+  token: string | undefined;
 }
 
 export const ProtectedRouteWrapper: FC<ProtectedRouteWrapperProps> = ({
   children,
-  // token,
+  token,
 }) => {
   const router = useRouter();
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
 
   useEffect(() => {
     const checkAuthentication = async () => {
-      const token = Cookies.get("token");
-
       if (!token) {
         toast.error(
           "Access Denied: You do not have the necessary permissions to view this page."
@@ -34,7 +31,7 @@ export const ProtectedRouteWrapper: FC<ProtectedRouteWrapperProps> = ({
     };
 
     checkAuthentication();
-  }, [router]);
+  }, [router, token]);
 
   if (isAuthenticated === null) {
     return <PageLoader />;

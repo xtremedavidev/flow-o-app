@@ -2,7 +2,6 @@ import {
   AverageTimeIcon,
   BaseSwitcher,
   ConditionsItem,
-  FilterButton,
   PressureAlertCard,
   SaveEnergyAlertCard,
   SemiPieChart,
@@ -15,7 +14,7 @@ import { IoNotifications } from "react-icons/io5";
 import { IconType } from "react-icons";
 import { MdOutlineTroubleshoot } from "react-icons/md";
 import { TbArrowsSort } from "react-icons/tb";
-import { getRightbarData, handleResolve } from "@/actions";
+import { getRightbarData, handleResolve } from "@/server";
 import { ReportsResponse, SessionDataResponse } from "@/types";
 import { Metadata } from "next";
 
@@ -33,14 +32,21 @@ const DashboardActionCenter: FC<DashboardActionCenterProps> = async ({
 }) => {
   const sortVal = searchParams.sort || "acc";
 
-
   const { sessionData, reportsData } = await getRightbarData();
+
+  if ("error" in sessionData || "error" in reportsData) {
+    return (
+      <div className="my-4 flex justify-center">
+        An error occured while fetching reports and session data
+      </div>
+    );
+  }
 
   const filteredReports =
     sortVal === "acc"
-      ? reportsData?.data?.data.filter((report) => report.status !== "RESOLVED")
-      : reportsData?.data?.data
-          .filter((report) => report.status !== "RESOLVED")
+      ? reportsData?.data?.filter((report) => report.status !== "RESOLVED")
+      : reportsData?.data
+          ?.filter((report) => report.status !== "RESOLVED")
           .reverse();
 
   const SwitcherOptionsElements = [
@@ -98,7 +104,7 @@ const DashboardActionCenter: FC<DashboardActionCenterProps> = async ({
       </div>
 
       <div className="mt-[20px] flex flex-col gap-[14px]">
-        {reportsData.data && filteredReports.length < 1 && (
+        {reportsData && filteredReports.length < 1 && (
           <div className="flex w-full justify-center text-sm font-normal">
             No recent alerts
           </div>
@@ -143,13 +149,13 @@ const DashboardActionCenter: FC<DashboardActionCenterProps> = async ({
       </div>
 
       <div className="mt-[20px] flex flex-col gap-[14px]">
-        {reportsData.data && filteredReports.length < 1 && (
+        {reportsData && filteredReports.length < 1 && (
           <div className="flex w-full justify-center text-sm font-normal">
             No recent notifications
           </div>
         )}
 
-        {reportsData.data &&
+        {reportsData &&
           filteredReports
             .filter((report) => report.type === "NOTIFICATION")
             .map((report) =>
@@ -182,8 +188,8 @@ const DashboardActionCenter: FC<DashboardActionCenterProps> = async ({
   return (
     <div>
       <ActionCenterCard
-        sessionData={sessionData.data ? sessionData.data : null}
-        reportsData={reportsData.data}
+        sessionData={sessionData ? sessionData : null}
+        reportsData={reportsData}
       />
       <div className="my-8">
         <BaseSwitcher

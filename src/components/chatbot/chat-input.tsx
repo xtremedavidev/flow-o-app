@@ -5,15 +5,26 @@ import { FC, useState } from "react";
 import { TbLoader2 } from "react-icons/tb";
 import { LuSendHorizonal } from "react-icons/lu";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { getChatbotMsg, sendChatbotMsg } from "@/actions";
+import { sendChatbotMsg } from "@/server";
 import { toast } from "react-toastify";
+import Cookies from "js-cookie";
+import { GetChatMsgResp } from "@/types";
 
 interface ChatPromptProps {
   page: number;
-  handleSuccess?: typeof getChatbotMsg;
+  handleSuccess?: (
+    page: number,
+    token: string | undefined
+  ) => Promise<
+    | GetChatMsgResp
+    | {
+        error: string;
+      }
+  >;
 }
 
 export const ChatBotInput: FC<ChatPromptProps> = ({ handleSuccess, page }) => {
+  const token = Cookies.get("token");
   const [promptText, setPromptText] = useState("");
   const setShowChatHistory = useChatBotStore(
     (state) => state.setShowChatHistory
@@ -37,7 +48,7 @@ export const ChatBotInput: FC<ChatPromptProps> = ({ handleSuccess, page }) => {
         // queryClient.invalidateQueries({ queryKey: ["getMsgResp"] });
         setPromptText("");
         handleSuccess &&
-          handleSuccess(page).then((resp) => {
+          handleSuccess(page, token).then((resp) => {
             if ("error" in resp) {
               toast.error("Failed to fetch chat history, please try again.");
             } else {

@@ -2,16 +2,16 @@ import {
   AddDeviceButton,
   DeviceListTable,
   FallbackLoader,
-  FilterButton,
   ManageDevicesCard,
   SortArrow,
 } from "@/components";
 import { decryptToken, fetcher, getCurrentDate } from "@/utils";
-import { TbArrowsSort } from "react-icons/tb";
 import { cookies } from "next/headers";
 import { FC, Suspense } from "react";
 import { DevicesDataResp } from "@/types";
 import { Metadata } from "next";
+import { redirect } from "next/navigation";
+import { toast } from "react-toastify";
 
 export const metadata: Metadata = {
   title: "FlowOptix | Manage Devices",
@@ -31,6 +31,10 @@ const DashboardDevices: FC<DashboardDevicesParams> = async ({
   const decryptedToken = token
     ? decryptToken(decodeURIComponent(token))
     : undefined;
+
+  if (!token) {
+    redirect("/login");
+  }
 
   const devicesData = await fetcher<DevicesDataResp>(
     `${process.env.NEXT_PUBLIC_BASEURL}/iot-gateway/get`,

@@ -1,4 +1,4 @@
-import { getRecords } from "@/actions";
+import { getRecords } from "@/server";
 import { formatDate } from "@/utils";
 // import Cookies from "js-cookie";
 

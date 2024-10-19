@@ -4,7 +4,7 @@ import {
   getRecords,
   getSystemEfficiency,
   getWells,
-} from "@/actions";
+} from "@/server";
 import {
   // ActivesCard,
   BackArrowButton,

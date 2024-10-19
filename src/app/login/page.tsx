@@ -9,9 +9,8 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
-import Cookies from "js-cookie";
 import { useUserStore } from "@/managers";
-import { handleLogin } from "@/actions";
+import { handleLogin } from "@/server";
 
 interface LoginResponse extends DefaultResponse {
   token: string;
@@ -55,12 +54,14 @@ const Login = () => {
     const UserData = {
       identifier: data.email,
       password: data.password,
+      rememberMe,
     };
 
     try {
       const resp = await handleLogin(
         UserData.identifier,
-        UserData.password
+        UserData.password,
+        UserData.rememberMe
       ).finally(() => {
         setIsLoading(false);
       });

@@ -1,4 +1,4 @@
-import { createNote, getNotes } from "@/actions";
+import { createNote, getNotes } from "@/server";
 import { NotesPrompt } from "@/components";
 import { decryptToken } from "@/utils";
 import { revalidatePath, revalidateTag } from "next/cache";

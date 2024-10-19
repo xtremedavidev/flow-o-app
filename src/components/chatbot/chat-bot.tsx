@@ -1,15 +1,36 @@
 "use client";
 
-import { ModalProps } from "@/types";
+import { GetChatMsgResp, ModalProps } from "@/types";
 import Image from "next/image";
 import { FC, useEffect, useMemo, useRef, useState } from "react";
 import ReactDOM from "react-dom";
 import { RxCrossCircled } from "react-icons/rx";
 import { ChatBotInput } from "./chat-input";
 import { BotChatItem, UserChatItem } from "./chat-item";
-import { getChatbotMsg, sendChatbotMsg } from "@/actions";
 import { useChatBotStore } from "@/managers";
-import { formatDate } from "@/utils";
+import { decryptToken, fetcher, formatDate } from "@/utils";
+
+export async function getChatbotMsg(page: number, token: string | undefined) {
+  const decryptedToken = token
+    ? decryptToken(decodeURIComponent(token))
+    : undefined;
+
+  const getMsgResp = await fetcher<GetChatMsgResp>(
+    `
+    ${process.env.NEXT_PUBLIC_BASEURL}/record-gateway/get-chat-history`,
+    {
+      method: "GET",
+      data: { page },
+      token: decryptedToken,
+    }
+  );
+
+  if (getMsgResp.error) {
+    return { error: getMsgResp.error };
+  }
+
+  return getMsgResp.data;
+}
 
 export const ChatBot = () => {
   const [isOpen, setIsOpen] = useState(false);
