@@ -1,9 +1,11 @@
 FROM node:20-alpine3.18 as builder
 
+RUN npm install -g pnpm
+
 WORKDIR /app
 COPY package*.json ./
-RUN npm install --production
+RUN pnpm install --production
 COPY . .
-RUN npm run build
+RUN pnpm build
 EXPOSE 3000
-CMD ["npm", "run", "start"]
+CMD ["pnpm", "start"]
