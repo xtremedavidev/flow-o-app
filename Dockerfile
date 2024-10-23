@@ -1,6 +1,6 @@
 FROM node:20-alpine3.18 as builder
 
-WORKDIR /src/app
+WORKDIR /app
 COPY package*.json ./
 RUN npm install --production
 COPY . .
