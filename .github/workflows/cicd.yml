@@ -27,6 +27,6 @@ jobs:
       - name: Pull image from docker hub
         run: docker pull umohsamuel/flowoptix-frontend:latest
       - name: Delete old container
-        run: docker rm -f flowoptix-frontend-container
+        run: docker rm -f flowoptix-frontend-container || true
       - name: Run docker container
         run: docker run -d -p 3000:3000 --name flowoptix-frontend-container umohsamuel/flowoptix-frontend
