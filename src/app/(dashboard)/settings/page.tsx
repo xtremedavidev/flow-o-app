@@ -28,11 +28,18 @@ interface Section {
 }
 
 const DashboardSettings = () => {
-  const { control, handleSubmit, reset } = useForm<FormValues>();
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
   const userData = useUserStore((state) => state.user);
   const setUserData = useUserStore((state) => state.setUser);
+
+  const { control, handleSubmit, reset } = useForm<FormValues>({
+    defaultValues: {
+      firstName: userData?.first_name || "",
+      lastName: userData?.last_name || "",
+      companyName: userData?.companyName || "",
+      companyLocation: userData?.companyLocation || "",
+    },
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [imagePreview, setImagePreview] = useState<string | null>(
     userData?.image || null
