@@ -21,6 +21,9 @@ interface LoginResponse extends DefaultResponse {
     email: string;
     phone: string;
     onBoardingDone: string;
+    companyName: string;
+    companyLocation: string;
+    image: string;
   };
 }
 

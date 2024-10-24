@@ -9,6 +9,9 @@ interface UserData {
     email: string;
     phone: string;
     onBoardingDone: boolean;
+    image: string;
+    companyName: string;
+    companyLocation: string;
   }
 
 export interface UserState {

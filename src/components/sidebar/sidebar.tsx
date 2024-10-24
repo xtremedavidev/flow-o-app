@@ -14,6 +14,7 @@ import { BiSolidLeaf } from "react-icons/bi";
 import Cookies from "js-cookie";
 import { cn } from "@/utils";
 import { ChatBot } from "../chatbot";
+import { useUserStore } from "@/managers";
 
 interface SidebarProps {
   className?: string;
@@ -26,6 +27,8 @@ export const Sidebar: FC<SidebarProps> = ({
   isNotMobile = true,
   handleMobileNav,
 }) => {
+  const userData = useUserStore((state) => state.user);
+
   return (
     <div
       className={cn(
@@ -67,7 +70,7 @@ export const Sidebar: FC<SidebarProps> = ({
                 width={40}
                 height={40}
               />
-              <p className="text-base font-normal">Company Name</p>
+              <p className="text-base font-normal">{userData?.companyName}</p>
             </div>
           </div>
 

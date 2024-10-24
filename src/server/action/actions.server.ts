@@ -309,6 +309,9 @@ interface LoginResponse extends DefaultResponse {
     email: string;
     phone: string;
     onBoardingDone: boolean;
+    companyName: string;
+    companyLocation: string;
+    image: string;
   };
 }
 
@@ -398,4 +401,61 @@ export async function sendChatbotMsg(message: string) {
   }
 
   return sendMsgResp.data;
+}
+
+
+export async function updateUserSettings(userSettings: FormData) {
+  const token = cookies().get("token")?.value;
+  const decryptedToken = token
+    ? decryptToken(decodeURIComponent(token))
+    : undefined;
+
+  const updatedUserSettings = await fetcher<{message: string}>(
+    `
+    ${process.env.NEXT_PUBLIC_BASEURL}/user-gateway/update-user`,
+    {
+      method: "POST",
+      data: userSettings,
+      token: decryptedToken,
+    }
+  );
+
+  if (updatedUserSettings.error) {
+    return { error: updatedUserSettings.error };
+  }
+
+  return updatedUserSettings.data;
+}
+
+export async function updateUserSettingsObj(firstName?:string, lastName?: string,  image?: string,
+    companyName?: string,
+    companyLocation?: string,) {
+  const token = cookies().get("token")?.value;
+  const decryptedToken = token
+    ? decryptToken(decodeURIComponent(token))
+    : undefined;
+
+  const updatedUserSettings = await fetcher<{message: string}>(
+    `
+    ${process.env.NEXT_PUBLIC_BASEURL}/user-gateway/update-user`,
+    {
+      method: "POST",
+      data: {
+       ...(firstName && { first_name: firstName }),
+              ...(lastName && { last_name: lastName }),
+              ...(companyName && { companyName: companyName }),
+              ...(companyLocation && {
+                companyLocation: companyLocation,
+              }),
+              ...(image && { image: image }),
+      },
+      token: decryptedToken,
+    }
+  );
+
+  if (updatedUserSettings.error) {
+    return { error: updatedUserSettings.error };
+  }
+
+  return updatedUserSettings.data;
 }

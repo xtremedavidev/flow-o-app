@@ -1,10 +1,13 @@
 "use client";
 
 import { ModalInput, ToggleSwitch } from "@/components";
+import { useUserStore } from "@/managers";
+import { updateUserSettings, updateUserSettingsObj } from "@/server";
 import Image from "next/image";
 import { FC, useState } from "react";
 import { Path, SubmitHandler, useForm } from "react-hook-form";
 import { FiCamera } from "react-icons/fi";
+import { toast } from "react-toastify";
 
 interface FormValues {
   firstName: string;
@@ -25,88 +28,114 @@ interface Section {
 }
 
 const DashboardSettings = () => {
-  const { control, handleSubmit } = useForm<FormValues>();
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [notifItemsArr, setNotifItemsArr] = useState<Section[]>([
-    {
-      section: "Choose Notification Types",
-      items: [
-        {
-          name: "operational-suggestions",
-          label: "Operational Suggestions",
-          value: false,
-        },
-        {
-          name: "critical",
-          label: "Critical",
-          value: false,
-        },
-        {
-          name: "warning",
-          label: "Warning",
-          value: false,
-        },
-      ],
-    },
-    {
-      section: "Alert Mode",
-      items: [
-        {
-          name: "escalate-alerts",
-          label: "Escalate alerts",
-          value: false,
-        },
-        {
-          name: "turn-on-email-alerts",
-          label: "Turn on email alerts",
-          value: false,
-        },
-      ],
-    },
-    {
-      section: "Accessibility",
-      items: [
-        {
-          name: "read-out-mode",
-          label: "Read out mode",
-          value: false,
-        },
-      ],
-    },
-  ]);
+  const { control, handleSubmit, reset } = useForm<FormValues>();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleToggle = (sectionIndex: number, itemIndex: number) => {
-    const newNotifItemsArr = notifItemsArr.map((section, sIndex) => {
-      if (sIndex === sectionIndex) {
-        const updatedItems = section.items.map((item, iIndex) => {
-          if (iIndex === itemIndex) {
-            return { ...item, value: !item.value };
-          }
-          return item;
-        });
-        return { ...section, items: updatedItems };
-      }
-      return section;
-    });
+  const userData = useUserStore((state) => state.user);
+  const setUserData = useUserStore((state) => state.setUser);
 
-    setNotifItemsArr(newNotifItemsArr);
-  };
+  const [imagePreview, setImagePreview] = useState<string | null>(
+    userData?.image || null
+  );
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
-    const updatedData = { ...data, profileImageUrl: imagePreview };
-    const notifItems = notifItemsArr.map((section) => section.items);
-    const notifItemsData = notifItems.flat();
+    // const updatedData = { ...data, profileImageUrl: imagePreview };
+    // const finalData = { ...updatedData };
+    // console.log(finalData);
 
-    const updatedNotifData = notifItemsData.reduce(
-      (acc, item) => {
-        acc[item.name] = item.value;
-        return acc;
-      },
-      {} as Record<string, boolean>
-    );
+    // console.log("data", data);
 
-    const finalData = { ...updatedData, ...updatedNotifData };
-    console.log(finalData);
+    setIsSubmitting(true);
+
+    const formData = new FormData();
+
+    if (imagePreview) {
+      const response = await fetch(imagePreview);
+      const blob = await response.blob();
+      formData.append("image", blob, "profile.jpg");
+    }
+
+    if (data.firstName) {
+      formData.append("first_name", data.firstName);
+    }
+    if (data.lastName) {
+      formData.append("last_name", data.lastName);
+    }
+    if (data.companyName) {
+      formData.append("companyName", data.companyName);
+    }
+    if (data.companyLocation) {
+      formData.append("companyLocation", data.companyLocation);
+    }
+
+    // await updateUserSettings(formData)
+    //   .then((res) => {
+    //     console.log(`ressss`, res);
+
+    //     if ("error" in res) {
+    //       toast.error(res.error || "Failed to save changes, try again later.");
+    //     } else {
+    //       if (res.message === "success") {
+    //         toast.success("Changes saved successfully");
+
+    //         const updatedUserData = {
+    //           ...(data.firstName && { first_name: data.firstName }),
+    //           ...(data.lastName && { last_name: data.lastName }),
+    //           ...(data.companyName && { companyName: data.companyName }),
+    //           ...(data.companyLocation && {
+    //             companyLocation: data.companyLocation,
+    //           }),
+    //           ...(imagePreview && { image: imagePreview }),
+    //         };
+
+    //         if (userData !== null) {
+    //           setUserData({ ...userData, ...updatedUserData });
+    //  reset();
+    //         }
+
+    //       }
+    //     }
+    //   })
+    //   .finally(() => {
+    //     setIsSubmitting(false);
+    //   });
+
+    await updateUserSettingsObj(
+      data.firstName,
+      data.lastName,
+      imagePreview ? imagePreview : undefined,
+      data.companyName,
+      data.companyLocation
+    )
+      .then((res) => {
+        console.log(`ressss`, res);
+
+        if ("error" in res) {
+          toast.error(res.error || "Failed to save changes, try again later.");
+        } else {
+          if (res.message === "success") {
+            toast.success("Changes saved successfully");
+
+            const updatedUserData = {
+              ...(data.firstName && { first_name: data.firstName }),
+              ...(data.lastName && { last_name: data.lastName }),
+              ...(data.companyName && { companyName: data.companyName }),
+              ...(data.companyLocation && {
+                companyLocation: data.companyLocation,
+              }),
+              ...(imagePreview && { image: imagePreview }),
+            };
+
+            if (userData !== null) {
+              setUserData({ ...userData, ...updatedUserData });
+              reset();
+            }
+          }
+        }
+      })
+      .finally(() => {
+        setIsSubmitting(false);
+      });
   };
 
   return (
@@ -133,13 +162,10 @@ const DashboardSettings = () => {
 
             <div className="mt-20 flex w-full items-center justify-between lg:mt-0">
               <div className="space-y-[14px]">
-                <h3 className="text-xl font-medium">Jane Daniel</h3>
-                <p className="text-sm font-light">Company Name</p>
-              </div>
-
-              <div className="space-y-[14px] text-sm font-light">
-                <p>200 wells</p>
-                <p>15 sites</p>
+                <h3 className="text-xl font-medium">
+                  {userData?.first_name} {userData?.last_name}
+                </h3>
+                <p className="text-sm font-light">{userData?.companyName}</p>
               </div>
             </div>
           </div>
@@ -167,45 +193,14 @@ const DashboardSettings = () => {
             </div>
           </div>
         </div>
-
-        <div>
-          <h1 className="my-8 text-2xl font-semibold">Notifications</h1>
-
-          <div className="rounded-[10px] bg-[#1A1D1F] px-7 py-5">
-            {notifItemsArr.map((notifItem, sectionIndex) => (
-              <div
-                key={notifItem.section}
-                className={`${sectionIndex === 0 ? "" : "mt-5"}`}
-              >
-                <h3 className="text-base font-semibold text-[#C0C0C0] lg:text-xl">
-                  {notifItem.section}
-                </h3>
-
-                <div className="mt-5 space-y-5">
-                  {notifItem.items.map((item, itemIndex) => (
-                    <div
-                      key={item.name}
-                      className="flex items-center justify-between gap-4"
-                    >
-                      <h3 className="text-sm lg:text-base">{item.label}</h3>
-                      <ToggleSwitch
-                        isOn={item.value}
-                        onToggle={() => handleToggle(sectionIndex, itemIndex)}
-                      />
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
       </div>
 
       <button
         type="submit"
-        className="my-8 flex w-full items-center justify-center rounded-xl bg-[#499BFC] py-[10.5px] text-base font-normal text-white"
+        disabled={isSubmitting}
+        className={`${isSubmitting ? "animate-pulse" : ""} my-8 flex w-full items-center justify-center rounded-xl bg-[#499BFC] py-[10.5px] text-base font-normal text-white`}
       >
-        Save Changes
+        {isSubmitting ? "Saving..." : "Save Changes"}
       </button>
     </form>
   );
@@ -271,50 +266,160 @@ const userDataFields = [
   { name: "companyLocation", label: "Company Location", type: "text" },
 ];
 
-const notifItemsArr = [
-  {
-    section: "Choose Notification Types",
-    items: [
-      {
-        name: "operational-suggestions",
-        label: "Operational Suggestions",
-        value: false,
-      },
-      {
-        name: "critical",
-        label: "Critical",
-        value: false,
-      },
-      {
-        name: "warning",
-        label: "Warning",
-        value: false,
-      },
-    ],
-  },
-  {
-    section: "Alert Mode",
-    items: [
-      {
-        name: "escalate-alerts",
-        label: "Escalate alerts",
-        value: false,
-      },
-      {
-        name: "turn-on-email-alerts",
-        label: "Turn on email alerts",
-        value: false,
-      },
-    ],
-  },
-  {
-    section: "Accessibility",
-    items: [
-      {
-        name: "read-out-mode",
-        label: "Read out mode",
-        value: false,
-      },
-    ],
-  },
-];
+// const notifItemsArr = [
+//   {
+//     section: "Choose Notification Types",
+//     items: [
+//       {
+//         name: "operational-suggestions",
+//         label: "Operational Suggestions",
+//         value: false,
+//       },
+//       {
+//         name: "critical",
+//         label: "Critical",
+//         value: false,
+//       },
+//       {
+//         name: "warning",
+//         label: "Warning",
+//         value: false,
+//       },
+//     ],
+//   },
+//   {
+//     section: "Alert Mode",
+//     items: [
+//       {
+//         name: "escalate-alerts",
+//         label: "Escalate alerts",
+//         value: false,
+//       },
+//       {
+//         name: "turn-on-email-alerts",
+//         label: "Turn on email alerts",
+//         value: false,
+//       },
+//     ],
+//   },
+//   {
+//     section: "Accessibility",
+//     items: [
+//       {
+//         name: "read-out-mode",
+//         label: "Read out mode",
+//         value: false,
+//       },
+//     ],
+//   },
+// ];
+
+// // Notifications -- removed
+
+//  const handleToggle = (sectionIndex: number, itemIndex: number) => {
+//    const newNotifItemsArr = notifItemsArr.map((section, sIndex) => {
+//      if (sIndex === sectionIndex) {
+//        const updatedItems = section.items.map((item, iIndex) => {
+//          if (iIndex === itemIndex) {
+//            return { ...item, value: !item.value };
+//          }
+//          return item;
+//        });
+//        return { ...section, items: updatedItems };
+//      }
+//      return section;
+//    });
+
+//    setNotifItemsArr(newNotifItemsArr);
+//  };
+
+//  const notifItems = notifItemsArr.map((section) => section.items);
+//  const notifItemsData = notifItems.flat();
+
+//  const updatedNotifData = notifItemsData.reduce(
+//    (acc, item) => {
+//      acc[item.name] = item.value;
+//      return acc;
+//    },
+//    {} as Record<string, boolean>
+//  );
+
+// const [notifItemsArr, setNotifItemsArr] = useState<Section[]>([
+//   {
+//     section: "Choose Notification Types",
+//     items: [
+//       {
+//         name: "operational-suggestions",
+//         label: "Operational Suggestions",
+//         value: false,
+//       },
+//       {
+//         name: "critical",
+//         label: "Critical",
+//         value: false,
+//       },
+//       {
+//         name: "warning",
+//         label: "Warning",
+//         value: false,
+//       },
+//     ],
+//   },
+//   {
+//     section: "Alert Mode",
+//     items: [
+//       {
+//         name: "escalate-alerts",
+//         label: "Escalate alerts",
+//         value: false,
+//       },
+//       {
+//         name: "turn-on-email-alerts",
+//         label: "Turn on email alerts",
+//         value: false,
+//       },
+//     ],
+//   },
+//   {
+//     section: "Accessibility",
+//     items: [
+//       {
+//         name: "read-out-mode",
+//         label: "Read out mode",
+//         value: false,
+//       },
+//     ],
+//   },
+// ]);
+
+//  <div>
+//    <h1 className="my-8 text-2xl font-semibold">Notifications</h1>
+
+//    <div className="rounded-[10px] bg-[#1A1D1F] px-7 py-5">
+//      {notifItemsArr.map((notifItem, sectionIndex) => (
+//        <div
+//          key={notifItem.section}
+//          className={`${sectionIndex === 0 ? "" : "mt-5"}`}
+//        >
+//          <h3 className="text-base font-semibold text-[#C0C0C0] lg:text-xl">
+//            {notifItem.section}
+//          </h3>
+
+//          <div className="mt-5 space-y-5">
+//            {notifItem.items.map((item, itemIndex) => (
+//              <div
+//                key={item.name}
+//                className="flex items-center justify-between gap-4"
+//              >
+//                <h3 className="text-sm lg:text-base">{item.label}</h3>
+//                <ToggleSwitch
+//                  isOn={item.value}
+//                  onToggle={() => handleToggle(sectionIndex, itemIndex)}
+//                />
+//              </div>
+//            ))}
+//          </div>
+//        </div>
+//      ))}
+//    </div>
+//  </div>;
