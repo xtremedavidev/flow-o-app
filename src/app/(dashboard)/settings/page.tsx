@@ -1,8 +1,8 @@
 "use client";
 
-import { ModalInput, ToggleSwitch } from "@/components";
+import { ModalInput } from "@/components";
 import { useUserStore } from "@/managers";
-import { updateUserSettings, updateUserSettingsObj } from "@/server";
+import { updateUserSettingsObj } from "@/server";
 import Image from "next/image";
 import { FC, useState } from "react";
 import { Path, SubmitHandler, useForm } from "react-hook-form";
@@ -41,26 +41,16 @@ const DashboardSettings = () => {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const [imagePreview, setImagePreview] = useState<string | null>(
+  const [initialImageUrl, setInitialImageUrl] = useState<string | null>(
     userData?.image || null
   );
 
+  const [imagePreview, setImagePreview] = useState<File | null>(null);
+
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
-    // const updatedData = { ...data, profileImageUrl: imagePreview };
-    // const finalData = { ...updatedData };
-    // console.log(finalData);
-
-    // console.log("data", data);
-
     setIsSubmitting(true);
 
     const formData = new FormData();
-
-    if (imagePreview) {
-      const response = await fetch(imagePreview);
-      const blob = await response.blob();
-      formData.append("image", blob, "profile.jpg");
-    }
 
     if (data.firstName) {
       formData.append("first_name", data.firstName);
@@ -75,45 +65,11 @@ const DashboardSettings = () => {
       formData.append("companyLocation", data.companyLocation);
     }
 
-    // await updateUserSettings(formData)
-    //   .then((res) => {
-    //     console.log(`ressss`, res);
+    if (imagePreview) {
+      formData.append("file", imagePreview);
+    }
 
-    //     if ("error" in res) {
-    //       toast.error(res.error || "Failed to save changes, try again later.");
-    //     } else {
-    //       if (res.message === "success") {
-    //         toast.success("Changes saved successfully");
-
-    //         const updatedUserData = {
-    //           ...(data.firstName && { first_name: data.firstName }),
-    //           ...(data.lastName && { last_name: data.lastName }),
-    //           ...(data.companyName && { companyName: data.companyName }),
-    //           ...(data.companyLocation && {
-    //             companyLocation: data.companyLocation,
-    //           }),
-    //           ...(imagePreview && { image: imagePreview }),
-    //         };
-
-    //         if (userData !== null) {
-    //           setUserData({ ...userData, ...updatedUserData });
-    //  reset();
-    //         }
-
-    //       }
-    //     }
-    //   })
-    //   .finally(() => {
-    //     setIsSubmitting(false);
-    //   });
-
-    await updateUserSettingsObj(
-      data.firstName,
-      data.lastName,
-      imagePreview ? imagePreview : undefined,
-      data.companyName,
-      data.companyLocation
-    )
+    await updateUserSettingsObj(formData)
       .then((res) => {
         console.log(`ressss`, res);
 
@@ -130,12 +86,11 @@ const DashboardSettings = () => {
               ...(data.companyLocation && {
                 companyLocation: data.companyLocation,
               }),
-              ...(imagePreview && { image: imagePreview }),
+              ...(imagePreview && { image: URL.createObjectURL(imagePreview) }),
             };
 
             if (userData !== null) {
               setUserData({ ...userData, ...updatedUserData });
-              reset();
             }
           }
         }
@@ -164,6 +119,8 @@ const DashboardSettings = () => {
               <ProfileImageUpload
                 setImagePreview={setImagePreview}
                 imagePreview={imagePreview}
+                initialImageUrl={initialImageUrl}
+                clearInitialImageUrl={() => setInitialImageUrl(null)}
               />
             </div>
 
@@ -215,22 +172,23 @@ const DashboardSettings = () => {
 export default DashboardSettings;
 
 interface ProfileImageUploadProps {
-  setImagePreview: (image: string | null) => void;
-  imagePreview: string | null;
+  setImagePreview: (image: File | null) => void;
+  imagePreview: File | null;
+  initialImageUrl: string | null;
+  clearInitialImageUrl: () => void;
 }
 
 const ProfileImageUpload: FC<ProfileImageUploadProps> = ({
   setImagePreview,
   imagePreview,
+  initialImageUrl,
+  clearInitialImageUrl,
 }) => {
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
+      setImagePreview(file);
+      clearInitialImageUrl();
     }
   };
 
@@ -242,7 +200,14 @@ const ProfileImageUpload: FC<ProfileImageUploadProps> = ({
             <Image
               width={120}
               height={120}
-              src={imagePreview || "/images/placeholder-profile-pic.png"}
+              src={
+                imagePreview
+                  ? URL.createObjectURL(imagePreview)
+                  : initialImageUrl || "/images/placeholder-profile-pic.png"
+                // imagePreview
+                //   ? URL.createObjectURL(imagePreview)
+                //   : "/images/placeholder-profile-pic.png"
+              }
               alt="Profile pic"
               className="h-full w-full object-cover object-center"
             />

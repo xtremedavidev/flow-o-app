@@ -1,11 +1,9 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import "./globals.css";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { ProviderQueryclient } from "@/utils";
-
-const inter = Inter({ subsets: ["latin"] });
+import { Inter } from "@/fonts";
 
 export const metadata: Metadata = {
   title: "FlowOptix",
@@ -22,7 +20,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.className} bg-[#202020] text-white`}>
+      <body className={`${Inter.variable} font-inter bg-[#202020] text-white`}>
         <ToastContainer position="top-center" className={"z-[99999]"} />
         <ProviderQueryclient>{children}</ProviderQueryclient>
       </body>
