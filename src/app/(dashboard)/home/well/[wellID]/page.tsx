@@ -1,4 +1,5 @@
 import {
+  getDataTypeNameByUser,
   getDevices,
   // getGeneralInsightsChartData,
   getRecords,
@@ -30,6 +31,7 @@ const WellDashboad: FC<WellDashboardProps> = async ({ params }) => {
   const devicesData = await getDevices(undefined, wellID);
   const recordsData = await getRecords();
   const sysEffData = await getSystemEfficiency(wellID);
+  const dataTypeNamesByUser = await getDataTypeNameByUser();
 
   // const generalInsightsChartData = await getGeneralInsightsChartData(
   //   "7206bdaf-79af-4a11-89b6-7fa14de2db7c"
@@ -63,7 +65,12 @@ const WellDashboad: FC<WellDashboardProps> = async ({ params }) => {
       <div className="mt-10 rounded-[27px] bg-[#297FB8]/[0.1] p-3">
         <h1 className="mb-5 text-center text-xl font-medium">Report Data</h1>
         <div className="w-full overflow-x-auto">
-          <ReportDataTable recordsData={recordsData?.data} />
+          {"error" in dataTypeNamesByUser ? null : (
+            <ReportDataTable
+              recordsData={recordsData?.data}
+              dataTypeNames={dataTypeNamesByUser.data.data}
+            />
+          )}
         </div>
 
         <h1 className="mb-5 mt-10 text-center text-xl font-medium">
