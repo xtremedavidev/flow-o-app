@@ -1,5 +1,6 @@
 import {
   getDashboardCardData,
+  getDataTypeNameByUser,
   getRecords,
   getTotalSystemEff,
   getWellActivityChart,
@@ -7,6 +8,7 @@ import {
 
 import {
   ActivesCard,
+  AddRecordButton,
   EventLogTable,
   GeneralInsightsCard,
   ListWrapper,
@@ -28,6 +30,7 @@ const DashboardHome = async () => {
   const recordsData = await getRecords();
   const wellChartData = await getWellActivityChart();
   const totalSysEffData = await getTotalSystemEff();
+  const dataTypeNamesByUser = await getDataTypeNameByUser();
 
   const SwitcherSitesWellsViewArr = [
     <ListWrapper
@@ -111,8 +114,15 @@ const DashboardHome = async () => {
 
       <div className="mt-10 rounded-[27px] bg-[#297FB8]/[0.1] p-3">
         <h1 className="mb-5 text-center text-xl font-medium">Report Data</h1>
+        <AddRecordButton />
+
         <div className="w-full overflow-x-auto">
-          <ReportDataTable recordsData={recordsData?.data} />
+          {"error" in dataTypeNamesByUser ? null : (
+            <ReportDataTable
+              recordsData={recordsData?.data}
+              dataTypeNames={dataTypeNamesByUser.data.data}
+            />
+          )}
         </div>
 
         <h1 className="mb-5 mt-10 text-center text-xl font-medium">

@@ -4,20 +4,13 @@ import { FC } from "react";
 
 interface ReportDataTableProps {
   recordsData: RecordsData | null;
+  dataTypeNames: string[];
 }
 
 export const ReportDataTable: FC<ReportDataTableProps> = async ({
   recordsData,
+  dataTypeNames,
 }) => {
-  // const transformHeaders = (headerData: RecordsData | null) => {
-  //   if (headerData) {
-  //     return headerData.data.flatMap((dataItem) =>
-  //       dataItem.recordTypes.flatMap((recordType) => recordType.dataRecords)
-  //     );
-  //   }
-  //   return [];
-  // };
-
   const tableDataffs = recordsData?.data[0].recordTypes[0].dataRecords || [];
 
   return tableDataffs.length < 1 ? (
@@ -30,12 +23,12 @@ export const ReportDataTable: FC<ReportDataTableProps> = async ({
         <tr>
           <th className="text-nowrap border-r px-8 py-2 text-center">Date</th>
           <th className="text-nowrap border-r px-8 py-2 text-center">Time</th>
-          {tableDataffs.map((header, index) => (
+          {dataTypeNames.map((header, index) => (
             <th
               key={index}
-              className={`text-nowrap ${tableDataffs.length - 1 !== index ? "border-r" : ""} px-4 py-2 text-center`}
+              className={`text-nowrap ${dataTypeNames.length - 1 !== index ? "border-r" : ""} px-4 py-2 text-center`}
             >
-              {header.dataTypeName}
+              {header}
             </th>
           ))}
         </tr>
@@ -51,14 +44,23 @@ export const ReportDataTable: FC<ReportDataTableProps> = async ({
             >
               <td className="border-b border-r px-4 py-2">{formattedDate}</td>
               <td className="border-b border-r px-4 py-2">{formattedTime}</td>
-              {row.recordTypes[0].dataRecords.map((dataRecord, idx) => (
-                <td
-                  key={dataRecord.id}
-                  className={`border-b ${row.recordTypes[0].dataRecords.length - 1 !== idx ? "border-r" : ""} px-4 py-2 text-center`}
-                >
-                  {dataRecord.value || "N/A"}
-                </td>
-              ))}
+              {/* {row.recordTypes[0].dataRecords.map((dataRecord, idx) => ( */}
+
+              {dataTypeNames.map((atThisPointIDK, index) => {
+                const secondIDK = row.recordTypes[0].dataRecords.find(
+                  (record) => record.dataTypeName === atThisPointIDK
+                );
+
+                return (
+                  <td
+                    key={index}
+                    className={`border-b ${row.recordTypes[0].dataRecords.length - 1 !== index ? "border-r" : ""} px-4 py-2 text-center`}
+                  >
+                    {secondIDK ? secondIDK.value : "N/A"}
+                  </td>
+                );
+              })}
+              {/* ))} */}
             </tr>
           );
         })}

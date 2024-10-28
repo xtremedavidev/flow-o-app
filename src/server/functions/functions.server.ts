@@ -2,6 +2,7 @@
 import { decryptToken, fetcher, getCookiesFromServer } from "@/utils";
 import {
   DataTemplate,
+  DataTypeResponseByUser,
   EnvTopicsAndTagsResp,
   GetNotesResponse,
   ReportsResponse,
@@ -256,4 +257,27 @@ export async function getTotalSystemEff() {
   }
 
   return totalSysEff;
+}
+
+export async function getDataTypeNameByUser() {
+  const token = await getCookiesFromServer();
+  const decryptedToken = token
+    ? decryptToken(decodeURIComponent(token))
+    : undefined;
+
+  const userDataTypes = await fetcher<DataTypeResponseByUser>(
+    `
+    ${process.env.NEXT_PUBLIC_BASEURL}/record-gateway/get-all-data-type-name-by-user`,
+    {
+      method: "GET",
+      data: {},
+      token: decryptedToken,
+    }
+  );
+
+  if (userDataTypes.error) {
+    return { error: userDataTypes.error };
+  }
+
+  return userDataTypes;
 }

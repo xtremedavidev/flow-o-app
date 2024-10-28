@@ -2,6 +2,7 @@
 
 import { GeneralInsightsAPIResponse } from "@/hooks";
 import {
+  CreateRecordResponse,
   DefaultResponse,
   DevicesDataResp,
   GetMultipleSitesResponse,
@@ -424,4 +425,47 @@ export async function updateUserSettingsObj(formData: FormData) {
   }
 
   return updatedUserSettings.data;
+}
+
+export async function createRecord(date: string, time: string, wellId: string, dataTypeName: {dataTypeName: string, value: string}[]) {
+  const token = cookies().get("token")?.value;
+  const decryptedToken = token
+    ? decryptToken(decodeURIComponent(token))
+    : undefined;
+
+    const DataObj = {
+  recordTitle: "Flowback Data Record",
+  recordDescription: "",
+  time: time,
+  date: date,
+  well: wellId,
+  recordTypes: [
+    {
+      typeName: "High Stage",
+      dataTypes: dataTypeName
+    }]
+    
+    }
+
+    // console.log("testing resp obj");
+    
+
+  const recordData = await fetcher<
+    CreateRecordResponse
+  >(
+    `
+    ${process.env.NEXT_PUBLIC_BASEURL}/record-gateway/create`,
+    {
+      method: "POST",
+      data: DataObj,
+      token: decryptedToken,
+    }
+  );
+
+  if (recordData.error) {
+    return { error: recordData.error };
+  }
+
+  revalidatePath("/home")
+  return recordData.data;
 }

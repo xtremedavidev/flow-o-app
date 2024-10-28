@@ -106,3 +106,69 @@ export interface RecommendationItem {
   report: ReportsData;
 }
 
+
+export interface DataTypeResponseByUser {
+  message: string;
+  data: string[];
+}
+
+
+const DATA_TYPE_NAMES = [
+  "Cumulative Flow",
+  "Time Flow",
+  "Temperature",
+  "Casing Pressure",
+  "Choke Size",
+  "Flow Line Velocity",
+  "Pipeline Pressure",
+  "Pipeline Temperature",
+  "Gas Destination",
+  "Total Gas Flared",
+  "Total Gas to Pipeline",
+  "Liquid Gas Ratio (LGR)",
+  "Total Gas Pipeline (Net)",
+  "Load Left to Recover (LTR)",
+  "Oil Gain",
+  "Oil Rate",
+  "Cumulative Oil",
+  "Water Gain",
+  "Water Rate",
+  "Cumulative Water",
+  "Water Salinity",
+  "pH Level",
+  "LF Recovered",
+  "Water Produced",
+  "Basic Sediment and Water (BSW)",
+  "H2S Level",
+  "Sand Cut",
+  "Cumulative Sand",
+  "Cumulative Water (No Sand)",
+  "Water Rate (No Sand)",
+  "Static Pressure",
+  "Temperature Differential Pressure",
+  "In Service Flow Rate",
+  "Cumulative Production",
+] as const;
+
+export type ConstDataTypeName = typeof DATA_TYPE_NAMES;
+
+
+export interface CreateRecordResponse {
+  message: string;
+  data: CreateRecordData;
+}
+
+interface CreateRecordData {
+  addedBy: string;
+  createdAt: string;
+  date: string;
+  id: string;
+  iotBondingCode: string | null;
+  recordDescription: string;
+  recordTitle: string;
+  status: string;
+  time: string;
+  updatedAt: string;
+  user_id: string;
+  wellId: string;
+}
