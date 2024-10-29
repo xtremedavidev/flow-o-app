@@ -1,271 +1,184 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import React, { useLayoutEffect } from "react";
 import * as am5 from "@amcharts/amcharts5";
 import * as am5xy from "@amcharts/amcharts5/xy";
 import am5themes_Animated from "@amcharts/amcharts5/themes/Animated";
 
-export const LineChart: React.FC = () => {
-  const chartRef = useRef<HTMLDivElement>(null); // Create a ref for the div element
+export interface ChartData {
+  date: number; // Timestamp for the X-axis
+  value: number; // Numerical value for the Y-axis
+  category: string; // Name value for the series
+}
 
-  useEffect(() => {
-    if (!chartRef.current) return; // Make sure the ref is assigned
+interface LineChartProps {
+  data: ChartData[];
+}
 
-    let root = am5.Root.new(chartRef.current); // Initialize amCharts with the ref
-
-    root.setThemes([am5themes_Animated.new(root)]);
+export const LineChart: React.FC<LineChartProps> = ({ data }) => {
+  useLayoutEffect(() => {
+    // Create root element
+    let root = am5.Root.new("chartdiv");
 
     // Hide the amCharts logo
     root._logo!.dispose();
 
+    // Apply theme
+    const myTheme = am5.Theme.new(root);
+    myTheme.rule("AxisLabel", ["minor"]).setAll({ dy: 1 });
+    myTheme.rule("Grid", ["x"]).setAll({ strokeOpacity: 0.05 });
+    myTheme.rule("Grid", ["x", "minor"]).setAll({ strokeOpacity: 0.05 });
+
+    root.setThemes([am5themes_Animated.new(root), myTheme]);
+
+    // Create the chart
     let chart = root.container.children.push(
       am5xy.XYChart.new(root, {
         panX: true,
         panY: true,
         wheelX: "panX",
         wheelY: "zoomX",
-        layout: root.verticalLayout,
+        maxTooltipDistance: 0,
         pinchZoomX: true,
-      }),
+      })
     );
 
-    let data = [
-      {
-        year: "1930",
-        flow_rate: 10,
-        temperature: 25,
-        differential_pressure: 30,
-        static_pressure: 40,
-        flow_total: 20,
-      },
-      {
-        year: "1934",
-        flow_rate: 15,
-        temperature: 28,
-        differential_pressure: 32,
-        static_pressure: 35,
-        flow_total: 22,
-      },
-      {
-        year: "1938",
-        flow_rate: 20,
-        temperature: 30,
-        differential_pressure: 25,
-        static_pressure: 38,
-        flow_total: 30,
-      },
-      {
-        year: "1950",
-        flow_rate: 22,
-        temperature: 27,
-        differential_pressure: 40,
-        static_pressure: 42,
-        flow_total: 35,
-      },
-      {
-        year: "1954",
-        flow_rate: 25,
-        temperature: 24,
-        differential_pressure: 35,
-        static_pressure: 30,
-        flow_total: 28,
-      },
-      {
-        year: "1958",
-        flow_rate: 30,
-        temperature: 22,
-        differential_pressure: 28,
-        static_pressure: 45,
-        flow_total: 40,
-      },
-      {
-        year: "1962",
-        flow_rate: 32,
-        temperature: 26,
-        differential_pressure: 22,
-        static_pressure: 35,
-        flow_total: 45,
-      },
-      {
-        year: "1966",
-        flow_rate: 35,
-        temperature: 29,
-        differential_pressure: 42,
-        static_pressure: 40,
-        flow_total: 38,
-      },
-      {
-        year: "1970",
-        flow_rate: 40,
-        temperature: 31,
-        differential_pressure: 30,
-        static_pressure: 48,
-        flow_total: 42,
-      },
-      {
-        year: "1974",
-        flow_rate: 45,
-        temperature: 33,
-        differential_pressure: 35,
-        static_pressure: 46,
-        flow_total: 48,
-      },
-      {
-        year: "1978",
-        flow_rate: 50,
-        temperature: 35,
-        differential_pressure: 40,
-        static_pressure: 50,
-        flow_total: 50,
-      },
-    ];
-
-    let xRenderer = am5xy.AxisRendererX.new(root, { minorGridEnabled: true });
-    xRenderer.grid.template.setAll({
-      stroke: am5.color("#FFFFFF"), // Set grid line color to white
-      strokeWidth: 2, // Set grid line width to 2px
-      strokeDasharray: [4, 4], // Make grid lines dotted
-      location: 0.5,
-    });
-    xRenderer.labels.template.setAll({
-      location: 0.5,
-      multiLocation: 0.5,
-      fill: am5.color(0xffffff), // Set text color to white
-      fontSize: "16px", // Increase font size
-    });
+    // Create axes
     let xAxis = chart.xAxes.push(
-      am5xy.CategoryAxis.new(root, {
-        categoryField: "year",
-        renderer: xRenderer,
+      am5xy.DateAxis.new(root, {
+        maxDeviation: 0.2,
+        baseInterval: { timeUnit: "hour", count: 1 },
+        renderer: am5xy.AxisRendererX.new(root, { minorGridEnabled: true }),
         tooltip: am5.Tooltip.new(root, {}),
-        snapTooltip: true,
-      }),
+      })
     );
 
-    xAxis.data.setAll(data);
-
-    let yRenderer = am5xy.AxisRendererY.new(root, { inversed: false });
-    yRenderer.grid.template.setAll({
-      stroke: am5.color("#FFFFFF"), // Set grid line color to white
-      strokeWidth: 2, // Set grid line width to 2px
-      strokeDasharray: [4, 4], // Make grid lines dotted
+    xAxis.get("renderer").labels.template.setAll({
+      fill: am5.color(0xffffff),
+      fontSize: 10,
     });
 
     let yAxis = chart.yAxes.push(
       am5xy.ValueAxis.new(root, {
-        maxPrecision: 0,
-        renderer: yRenderer,
-      }),
+        renderer: am5xy.AxisRendererY.new(root, {}),
+      })
     );
 
     yAxis.get("renderer").labels.template.setAll({
-      fill: am5.color(0xffffff), // Set text color to white
-      fontSize: "16px", // Increase font size
+      fill: am5.color(0xffffff),
+      fontSize: 10,
     });
 
+    // Create series by category
+    const categories = Array.from(new Set(data.map((item) => item.category)));
+
+    categories.forEach((category) => {
+      let seriesData = data?.filter((item) => item.category === category);
+
+      let series = chart.series.push(
+        am5xy.LineSeries.new(root, {
+          name: category,
+          xAxis: xAxis,
+          yAxis: yAxis,
+          valueYField: "value",
+          valueXField: "date",
+          legendValueText: "{valueY}",
+          tooltip: am5.Tooltip.new(root, {
+            pointerOrientation: "horizontal",
+            labelText: "{valueY}",
+          }),
+        })
+      );
+
+      series.data.setAll(seriesData);
+
+      // Add bullets to each data point
+      series.bullets.push(() => {
+        return am5.Bullet.new(root, {
+          sprite: am5.Circle.new(root, {
+            radius: 5, // Size of the bullet
+            fill: series.get("fill"), // Color of the bullet
+          }),
+        });
+      });
+
+      // Animate on load
+      series.appear();
+    });
+
+    // Add cursor
     let cursor = chart.set(
       "cursor",
       am5xy.XYCursor.new(root, {
-        alwaysShow: true,
-        xAxis: xAxis,
-        positionX: 1,
-      }),
+        behavior: "none",
+        snapToSeries: chart.series.values,
+      })
     );
-
     cursor.lineY.set("visible", false);
-    cursor.lineX.set("focusable", true);
 
-    const createSeries = (name: string, field: string) => {
-      let series = chart.series.push(
-        am5xy.LineSeries.new(root, {
-          name: name,
-          xAxis: xAxis,
-          yAxis: yAxis,
-          valueYField: field,
-          categoryXField: "year",
-          tooltip: am5.Tooltip.new(root, {
-            pointerOrientation: "horizontal",
-            labelText: "[bold]{name}[/]\n{categoryX}: {valueY}",
-          }),
-        }),
-      );
-
-      series.bullets.push(() =>
-        am5.Bullet.new(root, {
-          sprite: am5.Circle.new(root, {
-            radius: 5,
-            fill: series.get("fill"),
-          }),
-        }),
-      );
-
-      series.set("setStateOnChildren", true);
-      series.states.create("hover", {});
-      series.mainContainer.set("setStateOnChildren", true);
-      series.mainContainer.states.create("hover", {});
-      series.strokes.template.states.create("hover", { strokeWidth: 4 });
-      series.data.setAll(data);
-      series.appear(1000);
-    };
-
-    createSeries("Flow Rate", "flow_rate");
-    createSeries("Temperature", "temperature");
-    createSeries("Differential Pressure", "differential_pressure");
-    createSeries("Static Pressure", "static_pressure");
-    createSeries("Flow Total", "flow_total");
-
+    // Add scrollbars
     chart.set(
       "scrollbarX",
-      am5.Scrollbar.new(root, { orientation: "horizontal", marginBottom: 20 }),
+      am5.Scrollbar.new(root, { orientation: "horizontal" })
+    );
+    chart.set(
+      "scrollbarY",
+      am5.Scrollbar.new(root, { orientation: "vertical" })
     );
 
-    let legend = chart.children.push(
+    // Place the legend below the chart
+    let legendContainer = root.container.children.push(
+      am5.Container.new(root, {
+        layout: root.verticalLayout,
+        width: am5.percent(100),
+        height: am5.percent(100),
+      })
+    );
+
+    legendContainer.children.push(chart);
+
+    let legend = legendContainer.children.push(
       am5.Legend.new(root, {
         centerX: am5.p50,
         x: am5.p50,
-        fill: am5.color(0xffffff), // Set legend text color to white
-      }),
+        marginTop: 20,
+        layout: root.gridLayout,
+        maxHeight: 100, // Limit the height to 20% of the container
+        verticalScrollbar: am5.Scrollbar.new(root, { orientation: "vertical" }), // Add vertical scrollbar if necessary
+      })
     );
 
     legend.labels.template.setAll({
-      fill: am5.color(0xffffff), // Set legend labels color to red (change this to your preferred color)
-      fontSize: "16px", // Increase font size
+      fill: am5.color(0xffffff),
+      fontSize: 10,
     });
 
-    legend.itemContainers.template.states.create("hover", {});
-
-    legend.itemContainers.template.events.on("pointerover", (e) => {
-      const dataItem = e.target.dataItem;
-      if (dataItem) {
-        const context = dataItem.dataContext as { hover: () => void };
-        context.hover();
-      }
+    // Ensure legend items wrap if necessary
+    legend.itemContainers.template.set("width", am5.p100);
+    legend.labels.template.setAll({
+      width: am5.p100,
+      textAlign: "left",
+      fill: am5.color(0xffffff),
+      fontSize: 10,
     });
 
-    legend.itemContainers.template.events.on("pointerout", (e) => {
-      const dataItem = e.target.dataItem;
-      if (dataItem) {
-        const context = dataItem.dataContext as { unhover: () => void };
-        context.unhover();
-      }
+    legend.valueLabels.template.setAll({
+      width: am5.p100,
+      textAlign: "right",
+      fill: am5.color(0xffffff),
+      fontSize: 10,
     });
 
     legend.data.setAll(chart.series.values);
 
-    chart.plotContainer.events.on("pointerout", () => {
-      cursor.set("positionX", 1);
-    });
-
-    chart.plotContainer.events.on("pointerover", () => {
-      cursor.set("positionX", undefined);
-    });
-
+    // Animate chart on load
     chart.appear(1000, 100);
 
+    // Cleanup on unmount
     return () => {
       root.dispose();
     };
-  }, []);
+  }, [data]);
 
-  return <div ref={chartRef} className="h-[400px] w-full"></div>; // Use ref instead of id
+  return <div id="chartdiv" style={{ width: "100%", height: "500px" }}></div>;
 };

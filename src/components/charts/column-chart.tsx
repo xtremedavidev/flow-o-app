@@ -1,12 +1,18 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import { FC, useEffect, useRef } from "react";
 import * as am5 from "@amcharts/amcharts5";
 import * as am5xy from "@amcharts/amcharts5/xy";
 import am5themes_Animated from "@amcharts/amcharts5/themes/Animated";
 import am5themes_Responsive from "@amcharts/amcharts5/themes/Responsive";
+import { FetcherResult } from "@/utils";
+import { WellActivityChartResp } from "@/types";
 
-export const ColumnChart: React.FC = () => {
+interface ColumnChartProps {
+  wellChartData: FetcherResult<WellActivityChartResp[]> | { error: string };
+}
+
+export const ColumnChart: FC<ColumnChartProps> = ({ wellChartData }) => {
   const chartRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -43,7 +49,7 @@ export const ColumnChart: React.FC = () => {
         wheelX: "panX",
         wheelY: "zoomX",
         paddingLeft: 0,
-      }),
+      })
     );
 
     // Add cursor
@@ -51,7 +57,7 @@ export const ColumnChart: React.FC = () => {
       "cursor",
       am5xy.XYCursor.new(root, {
         behavior: "zoomX",
-      }),
+      })
     );
     cursor.lineY.set("visible", false);
 
@@ -75,22 +81,14 @@ export const ColumnChart: React.FC = () => {
       };
     }
 
-    function generateDatas(startDate: Date, endDate: Date) {
-      let data = [];
-      let date = new Date(startDate);
-      while (date <= endDate) {
-        data.push(generateData(new Date(date)));
-        date.setMonth(date.getMonth() + 1); // Move to the next month
-      }
-      return data;
-    }
-
     // Create axes
     let xAxis = chart.xAxes.push(
       am5xy.DateAxis.new(root, {
-        maxDeviation: 0,
+        maxDeviation: 0.1,
         baseInterval: {
-          timeUnit: "month",
+          // timeUnit: "month",
+          // count: 1,
+          timeUnit: "day",
           count: 1,
         },
         renderer: am5xy.AxisRendererX.new(root, {
@@ -99,7 +97,7 @@ export const ColumnChart: React.FC = () => {
           minGridDistance: 50, // Adjust to ensure labels don't overlap with the chart
         }),
         tooltip: am5.Tooltip.new(root, {}),
-      }),
+      })
     );
 
     // Position the labels below the bars
@@ -109,7 +107,7 @@ export const ColumnChart: React.FC = () => {
     });
 
     xAxis.set("dateFormats", {
-      month: "MMM", // Use month abbreviation
+      day: "MMM dd",
     });
 
     let yAxis = chart.yAxes.push(
@@ -119,7 +117,7 @@ export const ColumnChart: React.FC = () => {
         }),
         min: 0, // Ensure the minimum value on the y-axis is 0
         max: 100, // Ensure the maximum value on the y-axis is 100
-      }),
+      })
     );
 
     // Add series
@@ -133,7 +131,7 @@ export const ColumnChart: React.FC = () => {
         tooltip: am5.Tooltip.new(root, {
           labelText: "{valueY}",
         }),
-      }),
+      })
     );
 
     // Set column appearance
@@ -151,10 +149,18 @@ export const ColumnChart: React.FC = () => {
       "scrollbarX",
       am5.Scrollbar.new(root, {
         orientation: "horizontal",
-      }),
+      })
     );
 
-    let data = generateDatas(startDate, endDate);
+    const parseChartData = (data: { date: string; count: number }[]) => {
+      return data.map((item) => ({
+        date: new Date(item.date).getTime(),
+        value: item.count,
+      }));
+    };
+
+    let data =
+      "error" in wellChartData ? [] : parseChartData(wellChartData.data);
     series.data.setAll(data);
 
     // Make stuff animate on load

@@ -1,3 +1,6 @@
 export * from "./auth-bg-wrapper"
 export * from "./page-rerouter"
 export * from "./protected-routes"
+export * from "./dashboard-children-wrapper"
+export * from "./go-to-if-link"
+export * from "./dashboard-page-wrapper"

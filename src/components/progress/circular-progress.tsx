@@ -1,8 +1,8 @@
 "use client";
 
 export const CircularProgressBar = ({ percentage }: { percentage: number }) => {
-  const radius = 38;
-  const stroke = 6;
+  const radius = 30;
+  const stroke = 5;
   const normalizedRadius = radius - stroke * 2;
   const circumference = normalizedRadius * 2 * Math.PI;
   const strokeDashoffset = circumference - (percentage / 100) * circumference;
@@ -36,7 +36,7 @@ export const CircularProgressBar = ({ percentage }: { percentage: number }) => {
           strokeLinecap="round"
         />
       </svg>
-      <div className="absolute text-xs font-light">{percentage}%</div>
+      <div className="absolute text-[10px] font-light">{percentage}%</div>
     </div>
   );
 };

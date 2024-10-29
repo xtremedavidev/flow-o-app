@@ -10,17 +10,41 @@ import { IoMdSettings } from "react-icons/io";
 import Link from "next/link";
 import React, { FC } from "react";
 import { usePathname } from "next/navigation";
+import { BiSolidLeaf } from "react-icons/bi";
+import Cookies from "js-cookie";
+import { cn } from "@/utils";
+import { ChatBot } from "../chatbot";
+import { useUserStore } from "@/managers";
 
-export const Sidebar = () => {
+interface SidebarProps {
+  className?: string;
+  isNotMobile?: boolean;
+  handleMobileNav?: () => void;
+}
+
+export const Sidebar: FC<SidebarProps> = ({
+  className,
+  isNotMobile = true,
+  handleMobileNav,
+}) => {
+  const userData = useUserStore((state) => state.user);
+
   return (
-    <div className="flex h-screen w-[292px] shrink-0 flex-col overflow-y-auto border-r border-solid border-[#297FB8]/20 px-9 pb-6 pt-5 2xl:pb-[66px]">
-      <div className="flex h-[100px] items-center">
-        <div className="rounded-[25px] bg-[#424242]/15 px-4 py-[5px]">
-          <LogoWithText />
+    <div
+      className={cn(
+        `flex h-screen w-[292px] shrink-0 flex-col overflow-y-auto border-r border-solid border-[#297FB8]/20 px-9 pb-6 pt-5 2xl:pb-[66px]`,
+        className
+      )}
+    >
+      {isNotMobile && (
+        <div className="flex h-[100px] items-center">
+          <div className="rounded-[25px] bg-[#424242]/15 px-4 py-[5px]">
+            <LogoWithText />
+          </div>
         </div>
-      </div>
+      )}
 
-      <div className="mt-6 flex h-full flex-col justify-between gap-6 2xl:mt-[66px]">
+      <div className="my-6 flex h-full flex-col justify-between gap-6 2xl:mt-[66px]">
         <div className="space-y-2 xl:space-y-3 2xl:space-y-4">
           {SidebarListItemsArr.map((item, index) => (
             <SidebarItem
@@ -28,20 +52,13 @@ export const Sidebar = () => {
               label={item.label}
               icon={<item.icon size={24} color="#ffffff" />}
               href={item.href}
+              onClick={isNotMobile ? undefined : handleMobileNav}
             />
           ))}
         </div>
 
         <div>
-          <button className="flex items-center gap-[10px] rounded-[10px] bg-[#297FB8] px-4 py-3 text-base font-normal">
-            <Image
-              alt="ai chatbot"
-              width={32}
-              height={32}
-              src="/images/ai-chatbot-icon.svg"
-            />
-            <span>AI chatbot</span>
-          </button>
+          <ChatBot />
         </div>
 
         <div className="space-y-[10px]">
@@ -53,18 +70,20 @@ export const Sidebar = () => {
                 width={40}
                 height={40}
               />
-              <p className="text-base font-normal">Company Name</p>
+              <p className="text-base font-normal">{userData?.companyName}</p>
             </div>
           </div>
 
           <Link
             href="/login"
             onClick={() => {
-              localStorage.removeItem("token");
+              // localStorage.removeItem("token");
+              Cookies.remove("token");
+              if (!isNotMobile) handleMobileNav;
             }}
             className="flex w-full items-center gap-[10px] rounded-[4px] bg-white/[0.08] px-4 py-3 text-base font-normal"
           >
-            <FiLogOut size={24} color="#ffffff" />
+            <FiLogOut size={24} color="#ffffff" className="flex shrink-0" />
             <span>Logout</span>
           </Link>
         </div>
@@ -78,7 +97,7 @@ const LogoWithText = () => {
     <div className="flex items-center gap-3">
       <Image
         alt="FlowOptix Logo"
-        src="/images/flowoptix-logo-big.svg"
+        src="/images/flowoptix-logo-big.png"
         width={50}
         height={50}
       />
@@ -91,8 +110,9 @@ const SidebarItem: FC<{
   label: string;
   icon: React.ReactNode;
   href: string;
+  onClick?: () => void;
   // isActive?: boolean;
-}> = ({ label, icon, href }) => {
+}> = ({ label, icon, href, onClick }) => {
   const pathname = usePathname();
 
   const isActive = pathname.startsWith(href);
@@ -100,6 +120,7 @@ const SidebarItem: FC<{
   return (
     <Link
       href={href}
+      onClick={onClick}
       className={`flex w-full items-center gap-[10px] rounded-[10px] px-4 py-3 ${isActive ? "bg-[#297FB8]" : "bg-transparent"}`}
     >
       {icon} <span className="text-base font-semibold text-white">{label}</span>
@@ -111,26 +132,31 @@ const SidebarListItemsArr = [
   {
     label: "Dashboard",
     icon: MdDashboard,
-    href: "/dashboard/home",
+    href: "/home",
   },
   {
     label: "Manage Devices",
     icon: BsFillDeviceSsdFill,
-    href: "/dashboard/devices",
+    href: "/devices",
   },
   {
     label: "Action Center",
     icon: GoAlertFill,
-    href: "/dashboard/action-center",
+    href: "/action-center",
   },
+  // {
+  //   label: "Reports",
+  //   icon: MdPieChart,
+  //   href: "/reports",
+  // },
   {
-    label: "Reports",
-    icon: MdPieChart,
-    href: "/dashboard/reports",
+    label: "Environmental \n Compliance",
+    icon: BiSolidLeaf,
+    href: "/env-compliance",
   },
   {
     label: "Settings",
     icon: IoMdSettings,
-    href: "/dashboard/settings",
+    href: "/settings",
   },
 ];

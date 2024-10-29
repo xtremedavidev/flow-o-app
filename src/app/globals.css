@@ -2,7 +2,69 @@
 @tailwind components;
 @tailwind utilities;
 
+textarea {
+    resize: none; 
+}
+
+input:-webkit-autofill,
+textarea:-webkit-autofill,
+select:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0px 1000px transparent inset;
+  box-shadow: 0 0 0px 1000px transparent inset;
+  -webkit-text-fill-color: #fff; 
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+::-webkit-scrollbar {
+  width: 0.5rem !important; 
+  height: 0.5rem;
+  background: #0b231e;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #297FB8 !important; 
+  border-radius: 2.5px !important; 
+}
+
+/* ::-moz-selection {
+  background: #FF9500;
+  color: #2a1900;
+}
+
+::selection {
+  color: #2a1900;
+  background: #FF9500;
+} */
+
 .custom-login-gradient {
   @apply bg-gradient-to-tr;
   background-image: linear-gradient(to top right, #297FB8, #0A1F2D, #111C23, #202020);
+}
+
+.pinInput {
+  padding: 10px;
+  display: flex;
+  gap: 20px;
+  width: 80px;
+  height: 60px;
+}
+
+.pinInput input {
+  border-radius: 13px;
+  border-width: 0px;
+  background-color: #464646;
+}
+
+.pinInput input:focus {
+  border-width: 2px;
+  border-style: solid;
+  border-color: blue;
+  border-radius: 13px;
+  background-color: #464646;
+}
+
+@media (max-width: 600px) {
+  .pinInput {
+    width: 20px;
+  }
 }

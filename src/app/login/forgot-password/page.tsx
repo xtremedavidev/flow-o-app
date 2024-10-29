@@ -1,8 +1,10 @@
 "use client";
 
 import { AuthInput } from "@/components";
+import { DefaultResponse } from "@/types";
+import { encryptToken, fetcher } from "@/utils";
 import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
+import { useRouter } from "next/navigation";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 
@@ -13,11 +15,16 @@ export default function ForgotPassword() {
     formState: { errors },
   } = useForm<ForgotPasswordInputs>();
 
+  const router = useRouter();
+
   const mutation = useMutation({
     mutationFn: (data: { identifier: string }) => {
-      return axios.post(
+      return fetcher<DefaultResponse>(
         `${process.env.NEXT_PUBLIC_BASEURL}/user-gateway/retrieve-password-email`,
-        data,
+        {
+          method: "POST",
+          data,
+        }
       );
     },
   });
@@ -32,10 +39,12 @@ export default function ForgotPassword() {
     try {
       const res = await mutation.mutateAsync(UserData);
 
-      console.log("res", res);
-
       if (res?.data?.message === "success") {
-        toast.success("Success, please check your email for the reset link");
+        toast.success("Success, please check your email for an OTP");
+        router.push(
+          "/login/verify?identifier=" +
+            encodeURIComponent(encryptToken(data.identifier))
+        );
       } else {
         if (res?.data?.message) {
           toast.error(res?.data?.message);
@@ -44,7 +53,6 @@ export default function ForgotPassword() {
       }
     } catch (error) {
       console.error(error);
-      toast.error("Reset Failed");
     }
   };
 
@@ -77,9 +85,9 @@ export default function ForgotPassword() {
 
       <button
         type="submit"
-        className="h-[48px] w-full items-center justify-center rounded-[17px] bg-[#297FB8] text-base font-semibold"
+        className={`h-[48px] w-full items-center justify-center rounded-[17px] bg-[#297FB8] ${mutation.isPending && "animate-pulse"} text-base font-semibold`}
       >
-        Send OTP
+        {mutation.isPending ? "Loading..." : "Send OTP"}
       </button>
     </form>
   );

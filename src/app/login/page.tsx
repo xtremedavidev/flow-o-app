@@ -1,13 +1,31 @@
 "use client";
 
-import { AuthBgWrapper, AuthInput } from "@/components";
-import { encryptToken } from "@/utils";
+import { AuthInput } from "@/components";
+import { DefaultResponse } from "@/types";
+import { encryptToken, fetcher } from "@/utils";
 import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
+import { useUserStore } from "@/managers";
+import { handleLogin } from "@/server";
+
+interface LoginResponse extends DefaultResponse {
+  token: string;
+  user: {
+    id: string;
+    first_name: string;
+    last_name: string;
+    email: string;
+    phone: string;
+    onBoardingDone: string;
+    companyName: string;
+    companyLocation: string;
+    image: string;
+  };
+}
 
 const Login = () => {
   const {
@@ -16,44 +34,52 @@ const Login = () => {
     formState: { errors },
   } = useForm<LoginInputs>();
 
+  const [rememberMe, setRememberMe] = useState(true);
+  const setUser = useUserStore((state) => state.setUser);
+  const [isLoading, setIsLoading] = useState(false);
+
   const router = useRouter();
 
   const mutation = useMutation({
     mutationFn: (data: { identifier: string; password: string }) => {
-      return axios.post(
+      return fetcher<LoginResponse>(
         `${process.env.NEXT_PUBLIC_BASEURL}/user-gateway/login`,
-        data,
+        {
+          method: "POST",
+          data,
+        }
       );
     },
   });
 
   const onSubmit: SubmitHandler<LoginInputs> = async (data) => {
+    setIsLoading(true);
     const UserData = {
       identifier: data.email,
       password: data.password,
+      rememberMe,
     };
 
-    console.log("hee", UserData);
-
     try {
-      const res = await mutation.mutateAsync(UserData);
+      const resp = await handleLogin(
+        UserData.identifier,
+        UserData.password,
+        UserData.rememberMe
+      ).finally(() => {
+        setIsLoading(false);
+      });
 
-      if (res?.data?.message === "success") {
-        const token = res?.data?.token;
-        const encryptedToken = encryptToken(token);
+      if (resp.error) {
+        toast.error(resp.error);
+      }
 
-        localStorage.setItem("token", encryptedToken);
+      if (resp.loginData) {
         toast.success("Login Successful");
-        router.push("/dashboard/home");
-      } else {
-        if (res?.data?.message) {
-          toast.error(res?.data?.message);
-          console.log("hello 22", res);
-        }
+        setUser(resp.loginData.user);
+        router.push("/home");
       }
     } catch (error) {
       console.error(error);
-      toast.error("Login Failed");
     }
   };
 
@@ -82,9 +108,13 @@ const Login = () => {
         ))}
       </div>
 
-      <div className="flex items-center justify-between text-sm font-normal">
+      <div className="flex flex-col justify-between gap-4 text-sm font-normal lg:flex-row lg:items-center">
         <div className="flex gap-2">
-          <input type="checkbox" checked={true} />
+          <input
+            type="checkbox"
+            checked={rememberMe}
+            onChange={(e) => setRememberMe(e.target.checked)}
+          />
           <p>Remember me</p>
         </div>
 
@@ -98,9 +128,11 @@ const Login = () => {
 
       <button
         type="submit"
-        className={`h-[48px] w-full items-center justify-center rounded-[17px] bg-[#297FB8] text-base font-semibold ${mutation.isPending && "animate-pulse"}`}
+        disabled={isLoading}
+        className={`h-[48px] w-full items-center justify-center rounded-[17px] bg-[#297FB8] text-base font-semibold ${isLoading && "animate-pulse"} `}
       >
-        {mutation.isPending ? "Loading..." : "Log In"}
+        {/* {mutation.isPending ? "Loading..." : "Log In"} */}
+        {isLoading ? "Loading..." : "Log In"}
       </button>
     </form>
   );
