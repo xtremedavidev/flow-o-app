@@ -3,7 +3,6 @@ import { FC, PropsWithChildren } from "react";
 
 const DashboardLayout: FC<PropsWithChildren> = ({ children }) => {
   return (
-    <ProtectedRouteWrapper>
       <main className="flex h-screen w-full overflow-hidden">
         <Sidebar />
         <div className="h-screen w-full overflow-hidden">
@@ -16,7 +15,6 @@ const DashboardLayout: FC<PropsWithChildren> = ({ children }) => {
           </div>
         </div>
       </main>
-    </ProtectedRouteWrapper>
   );
 };
 export default DashboardLayout;
