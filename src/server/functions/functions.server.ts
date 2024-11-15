@@ -1,3 +1,4 @@
+"use server"
 
 import { decryptToken, fetcher, getCookiesFromServer } from "@/utils";
 import {
@@ -105,8 +106,9 @@ export async function getTableHeaderForReportData() {
     }
   );
 
-  if (!reportTableHeaderData) {
-    throw new Error("Failed to fetch reports table header data");
+ 
+  if (reportTableHeaderData.error) {
+    return { error: reportTableHeaderData.error };
   }
 
   return reportTableHeaderData;
@@ -129,14 +131,15 @@ export const getNotes = async (deviceID: string) => {
       }
     );
 
-    if (!notesData) {
-      throw new Error("Failed to create note");
-    }
 
     return notesData;
   };
 
   const data = await resp();
+
+  if (data.error) {
+    return { error: data.error };
+  }
 
   return data;
 };
@@ -241,6 +244,7 @@ export async function getTotalSystemEff() {
   const decryptedToken = token
     ? decryptToken(decodeURIComponent(token))
     : undefined;
+
 
   const totalSysEff = await fetcher<SystemEfficiency>(
     `

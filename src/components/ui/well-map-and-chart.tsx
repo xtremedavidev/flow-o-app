@@ -21,11 +21,13 @@ export const WellChartAndMap: FC<WellChartAndMapProps> = ({
       <div
         className={` ${showMap === true ? "w-full" : showMap === false ? "hidden w-0" : "w-full lg:w-[45%]"}`}
       >
-        <LocateWellCard
-          showMap={showMap}
-          setShowMap={setShowMap}
-          sitesData={sitesData}
-        />
+        {sitesData && (
+          <LocateWellCard
+            showMap={showMap}
+            setShowMap={setShowMap}
+            sitesData={sitesData}
+          />
+        )}
       </div>
 
       <div

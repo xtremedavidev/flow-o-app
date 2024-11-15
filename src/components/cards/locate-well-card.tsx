@@ -58,7 +58,7 @@ export const LocateWellCard: FC<LocateWellCardProps> = ({
 
       return gpsData;
     } catch (error) {
-      console.error("Error fetching coordinates for LSD:", lsd, error);
+      // console.error("Error fetching coordinates for LSD:", lsd, error);
       return null;
     }
   };
@@ -83,7 +83,7 @@ export const LocateWellCard: FC<LocateWellCardProps> = ({
 
         setMarkerPositions(markers);
       } catch (error) {
-        console.error("Error loading marker positions:", error);
+        // console.error("Error loading marker positions:", error);
         toast.error("Error fetching marker positions");
       }
     } else {
@@ -99,7 +99,7 @@ export const LocateWellCard: FC<LocateWellCardProps> = ({
 
         setMarkerPositions(markers);
       } catch (error) {
-        console.error("Error loading marker positions:", error);
+        // console.error("Error loading marker positions:", error);
         toast.error("Error fetching marker positions");
       }
     }

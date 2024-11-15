@@ -26,6 +26,10 @@ export const GeneralInsightsWellsDashboard: FC<
     }
   }, [sysEffData]);
 
+  if ("error" in wellsData || "error" in devicesData) {
+    return <div>{wellsData.error || devicesData.error}</div>;
+  }
+
   return (
     <div className="rounded-[10px] bg-[#292929] p-3 transition-all duration-300 ease-linear">
       <div className="mb-4">
