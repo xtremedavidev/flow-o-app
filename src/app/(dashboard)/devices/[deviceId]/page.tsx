@@ -44,10 +44,12 @@ const DeviceByDeviceIDPage = async ({ params }: DeviceByDeviceIDPageProps) => {
       </div>
 
       <Suspense fallback={<FallbackLoader />}>
-        <DeviceDetailsCard
-          deviceData={deviceData.data?.data.devices[0]}
-          notesData={notesData}
-        />
+        {"error" in deviceData || "error" in notesData ? null : (
+          <DeviceDetailsCard
+            deviceData={deviceData.data?.data.devices[0]}
+            notesData={notesData}
+          />
+        )}
       </Suspense>
 
       <DeviceActivities />

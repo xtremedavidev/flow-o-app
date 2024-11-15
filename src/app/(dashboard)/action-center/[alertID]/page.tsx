@@ -36,7 +36,11 @@ const AlertsPage: FC<AlertsPageProps> = async ({ params }) => {
     return resp;
   };
 
-  if (!recommendationData.data || !recommendationData) {
+  if (
+    "error" in recommendationData ||
+    !recommendationData.data ||
+    !recommendationData
+  ) {
     return <div>No recommendation data found, please try again</div>;
   }
 

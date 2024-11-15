@@ -39,22 +39,34 @@ export const GeneralInsightsCard: FC<GeneralInsightsCardProps> = ({
   });
 
   useEffect(() => {
-    if (generalInsightsChartData.data?.data.data) {
+    if (
+      generalInsightsChartData.data &&
+      !("error" in generalInsightsChartData.data) &&
+      generalInsightsChartData.data?.data.data
+    ) {
       const newTransformedData = transformData(
         generalInsightsChartData.data.data.data
       );
       setTransformedData(newTransformedData);
     }
-  }, [
-    generalInsightsChartData.isSuccess,
-    generalInsightsChartData.data?.data.data,
-  ]);
+  }, [generalInsightsChartData.isSuccess, generalInsightsChartData.data]);
 
   const lineChartData = useMemo(() => transformedData, [transformedData]);
 
   if (!wellsData) {
     return (
       <div className="flex w-full justify-center">No category data found</div>
+    );
+  }
+
+  if (
+    !generalInsightsChartData.data ||
+    "error" in generalInsightsChartData.data
+  ) {
+    return (
+      <div className="flex w-full justify-center">
+        Failed to get insights chart data
+      </div>
     );
   }
 

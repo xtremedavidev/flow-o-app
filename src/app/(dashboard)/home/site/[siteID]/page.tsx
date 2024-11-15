@@ -51,40 +51,21 @@ const SiteDashboard: FC<SiteDashboardProps> = async ({ params }) => {
       </h1>
 
       <div className="flex w-full items-center justify-between gap-6">
-        <ActivesCard
-          icon={<BsFillDeviceSsdFill />}
-          label="Active Wells"
-          amount={`${wellsData.data?.data.activeWell}`}
-          desc={`of ${wellsData.data?.data.totalWell} total`}
-          percentage={
-            wellsData.data?.data.totalWell > 0
-              ? (wellsData.data?.data.activeWell /
-                  wellsData.data?.data.totalWell) *
-                100
-              : 0
-          }
-        />
-        {/* <ActivesCard
-          icon={<BsFillDeviceSsdFill />}
-          label="Active Devices"
-          amount={`${devicesData.data?.data.activeDevice}`}
-          desc={`of ${devicesData.data?.data.totalDevice} total`}
-          percentage={
-            devicesData.data?.data.totalDevice > 0
-              ? (devicesData.data?.data.activeDevice /
-                  devicesData.data?.data.totalDevice) *
-                100
-              : 0
-          }
-        /> */}
-
-        {/* <SystemEfficiencyCard
-          average_downtime="5 mins"
-          average_resolution="2 Hours"
-          icon={<BsFillDeviceSsdFill />}
-          label="System Efficiency"
-          percentage={92}
-        /> */}
+        {"error" in wellsData ? null : (
+          <ActivesCard
+            icon={<BsFillDeviceSsdFill />}
+            label="Active Wells"
+            amount={`${wellsData.data?.data.activeWell}`}
+            desc={`of ${wellsData.data?.data.totalWell} total`}
+            percentage={
+              wellsData.data?.data.totalWell > 0
+                ? (wellsData.data?.data.activeWell /
+                    wellsData.data?.data.totalWell) *
+                  100
+                : 0
+            }
+          />
+        )}
       </div>
 
       <WellChartAndMap
@@ -93,24 +74,28 @@ const SiteDashboard: FC<SiteDashboardProps> = async ({ params }) => {
       />
 
       {/* {generalInsightsChartData && ( */}
-      <GeneralInsightsCard
-        // generalInsightsChartData={generalInsightsChartData.data?.data}
-        wellsData={wellsData}
-      />
+      {"error" in wellsData ? null : (
+        <GeneralInsightsCard
+          // generalInsightsChartData={generalInsightsChartData.data?.data}
+          wellsData={wellsData}
+        />
+      )}
       {/* )} */}
 
-      <ListWrapper
-        key="list-wrapper-for-all-wells"
-        listTitle="Wells"
-        baseUrl="/home/well/"
-        listData={wellsData.data?.data.wells}
-        noOfWells={wellsData.data?.data.totalWell}
-      />
+      {"error" in wellsData ? null : (
+        <ListWrapper
+          key="list-wrapper-for-all-wells"
+          listTitle="Wells"
+          baseUrl="/home/well/"
+          listData={wellsData.data?.data.wells}
+          noOfWells={wellsData.data?.data.totalWell}
+        />
+      )}
 
       <div className="mt-10 rounded-[27px] bg-[#297FB8]/[0.1] p-3">
         <h1 className="mb-5 text-center text-xl font-medium">Report Data</h1>
         <div className="w-full overflow-x-auto">
-          {"error" in dataTypeNamesByUser ? null : (
+          {"error" in dataTypeNamesByUser || "error" in recordsData ? null : (
             <ReportDataTable
               recordsData={recordsData?.data}
               dataTypeNames={dataTypeNamesByUser.data.data}

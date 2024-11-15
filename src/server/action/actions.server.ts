@@ -58,16 +58,16 @@ export async function getDashboardCardData() {
     sitesDataPromise,
   ]);
 
-  if (!wellsData) {
-    throw new Error("Failed to fetch wells data");
+  if (wellsData.error) {
+    return{error: "Failed to fetch wells data"};
   }
 
-  if (!devicesData) {
-    throw new Error("Failed to fetch devices data");
+  if (devicesData.error) {
+    return{error: "Failed to fetch devices data"};
   }
 
-  if (!sitesData) {
-    throw new Error("Failed to fetch sites data");
+  if (sitesData.error) {
+    return{error: "Failed to fetch sites data"};
   }
 
   return { wellsData, devicesData, sitesData };
@@ -89,7 +89,7 @@ export async function getRecords() {
   );
 
   if (!recordsData) {
-    throw new Error("Failed to fetch reports data");
+    return{error: "Failed to fetch reports data"}
   }
 
   return recordsData;
@@ -118,7 +118,7 @@ export async function getGeneralInsightsChartData(wellID: string) {
   );
 
   if (!generalInsightsChartData) {
-    throw new Error("Failed to fetch reports data");
+    return{error:"Failed to fetch reports data"}
   }
 
   return generalInsightsChartData;
@@ -167,7 +167,7 @@ export const getRecommendations = async (id: string) => {
       );
 
       if (!recommendationData) {
-        throw new Error("Failed to fetch recommendation data");
+        return{error:"Failed to fetch recommendation data"};
       }
 
       return recommendationData;
@@ -198,7 +198,7 @@ export async function getRecommendationsChat(id: string, question: string) {
   );
 
   if (!recommendationChatData) {
-    throw new Error("Failed to fetch recommendation chat data");
+    return{error:"Failed to fetch recommendation chat data"}
   }
 
   return recommendationChatData;
@@ -228,8 +228,9 @@ export async function getSites(
     }
   );
 
-  if (!sitesData) {
-    throw new Error("Failed to fetch sites data");
+  if (sitesData.error || !sitesData) {
+    // throw new Error("Failed to fetch sites data");
+    return {data: null as unknown as GetSiteResponse<typeof id>, error: "Failed to fetch sites data"}
   }
 
   return sitesData;
@@ -251,7 +252,7 @@ export async function getWells(id?: string, siteId?: string) {
   );
 
   if (!wellsData) {
-    throw new Error("Failed to fetch wells data");
+    return{error: "Failed to fetch wells data"};
   }
 
   return wellsData;
@@ -273,7 +274,7 @@ export async function getDevices(id?: string, wellId?: string) {
   );
 
   if (!devicesData) {
-    throw new Error("Failed to fetch devices data");
+    return{error:"Failed to fetch devices data"}
   }
 
   return devicesData;
@@ -295,7 +296,7 @@ export async function createNote(text: string, deviceID: string) {
   );
 
   if (!noteData) {
-    throw new Error("Failed to create note");
+    return {error:"Failed to create note"}
   }
 
   return noteData;

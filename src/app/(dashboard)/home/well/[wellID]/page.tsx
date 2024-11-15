@@ -46,26 +46,32 @@ const WellDashboad: FC<WellDashboardProps> = async ({ params }) => {
         <span className="text-xs">/ {wellID}</span>
       </h1>
 
-      {devicesData && wellsData && sysEffData && (
-        <GeneralInsightsWellsDashboard
-          date={date}
-          devicesData={devicesData}
-          wellsData={wellsData}
-          sysEffData={sysEffData}
-        />
-      )}
+      {"error" in wellsData || "error" in devicesData
+        ? null
+        : devicesData &&
+          wellsData &&
+          sysEffData && (
+            <GeneralInsightsWellsDashboard
+              date={date}
+              devicesData={devicesData}
+              wellsData={wellsData}
+              sysEffData={sysEffData}
+            />
+          )}
 
       {/* {generalInsightsChartData && ( */}
-      <GeneralInsightsCard
-        // generalInsightsChartData={generalInsightsChartData.data?.data}
-        wellsData={wellsData}
-      />
+      {"error" in wellsData ? null : (
+        <GeneralInsightsCard
+          // generalInsightsChartData={generalInsightsChartData.data?.data}
+          wellsData={wellsData}
+        />
+      )}
       {/* )} */}
 
       <div className="mt-10 rounded-[27px] bg-[#297FB8]/[0.1] p-3">
         <h1 className="mb-5 text-center text-xl font-medium">Report Data</h1>
         <div className="w-full overflow-x-auto">
-          {"error" in dataTypeNamesByUser ? null : (
+          {"error" in dataTypeNamesByUser || "error" in recordsData ? null : (
             <ReportDataTable
               recordsData={recordsData?.data}
               dataTypeNames={dataTypeNamesByUser.data.data}

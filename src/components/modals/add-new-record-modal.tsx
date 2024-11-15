@@ -39,10 +39,12 @@ export const AddNewRecordModal: FC<ModalProps> = ({ isOpen, setIsOpen }) => {
     : [];
 
   const formattedWellsData = wellsData.data
-    ? wellsData.data.data.data.wells.map((well) => ({
-        label: well.name,
-        value: well.id,
-      }))
+    ? "error" in wellsData.data
+      ? []
+      : wellsData.data.data.data.wells.map((well) => ({
+          label: well.name,
+          value: well.id,
+        }))
     : [];
 
   const handleAddField = () => {

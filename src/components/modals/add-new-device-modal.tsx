@@ -107,7 +107,8 @@ export const AddNewDeviceModal: FC<ModalProps> = ({ isOpen, setIsOpen }) => {
     queryFn: () => getWells(),
   });
 
-  const fields = formFields(sitesOptions, wellOptions);
+  const fields =
+    "error" in wellOptions ? [] : formFields(sitesOptions, wellOptions);
 
   if (!isOpen) return null;
   return (

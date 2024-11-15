@@ -32,53 +32,59 @@ const DashboardHome = async () => {
   const totalSysEffData = await getTotalSystemEff();
   const dataTypeNamesByUser = await getDataTypeNameByUser();
 
-  const SwitcherSitesWellsViewArr = [
-    <ListWrapper
-      key="list-wrapper-for-all-sites"
-      listTitle="Sites"
-      baseUrl="/home/site/"
-      listData={sitesData.data?.data}
-    />,
-    <ListWrapper
-      key="list-wrapper-for-all-wells"
-      listTitle="Wells"
-      baseUrl="/home/well/"
-      listData={wellsData.data?.data.wells}
-      // noOfWells={wellsData.data?.data.totalWell}
-    />,
-  ];
+  const SwitcherSitesWellsViewArr = sitesData
+    ? [
+        <ListWrapper
+          key="list-wrapper-for-all-sites"
+          listTitle="Sites"
+          baseUrl="/home/site/"
+          listData={sitesData.data?.data}
+        />,
+        <ListWrapper
+          key="list-wrapper-for-all-wells"
+          listTitle="Wells"
+          baseUrl="/home/well/"
+          listData={wellsData.data?.data.wells}
+          // noOfWells={wellsData.data?.data.totalWell}
+        />,
+      ]
+    : [];
 
   return (
     <div className="flex flex-col gap-7">
       <h1 className="text-2xl font-semibold">Dashboard</h1>
 
       <div className="flex w-full flex-col items-center justify-between gap-6 lg:flex-row">
-        <ActivesCard
-          icon={<BsFillDeviceSsdFill />}
-          label="Active Wells"
-          amount={`${wellsData.data?.data.activeWell}`}
-          desc={`of ${wellsData.data?.data.totalWell} total`}
-          percentage={
-            wellsData.data?.data.totalWell > 0
-              ? (wellsData.data?.data.activeWell /
-                  wellsData.data?.data.totalWell) *
-                100
-              : 0
-          }
-        />
-        <ActivesCard
-          icon={<BsFillDeviceSsdFill />}
-          label="Active Devices"
-          amount={`${devicesData.data?.data.activeDevice}`}
-          desc={`of ${devicesData.data?.data.totalDevice} total`}
-          percentage={
-            devicesData.data?.data.totalDevice > 0
-              ? (devicesData.data?.data.activeDevice /
-                  devicesData.data?.data.totalDevice) *
-                100
-              : 0
-          }
-        />
+        {wellsData && (
+          <ActivesCard
+            icon={<BsFillDeviceSsdFill />}
+            label="Active Wells"
+            amount={`${wellsData.data?.data.activeWell}`}
+            desc={`of ${wellsData.data?.data.totalWell} total`}
+            percentage={
+              wellsData.data?.data.totalWell > 0
+                ? (wellsData.data?.data.activeWell /
+                    wellsData.data?.data.totalWell) *
+                  100
+                : 0
+            }
+          />
+        )}
+        {devicesData && (
+          <ActivesCard
+            icon={<BsFillDeviceSsdFill />}
+            label="Active Devices"
+            amount={`${devicesData.data?.data.activeDevice}`}
+            desc={`of ${devicesData.data?.data.totalDevice} total`}
+            percentage={
+              devicesData.data?.data.totalDevice > 0
+                ? (devicesData.data?.data.activeDevice /
+                    devicesData.data?.data.totalDevice) *
+                  100
+                : 0
+            }
+          />
+        )}
 
         {"error" in totalSysEffData ? null : (
           <SystemEfficiencyCard
@@ -103,12 +109,14 @@ const DashboardHome = async () => {
         />
       )}
 
-      <WellChartAndMap
-        sitesData={sitesData.data.data}
-        wellChartData={wellChartData}
-      />
+      {sitesData && (
+        <WellChartAndMap
+          sitesData={sitesData.data.data}
+          wellChartData={wellChartData}
+        />
+      )}
 
-      <GeneralInsightsCard wellsData={wellsData} />
+      {wellsData && <GeneralInsightsCard wellsData={wellsData} />}
 
       <SwitcherSitesWells currentViewArr={SwitcherSitesWellsViewArr} />
 
@@ -117,7 +125,7 @@ const DashboardHome = async () => {
         <AddRecordButton />
 
         <div className="w-full overflow-x-auto">
-          {"error" in dataTypeNamesByUser ? null : (
+          {"error" in dataTypeNamesByUser || "error" in recordsData ? null : (
             <ReportDataTable
               recordsData={recordsData?.data}
               dataTypeNames={dataTypeNamesByUser.data.data}

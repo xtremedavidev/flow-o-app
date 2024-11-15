@@ -11,7 +11,7 @@ export const EventLogTable = async () => {
   // const reportsData = await getReports();
   const reportsData = await getRecords();
 
-  if (reportsData === null) {
+  if (reportsData === null || "error" in reportsData) {
     return <div>Failed to fetch reports data</div>;
   }
 

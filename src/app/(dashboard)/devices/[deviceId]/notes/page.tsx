@@ -36,13 +36,17 @@ const NotesPage: FC<NotesPageProps> = async ({ params }) => {
       </div>
 
       <div className="h-full max-h-[calc(100%-130px)] space-y-4 overflow-y-auto pr-2">
-        {notesData.data.notes.reverse().map((note) => (
-          <NotesItem
-            key={note.id}
-            username={`${note.user.first_name} ${note.user.last_name}`}
-            comment={note.note}
-          />
-        ))}
+        {"error" in notesData
+          ? null
+          : notesData.data.notes
+              .reverse()
+              .map((note) => (
+                <NotesItem
+                  key={note.id}
+                  username={`${note.user.first_name} ${note.user.last_name}`}
+                  comment={note.note}
+                />
+              ))}
       </div>
 
       <NotesPrompt handlePrompt={handleCreatNote} deviceID={deviceId} />

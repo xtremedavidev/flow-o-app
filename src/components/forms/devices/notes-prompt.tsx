@@ -12,7 +12,7 @@ interface NotesPromptProps {
   handlePrompt: (
     text: string,
     deviceID: string
-  ) => Promise<FetcherResult<{ message: string }>>;
+  ) => Promise<FetcherResult<{ message: string }> | { error: string }>;
   deviceID: string;
 }
 
@@ -31,7 +31,7 @@ export const NotesPrompt: FC<NotesPromptProps> = ({
     const resp = await handlePrompt(promptText, deviceID).finally(() =>
       setIsLoading(false)
     );
-    toast.info(resp.data.message);
+    toast.info(!("error" in resp) ? resp.data.message : resp.error);
     // setRecommendationChat(resp.data.recommendation);
     setPromptText("");
   }

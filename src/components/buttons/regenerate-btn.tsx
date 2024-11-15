@@ -37,7 +37,7 @@ export const RegenerateBtn: FC<RegenerateBtnProps> = ({ alertID }) => {
     );
 
     if (!recommendationData) {
-      throw new Error("Failed to fetch recommendation data");
+      return { error: "Failed to fetch recommendation data" };
     }
 
     // return recommendationData;
