@@ -350,6 +350,7 @@ export async function handleLogin(
   }
 
   await cookies().set("token", encryptedToken, cookieOptions);
+  localStorage.setItem("token", encryptedToken)
 
   return { loginData: loginData.data };
 }

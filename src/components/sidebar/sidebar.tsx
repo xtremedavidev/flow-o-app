@@ -79,6 +79,7 @@ export const Sidebar: FC<SidebarProps> = ({
             onClick={() => {
               // localStorage.removeItem("token");
               Cookies.remove("token");
+              localStorage.removeItem("token")
               if (!isNotMobile) handleMobileNav;
             }}
             className="flex w-full items-center gap-[10px] rounded-[4px] bg-white/[0.08] px-4 py-3 text-base font-normal"
