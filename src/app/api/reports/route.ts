@@ -1,36 +1,51 @@
 import { ReportsResponse } from "@/types";
 import { decryptToken } from "@/utils";
-// import { cookies } from "next/headers";
 import { NextResponse, type NextRequest } from "next/server";
 
 export const dynamic = "force-dynamic";
 
 export async function GET(request: NextRequest) {
   const token = request.cookies.get("token");
-  // const token = request.headers.get("authorization")?.split("Bearer ")[1];
 
   if (!token) {
+    console.error("Token not found in cookies");
     return NextResponse.json({ error: "No token found, please login again" });
   }
 
-  const decryptedToken = decryptToken(decodeURIComponent(token.value));
-  // const decryptedToken = token;
+  let decryptedToken: string;
+  try {
+    decryptedToken = decryptToken(decodeURIComponent(token.value));
+    console.log("Decrypted token:", decryptedToken);
+  } catch (error) {
+    console.error("Error decrypting token:", error);
+    return NextResponse.json({ error: "Invalid token" });
+  }
 
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_BASEURL}/record-gateway/get-reports`,
-    {
+  const baseUrl = process.env.NEXT_PUBLIC_BASEURL;
+  if (!baseUrl) {
+    console.error("Base URL not defined in environment variables");
+    return NextResponse.json({ error: "Server configuration error" });
+  }
+
+  try {
+    const res = await fetch(`${baseUrl}/record-gateway/get-reports`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${decryptedToken}`,
       },
       next: { revalidate: 10 },
+    });
+
+    if (!res.ok) {
+      const errorText = await res.text();
+      console.error("Error fetching reports:", res.status, errorText);
+      return NextResponse.json({ error: "Failed to fetch reports data" });
     }
-  );
 
-  if (!res.ok) {
-    return NextResponse.json({ error: "Failed to fetch reports data" });
+    const data: ReportsResponse = await res.json();
+    return NextResponse.json(data);
+  } catch (error) {
+    console.error("Unexpected error during fetch:", error);
+    return NextResponse.json({ error: "Unexpected server error" });
   }
-
-  const data: ReportsResponse = await res.json();
-  return NextResponse.json(data);
 }
