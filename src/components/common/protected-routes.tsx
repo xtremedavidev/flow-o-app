@@ -19,7 +19,7 @@ export const ProtectedRouteWrapper: FC<ProtectedRouteWrapperProps> = ({
 
   useEffect(() => {
     const checkAuthentication = async () => {
-      if (!token) {
+      if (!token || token === "") {
         toast.error(
           "Access Denied: You do not have the necessary permissions to view this page."
         );
