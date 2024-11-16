@@ -20,7 +20,7 @@ export const fetcher = async <T>(
   const { method = "GET", data, config, token } = options;
 
     const headers = {
-    Authorization: token ? `Bearer ${token}` : undefined,
+    Authorization: token ? `Bearer ${token}` : "",
     ...config?.headers,
   };
 
