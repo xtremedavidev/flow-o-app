@@ -41,17 +41,14 @@ const DashboardLayout: FC<DashboardLayoutProps> = async ({ children }) => {
         //credentials: "include",
       }
     );
-    const reportsData2: any = await res.json();
-    const reportsData: ReportsResponse = reportsData2;
-
-    console.log("log ", reportsData2)
-
+    console.log("log ", res)
 
     // Handle non-200 responses
     if (!res.ok) {
-      throw new Error(`Failed to fetch reports: ${res.statusText}, ${reportsData}`);
+      throw new Error(`Failed to fetch reports: ${res.statusText}`);
     }
 
+    const reportsData: ReportsResponse = await res.json();
     const sessionData = await getSessionDataSF();
 
     return (
@@ -72,8 +69,8 @@ const DashboardLayout: FC<DashboardLayoutProps> = async ({ children }) => {
         </main>
       </ProtectedRouteWrapper>
     );
-  } catch (error: any) {
-    console.error("Error loading dashboard data:", error.message || error);
+  } catch (error) {
+    console.error("Error loading dashboard data:", error);
 
     // Show an error message if something goes wrong
     return (
