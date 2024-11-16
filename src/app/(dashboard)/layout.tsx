@@ -42,7 +42,7 @@ const DashboardLayout: FC<DashboardLayoutProps> = async ({ children }) => {
       }
     );
     const datta: any = await res.json();
-    const reportsData: ReportsResponse = datta.data;
+    const reportsData: ReportsResponse = JSON.parse(datta?.data)
     console.log("log ", datta)
 
 
