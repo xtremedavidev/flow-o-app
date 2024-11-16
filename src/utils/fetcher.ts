@@ -17,8 +17,7 @@ export const fetcher = async <T>(
   url: string,
   options: FetcherOptions = {}
 ): Promise<FetcherResult<T>> => {
-  const { method = "GET", data, config } = options;
-  const token = localStorage.getItem("token")
+  const { method = "GET", data, config, token } = options;
 
     const headers = {
     Authorization: token ? `Bearer ${token}` : "",
