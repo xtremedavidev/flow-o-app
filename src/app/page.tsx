@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 export default function Home() {
   return (
     <main>
-      <PageRerouter fallback={<PageLoader />} goTo="/login" />
+      <PageRerouter fallback={<PageLoader />} goTo="/home" />
     </main>
   );
 }

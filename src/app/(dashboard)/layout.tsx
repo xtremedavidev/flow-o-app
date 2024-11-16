@@ -14,42 +14,70 @@ interface DashboardLayoutProps extends PropsWithChildren {}
 
 const DashboardLayout: FC<DashboardLayoutProps> = async ({ children }) => {
   const token = cookies().get("token")?.value;
-  // const decryptedToken = decryptToken(decodeURIComponent(token!));
 
-  const flowTempData = await getDataTemplate();
-
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_ROUTE_BASE_URL}/api/reports`,
-    {
-      headers: {
-        // Authorization: `Bearer ${decryptedToken}`,
-        cookie: `token=${token}`,
-      },
-      credentials: "include",
-    }
-  );
-  const reportsData: ReportsResponse = await res.json();
-  // const reportsData = await getReportsDataSF();
-  const sessionData = await getSessionDataSF();
-
-  return (
-    <ProtectedRouteWrapper token={token}>
-      <main className="flex h-screen w-full overflow-hidden">
-        <Sidebar className="hidden lg:flex" />
-        <div className="h-screen w-full overflow-hidden">
-          <Topbar />
-
-          <DashboardChildrenWrapper
-            flowTempData={flowTempData}
-            rightbar={
-              <Rightbar reportsData={reportsData} sessionData={sessionData} />
-            }
-          >
-            {children}
-          </DashboardChildrenWrapper>
+  if (!token) {
+    // If no token is available, redirect to the login page or handle gracefully
+    return (
+      <ProtectedRouteWrapper token={token}>
+        <div className="flex h-screen items-center justify-center">
+          <p className="text-red-500">Authentication token missing. Please log in.</p>
         </div>
-      </main>
-    </ProtectedRouteWrapper>
-  );
+      </ProtectedRouteWrapper>
+    );
+  }
+
+  try {
+    const flowTempData = await getDataTemplate();
+
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_ROUTE_BASE_URL}/api/reports`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          cookie: `token=${token}`,
+        },
+        credentials: "include",
+      }
+    );
+
+    // Handle non-200 responses
+    if (!res.ok) {
+      throw new Error(`Failed to fetch reports: ${res.statusText}`);
+    }
+
+    const reportsData: ReportsResponse = await res.json();
+    const sessionData = await getSessionDataSF();
+
+    return (
+      <ProtectedRouteWrapper token={token}>
+        <main className="flex h-screen w-full overflow-hidden">
+          <Sidebar className="hidden lg:flex" />
+          <div className="h-screen w-full overflow-hidden">
+            <Topbar />
+            <DashboardChildrenWrapper
+              flowTempData={flowTempData}
+              rightbar={
+                <Rightbar reportsData={reportsData} sessionData={sessionData} />
+              }
+            >
+              {children}
+            </DashboardChildrenWrapper>
+          </div>
+        </main>
+      </ProtectedRouteWrapper>
+    );
+  } catch (error) {
+    console.error("Error loading dashboard data:", error);
+
+    // Show an error message if something goes wrong
+    return (
+      <ProtectedRouteWrapper token={token}>
+        <div className="flex h-screen items-center justify-center">
+          <p className="text-red-500">An error occurred while loading the dashboard.</p>
+        </div>
+      </ProtectedRouteWrapper>
+    );
+  }
 };
+
 export default DashboardLayout;
