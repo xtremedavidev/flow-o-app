@@ -41,6 +41,7 @@ const DashboardLayout: FC<DashboardLayoutProps> = async ({ children }) => {
         credentials: "include",
       }
     );
+    console.log("log ", res)
 
     // Handle non-200 responses
     if (!res.ok) {
