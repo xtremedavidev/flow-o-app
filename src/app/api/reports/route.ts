@@ -37,12 +37,15 @@ export async function GET(request: NextRequest) {
     });
 
     if (!res.ok) {
+      const data: ReportsResponse = await res.json();
       const errorText = await res.text();
       console.error("Error fetching reports:", res.status, errorText);
+      console.log("chk res2", data)
       return NextResponse.json({ error: "Failed to fetch reports data" });
     }
 
     const data: ReportsResponse = await res.json();
+    console.log("chk res", data)
     return NextResponse.json(data);
   } catch (error) {
     console.error("Unexpected error during fetch:", error);
