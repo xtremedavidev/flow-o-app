@@ -41,8 +41,10 @@ const DashboardLayout: FC<DashboardLayoutProps> = async ({ children }) => {
         //credentials: "include",
       }
     );
-    const reportsData: ReportsResponse = await res.json();
-    console.log("log ", reportsData)
+    const reportsData2: any = await res.json();
+    const reportsData: ReportsResponse = (reportsData2.data);
+
+    console.log("log ", reportsData2)
 
 
     // Handle non-200 responses
