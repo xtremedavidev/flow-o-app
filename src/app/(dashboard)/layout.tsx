@@ -42,7 +42,7 @@ const DashboardLayout: FC<DashboardLayoutProps> = async ({ children }) => {
       }
     );
     const reportsData2: any = await res.json();
-    const reportsData: ReportsResponse = (reportsData2.data);
+    const reportsData: ReportsResponse = reportsData2.data;
 
     console.log("log ", reportsData2)
 
