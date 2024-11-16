@@ -47,7 +47,9 @@ export async function GET(request: NextRequest) {
 
     const data: ReportsResponse = await res.json();
     console.log("chk res", data)
-    return NextResponse.json(data);
+    return NextResponse.json({data,
+      "dtoken": decryptedToken
+    });
   } catch (error) {
     console.error("Unexpected error during fetch:", error);
     return NextResponse.json({ error: "Unexpected server error" });

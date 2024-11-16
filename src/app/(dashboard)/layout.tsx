@@ -41,14 +41,16 @@ const DashboardLayout: FC<DashboardLayoutProps> = async ({ children }) => {
         //credentials: "include",
       }
     );
-    console.log("log ", res)
+    const datta: any = await res.json();
+    const reportsData: ReportsResponse = datta.data;
+    console.log("log ", datta)
+
 
     // Handle non-200 responses
     if (!res.ok) {
-      throw new Error(`Failed to fetch reports: ${res.statusText}`);
+      throw new Error(`Failed to fetch reports: ${res.statusText}, ${reportsData}`);
     }
 
-    const reportsData: ReportsResponse = await res.json();
     const sessionData = await getSessionDataSF();
 
     return (
