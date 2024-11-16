@@ -33,7 +33,7 @@ export const ProtectedRouteWrapper: FC<ProtectedRouteWrapperProps> = ({
     checkAuthentication();
   }, [router, token]);
 
-  if (isAuthenticated === null) {
+  if (isAuthenticated === false) {
     return <PageLoader />;
   }
 
