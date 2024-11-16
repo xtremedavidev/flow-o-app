@@ -33,13 +33,13 @@ export const ProtectedRouteWrapper: FC<ProtectedRouteWrapperProps> = ({
     checkAuthentication();
   }, [router, token]);
 
-  // if (isAuthenticated === null) {
-  //   return <PageLoader />;
-  // }
-
-  if (isAuthenticated) {
-    return <>{children}</>;
-  } else {
-    return null;
+  if (isAuthenticated === null) {
+    return <PageLoader />;
   }
+
+  // if (isAuthenticated) {
+  //   return <>{children}</>;
+  // } else {
+  //   return null;
+  // }
 };
