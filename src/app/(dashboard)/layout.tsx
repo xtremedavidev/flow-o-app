@@ -26,6 +26,8 @@ const DashboardLayout: FC<DashboardLayoutProps> = async ({ children }) => {
     );
   }
 
+  console.log("token", token)
+
   try {
     const flowTempData = await getDataTemplate();
 
