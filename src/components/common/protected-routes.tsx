@@ -37,9 +37,9 @@ export const ProtectedRouteWrapper: FC<ProtectedRouteWrapperProps> = ({
     return <PageLoader />;
   }
 
-  // if (isAuthenticated) {
-  //   return <>{children}</>;
-  // } else {
-  //   return null;
-  // }
+  if (isAuthenticated) {
+    return <>{children}</>;
+  } else {
+    return null;
+  }
 };
