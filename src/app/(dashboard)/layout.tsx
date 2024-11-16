@@ -26,7 +26,6 @@ const DashboardLayout: FC<DashboardLayoutProps> = async ({ children }) => {
     );
   }
 
-  console.log("token", token)
 
   try {
     const flowTempData = await getDataTemplate();
@@ -41,7 +40,6 @@ const DashboardLayout: FC<DashboardLayoutProps> = async ({ children }) => {
         //credentials: "include",
       }
     );
-    console.log("log ", res)
 
     // Handle non-200 responses
     if (!res.ok) {

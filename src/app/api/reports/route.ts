@@ -26,7 +26,6 @@ export async function GET(request: NextRequest) {
   });
 
 
-  console.log("tokener", decryptedToken)
   if (!res.ok) {
     return NextResponse.json({ error: "Failed to fetch reports data" });
   }
