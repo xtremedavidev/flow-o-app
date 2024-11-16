@@ -11,10 +11,12 @@ interface RightbarProps {
 }
 
 export const Rightbar: FC<RightbarProps> = ({ sessionData, reportsData }) => {
-  // const { sessionData, reportsData } = await getRightbarData();
+  // Debug logs
+  console.log("sessionData:", sessionData);
+  console.log("reportsData:", reportsData);
 
   const filteredReports =
-    "error" in reportsData
+    reportsData && typeof reportsData === "object" && "error" in reportsData
       ? null
       : reportsData?.data?.filter((report) => report.status !== "RESOLVED");
 
@@ -23,16 +25,15 @@ export const Rightbar: FC<RightbarProps> = ({ sessionData, reportsData }) => {
       <div className="w-full rounded-2xl bg-[#CBCBCB]/[0.06] px-[18px] py-[14px]">
         <h2 className="mb-6 text-base font-medium">Updates</h2>
 
-        {"error" in sessionData ||
-          (!sessionData?.data && (
-            <div className="flex w-full justify-center text-sm font-normal">
-              Failed to get report data
-            </div>
-          ))}
+        {(!sessionData || "error" in sessionData) && (
+          <div className="flex w-full justify-center text-sm font-normal">
+            Failed to get report data
+          </div>
+        )}
 
-        {"error" in sessionData
-          ? null
-          : sessionData && <SemiPieChart sessionData={sessionData} />}
+        {sessionData && typeof sessionData === "object" && !("error" in sessionData) && (
+          <SemiPieChart sessionData={sessionData} />
+        )}
         <div className="flex items-center justify-between">
           {ConditionsArr.map((condition, index) => (
             <ConditionsItem
@@ -55,37 +56,35 @@ export const Rightbar: FC<RightbarProps> = ({ sessionData, reportsData }) => {
       </div>
 
       <div className="flex flex-col gap-[10px]">
-        {reportsData && filteredReports && filteredReports.length < 1 && (
+        {filteredReports?.length === 0 && (
           <div className="flex w-full justify-center text-sm font-normal">
             No recent alerts
           </div>
         )}
 
-        {reportsData &&
-          filteredReports &&
-          filteredReports.map((report) =>
-            report.title.toLowerCase().includes("temperature") ? (
-              <PressureAlertCard
-                key={report.id}
-                id={report.id}
-                title={report.title}
-                description={report.description}
-                time={report.updatedAt}
-                level={report.level as "Critical" | "Warning" | "Resolved"}
-                handleResolve={handleResolve}
-              />
-            ) : (
-              <SaveEnergyAlertCard
-                key={report.id}
-                id={report.id}
-                title={report.title}
-                description={report.description}
-                time={report.updatedAt}
-                level={report.level as "Critical" | "Warning" | "Resolved"}
-                handleResolve={handleResolve}
-              />
-            )
-          )}
+        {filteredReports?.map((report) =>
+          report.title.toLowerCase().includes("temperature") ? (
+            <PressureAlertCard
+              key={report.id}
+              id={report.id}
+              title={report.title}
+              description={report.description}
+              time={report.updatedAt}
+              level={report.level as "Critical" | "Warning" | "Resolved"}
+              handleResolve={handleResolve}
+            />
+          ) : (
+            <SaveEnergyAlertCard
+              key={report.id}
+              id={report.id}
+              title={report.title}
+              description={report.description}
+              time={report.updatedAt}
+              level={report.level as "Critical" | "Warning" | "Resolved"}
+              handleResolve={handleResolve}
+            />
+          )
+        )}
       </div>
     </div>
   );
@@ -96,10 +95,6 @@ export const ConditionsArr = [
     colour: "#F94144",
     status: "Critical",
   },
-  // {
-  //   colour: "#D48A2E",
-  //   status: "Warning",
-  // },
   {
     colour: "#3F9360",
     status: "Resolved",
