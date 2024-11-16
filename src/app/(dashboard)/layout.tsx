@@ -38,7 +38,7 @@ const DashboardLayout: FC<DashboardLayoutProps> = async ({ children }) => {
           Authorization: `Bearer ${token}`,
           cookie: `token=${token}`,
         },
-        credentials: "include",
+        //credentials: "include",
       }
     );
     console.log("log ", res)
@@ -69,8 +69,8 @@ const DashboardLayout: FC<DashboardLayoutProps> = async ({ children }) => {
         </main>
       </ProtectedRouteWrapper>
     );
-  } catch (error) {
-    console.error("Error loading dashboard data:", error);
+  } catch (error: any) {
+    console.error("Error loading dashboard data:", error.message || error);
 
     // Show an error message if something goes wrong
     return (
